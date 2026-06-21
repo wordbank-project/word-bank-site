@@ -154,7 +154,7 @@ export const FAQS: Faq[] = [
 ];
 
 // Word Bank is open source — link the repo from the "Built with" section.
-export const REPO_URL = 'https://github.com/jensrot/word-bank';
+export const REPO_URL = 'https://github.com/wordbank-project/word-bank';
 
 export type Tech = {
     name: string;
