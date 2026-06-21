@@ -1,8 +1,13 @@
 import PhoneMockup from './PhoneMockup';
+import FloatingWords from './FloatingWords';
+import { useFloatingWords } from '../hooks/useFloatingWords';
 
 export default function Hero() {
+    const words = useFloatingWords();
+
     return (
         <section id="top" className="hero">
+            <FloatingWords words={words} />
             <div className="container hero-inner">
                 <div className="hero-copy">
                     <h1>

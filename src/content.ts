@@ -201,3 +201,51 @@ export const MOCK_BOOKS: MockBook[] = [
     { title: 'Moby Dick', author: 'Herman Melville', status: 'read', wordCount: 47, coverColor: '#2f7d5c' },
     { title: 'Pride and Prejudice', author: 'Jane Austen', status: 'reading', wordCount: 8, coverColor: '#8d5fb0' },
 ];
+
+// The single knob for how many words float in the Hero. Change this number.
+export const MAX_FLOATING_WORDS = 36;
+
+// Fallback list of evocative vocabulary words shown floating behind the Hero
+// when the words server is unreachable or VITE_WORDS_API_URL is unset.
+export const HERO_WORDS: string[] = [
+    'serendipity',
+    'ephemeral',
+    'melancholy',
+    'resilience',
+    'eloquent',
+    'ambiguous',
+    'tenacious',
+    'vivid',
+    'profound',
+    'meticulous',
+    'candid',
+    'perseverance',
+    'whimsical',
+    'diligent',
+    'luminous',
+    'ineffable',
+    'petrichor',
+    'solitude',
+    'nostalgia',
+    'wanderlust',
+    'euphoria',
+    'mellifluous',
+    'quintessence',
+    'ethereal',
+    'sonder',
+    'halcyon',
+    'labyrinth',
+    'cascade',
+    'lucid',
+    'verdant',
+    'zephyr',
+    'aurora',
+    'ephemera',
+    'reverie',
+    'cadence',
+    'oblivion',
+    'paradox',
+    'sublime',
+    'tranquil',
+    'vestige',
+];

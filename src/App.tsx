@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import Hero from './components/Hero';
 import HowItWorks from './components/HowItWorks';
 import Nav from './components/Nav';
+import Stats from './components/Stats';
 import TechMarquee from './components/TechMarquee';
 
 export default function App() {
@@ -13,6 +14,7 @@ export default function App() {
             <Nav />
             <main>
                 <Hero />
+                <Stats />
                 <Features />
                 <HowItWorks />
                 <DictionaryShowcase />
