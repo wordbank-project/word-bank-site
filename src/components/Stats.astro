@@ -1,0 +1,74 @@
+---
+// Renders hidden; the script fills it from the feed server's /stats and unhides
+// it only when there's data — so the page is unaffected when there's no backend.
+---
+
+<section class="section stats" aria-label="Live word stats" hidden data-stats>
+    <div class="container stats-inner" data-stats-inner></div>
+</section>
+
+<script>
+    type WordRow = { word: string; count: number };
+    type DayRow = { day: string; count: number };
+    type StatsData = { total: number; top: WordRow[]; perDay: DayRow[] };
+
+    function sparklinePoints(perDay: DayRow[], width: number, height: number): string {
+        if (perDay.length === 0) return "";
+        const max = Math.max(1, ...perDay.map((d) => d.count));
+        const stepX = perDay.length > 1 ? width / (perDay.length - 1) : 0;
+        return perDay
+            .map((d, i) => {
+                const x = perDay.length > 1 ? i * stepX : width / 2;
+                const y = height - (d.count / max) * height;
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+            })
+            .join(" ");
+    }
+
+    function stat(value: string, label: string, accent = false): string {
+        const cls = accent ? "stat-value accent" : "stat-value";
+        return `<div class="stat"><span class="${cls}">${value}</span><span class="stat-label">${label}</span></div>`;
+    }
+
+    function escapeHtml(s: string): string {
+        return s.replace(
+            /[&<>"']/g,
+            (c) =>
+                ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c,
+        );
+    }
+
+    async function init(): Promise<void> {
+        const base = import.meta.env.PUBLIC_WORDS_API_URL as string | undefined;
+        if (!base) return; // No server configured — stays hidden.
+
+        const section = document.querySelector<HTMLElement>("[data-stats]");
+        const inner = document.querySelector<HTMLElement>("[data-stats-inner]");
+        if (!section || !inner) return;
+
+        try {
+            const res = await fetch(`${base}/stats?limit=1`);
+            if (!res.ok) return;
+            const data = (await res.json()) as StatsData;
+            if (!data || typeof data.total !== "number" || data.total === 0) return;
+
+            const parts = [stat(data.total.toLocaleString(), "words readers have collected")];
+            const wordOfTheWeek = data.top?.[0]?.word;
+            if (wordOfTheWeek) parts.push(stat(escapeHtml(wordOfTheWeek), "most-saved word", true));
+
+            const points = sparklinePoints(data.perDay ?? [], 240, 48);
+            if (points) {
+                parts.push(
+                    `<div class="stat stat-spark"><svg viewBox="0 0 240 48" width="240" height="48" aria-hidden="true"><polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg><span class="stat-label">words added per day</span></div>`,
+                );
+            }
+
+            inner.innerHTML = parts.join("");
+            section.hidden = false;
+        } catch {
+            // Network error / bad JSON — leave the section hidden.
+        }
+    }
+
+    init();
+</script>

@@ -1,0 +1,39 @@
+---
+import { FEATURES } from "../content";
+import type { IconName } from "../content";
+import Section from "./Section.astro";
+
+const svg = (inner: string) =>
+    `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+
+const ICONS: Record<IconName, string> = {
+    search: svg('<circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />'),
+    list: svg('<path d="M8 6h13M8 12h13M8 18h13" /><path d="m3 6 1 1 2-2M3 12l1 1 2-2M3 18l1 1 2-2" />'),
+    stack: svg('<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />'),
+    bolt: svg('<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" />'),
+    layers: svg('<path d="M12 2 2 7l10 5 10-5-10-5z" /><path d="m2 17 10 5 10-5" /><path d="m2 12 10 5 10-5" />'),
+    sort: svg('<path d="M3 6h12M3 12h9M3 18h6" /><path d="m17 8 3-3 3 3M20 5v14" />'),
+    star: svg('<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5z" />'),
+    pencil: svg('<path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />'),
+    globe: svg('<circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z" />'),
+    camera: svg('<path d="M3 8a2 2 0 0 1 2-2h2l2-3h6l2 3h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z" /><circle cx="12" cy="13" r="4" />'),
+    lock: svg('<rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" />'),
+    moon: svg('<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z" />'),
+};
+---
+
+<Section id="features" class="features">
+    <h2>Everything a reading habit needs</h2>
+    <p class="section-sub">One app for the books you read and the words they teach you.</p>
+    <div class="features-grid">
+        {
+            FEATURES.map(({ icon, title, description }) => (
+                <article class="feature-card">
+                    <span class="feature-icon" set:html={ICONS[icon]} />
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                </article>
+            ))
+        }
+    </div>
+</Section>

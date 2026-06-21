@@ -1,0 +1,20 @@
+---
+import { STEPS } from "../content";
+import Section from "./Section.astro";
+---
+
+<Section id="how-it-works" class="how">
+    <h2>How it works</h2>
+    <p class="section-sub">Three steps, then it becomes a habit.</p>
+    <ol class="steps">
+        {
+            STEPS.map(({ title, description }, i) => (
+                <li class="step">
+                    <span class="step-number">{i + 1}</span>
+                    <h3>{title}</h3>
+                    <p>{description}</p>
+                </li>
+            ))
+        }
+    </ol>
+</Section>

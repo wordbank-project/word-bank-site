@@ -1,0 +1,52 @@
+---
+import "../styles/global.css";
+
+interface Props {
+    title?: string;
+    description?: string;
+}
+
+const {
+    title = "Word Bank — turn the books you read into vocabulary you keep",
+    description = "Word Bank is a reading companion: track what you read and save every new word with its definition, your sentence, and your notes — in your preferred language.",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{title}</title>
+        <meta name="description" content={description} />
+    </head>
+    <body>
+        <slot />
+
+        <!-- Scroll-reveal: fade sections up the first time they enter view
+             (replaces the former useReveal React hook). -->
+        <script>
+            const reveal = () => {
+                const els = document.querySelectorAll(".reveal");
+                if (!("IntersectionObserver" in window)) {
+                    els.forEach((el) => el.classList.add("revealed"));
+                    return;
+                }
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        for (const entry of entries) {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add("revealed");
+                                observer.unobserve(entry.target);
+                            }
+                        }
+                    },
+                    { threshold: 0.15 },
+                );
+                els.forEach((el) => observer.observe(el));
+            };
+            reveal();
+        </script>
+    </body>
+</html>

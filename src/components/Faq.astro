@@ -1,0 +1,18 @@
+---
+import { FAQS } from "../content";
+import Section from "./Section.astro";
+---
+
+<Section id="faq" class="faq">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-list">
+        {
+            FAQS.map(({ question, answer }) => (
+                <details class="faq-item">
+                    <summary>{question}</summary>
+                    <p>{answer}</p>
+                </details>
+            ))
+        }
+    </div>
+</Section>

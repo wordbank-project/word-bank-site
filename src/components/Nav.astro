@@ -1,0 +1,52 @@
+---
+const LINKS = [
+    { href: "#features", label: "Features" },
+    { href: "#how-it-works", label: "How it works" },
+    { href: "#dictionary", label: "Dictionary" },
+    { href: "#faq", label: "FAQ" },
+];
+---
+
+<header class="nav">
+    <div class="container nav-inner">
+        <a href="#top" class="nav-logo">
+            <span class="nav-logo-mark">W</span>
+            Word Bank
+        </a>
+
+        <nav class="nav-links" aria-label="Main" data-nav-links>
+            {LINKS.map(({ href, label }) => <a href={href}>{label}</a>)}
+            <a href="#download" class="button button-small">Get the app</a>
+        </nav>
+
+        <button
+            type="button"
+            class="nav-toggle"
+            aria-expanded="false"
+            aria-label="Open menu"
+            data-nav-toggle>☰</button>
+    </div>
+</header>
+
+<script>
+    const toggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+    const links = document.querySelector<HTMLElement>("[data-nav-links]");
+
+    if (toggle && links) {
+        const close = () => {
+            links.classList.remove("open");
+            toggle.setAttribute("aria-expanded", "false");
+            toggle.setAttribute("aria-label", "Open menu");
+            toggle.textContent = "☰";
+        };
+
+        toggle.addEventListener("click", () => {
+            const open = links.classList.toggle("open");
+            toggle.setAttribute("aria-expanded", String(open));
+            toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+            toggle.textContent = open ? "✕" : "☰";
+        });
+
+        links.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+    }
+</script>

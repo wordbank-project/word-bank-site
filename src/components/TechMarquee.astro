@@ -1,0 +1,46 @@
+---
+import { REPO_URL, TECH } from "../content";
+
+// Rendered twice so the track can translate -50% and loop seamlessly; the
+// second copy is decorative (hidden from assistive tech, out of the tab order).
+---
+
+<section class="section tech reveal" aria-label="Built with open source">
+    <div class="container tech-head">
+        <h2>Built with open source</h2>
+        <p>
+            Word Bank is free and <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+                open source</a>. <br />
+            Feel free to report issues and contribute.
+        </p>
+    </div>
+
+    <div class="marquee">
+        <div class="marquee-track">
+            {
+                TECH.map((tech) => (
+                    <a
+                        class:list={["tech-chip", { "tech-chip-accent": tech.highlight }]}
+                        href={tech.url}
+                        target="_blank"
+                        rel="noopener noreferrer">
+                        {tech.name}
+                    </a>
+                ))
+            }
+            {
+                TECH.map((tech) => (
+                    <a
+                        class:list={["tech-chip", { "tech-chip-accent": tech.highlight }]}
+                        href={tech.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-hidden="true"
+                        tabindex="-1">
+                        {tech.name}
+                    </a>
+                ))
+            }
+        </div>
+    </div>
+</section>

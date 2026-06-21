@@ -1,5 +1,10 @@
+@import "tailwindcss";
+
 /* ------------------------------------------------------------------ */
 /* Design tokens — accent matches the app's splash color (#208AEF).    */
+/* Plain custom properties; the @theme block below exposes them to     */
+/* Tailwind so utilities (bg-accent, text-ink, border-line, …) work    */
+/* and dark mode flips automatically by overriding these vars.         */
 /* ------------------------------------------------------------------ */
 :root {
     --accent: #208aef;
@@ -18,8 +23,23 @@
     --radius: 14px;
 }
 
+/* Dark tokens. Theme is driven by `data-theme` on <html> (set pre-paint by the
+   inline script in Layout.astro from the saved preference), so it can override
+   the OS. The media query is the no-JS fallback: apply dark only when no explicit
+   theme has been set. */
+:root[data-theme="dark"] {
+    --bg: #0e1419;
+    --bg-soft: #131b23;
+    --card: #18222b;
+    --border: #243140;
+    --text: #f1f5f9;
+    --text-secondary: #c4cdd6;
+    --text-muted: #8a97a4;
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
 @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme]) {
         --bg: #0e1419;
         --bg-soft: #131b23;
         --card: #18222b;
@@ -31,13 +51,27 @@
     }
 }
 
+/* Map the tokens above onto Tailwind theme variables. `inline` emits the
+   referenced var directly, so `bg-surface` etc. resolve to the live `--bg`
+   value and flip with the dark media query. Utility names:
+   bg/text/border-accent, -surface, -surface-soft, -card, -line, -ink,
+   -ink-soft, -ink-muted. */
+@theme inline {
+    --color-accent: var(--accent);
+    --color-accent-strong: var(--accent-strong);
+    --color-accent-soft: var(--accent-soft);
+    --color-surface: var(--bg);
+    --color-surface-soft: var(--bg-soft);
+    --color-card: var(--card);
+    --color-line: var(--border);
+    --color-ink: var(--text);
+    --color-ink-soft: var(--text-secondary);
+    --color-ink-muted: var(--text-muted);
+}
+
 /* ------------------------------------------------------------------ */
 /* Base                                                                */
 /* ------------------------------------------------------------------ */
-* {
-    box-sizing: border-box;
-}
-
 html {
     scroll-behavior: smooth;
 }
@@ -757,78 +791,6 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Responsive                                                          */
-/* ------------------------------------------------------------------ */
-@media (max-width: 900px) {
-    .features-grid,
-    .steps {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 720px) {
-    .hero {
-        padding-top: 56px;
-    }
-
-    /* Keep the mobile hero clean — drop the floating words layer. */
-    .floating-words {
-        display: none;
-    }
-
-    .hero-inner,
-    .dictionary-inner {
-        grid-template-columns: 1fr;
-    }
-
-    .dictionary h2 {
-        text-align: center;
-    }
-
-    .nav-toggle {
-        display: block;
-    }
-
-    .nav-links {
-        display: none;
-        position: absolute;
-        top: 64px;
-        left: 0;
-        right: 0;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0;
-        background: var(--bg);
-        border-bottom: 1px solid var(--border);
-        padding: 8px 24px 16px;
-    }
-
-    .nav-links.open {
-        display: flex;
-    }
-
-    .nav-links a {
-        padding: 12px 0;
-    }
-
-    .nav-links .button {
-        text-align: center;
-        margin-top: 8px;
-    }
-}
-
-@media (max-width: 520px) {
-    .features-grid,
-    .steps {
-        grid-template-columns: 1fr;
-    }
-
-    .section {
-        padding: 64px 0;
-    }
-}
-
-/* ------------------------------------------------------------------ */
 /* Tech marquee — continuously scrolling "Built with" strip          */
 /* ------------------------------------------------------------------ */
 .tech-head {
@@ -904,6 +866,83 @@ a {
     border-color: var(--accent);
     background: var(--accent-soft);
     color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+@media (max-width: 900px) {
+    .features-grid,
+    .steps {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 720px) {
+    .hero {
+        padding-top: 56px;
+    }
+
+    /* Keep the mobile hero clean — drop the floating words layer. */
+    .floating-words {
+        display: none;
+    }
+
+    .hero-inner,
+    .dictionary-inner {
+        grid-template-columns: 1fr;
+    }
+
+    .dictionary h2 {
+        text-align: center;
+    }
+
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        padding: 8px 24px 16px;
+    }
+
+    .nav-links.open {
+        display: flex;
+    }
+
+    .nav-links a {
+        padding: 12px 0;
+    }
+
+    .nav-links .button {
+        text-align: center;
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 520px) {
+    .features-grid,
+    .steps {
+        grid-template-columns: 1fr;
+    }
+
+    .section {
+        padding: 64px 0;
+    }
+
+    .marquee {
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {

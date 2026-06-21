@@ -1,0 +1,100 @@
+---
+import { HERO_WORDS, MAX_FLOATING_WORDS } from "../content";
+
+// Deterministic pseudo-random number in [0, 1) seeded by an integer — keeps each
+// word's layout stable. Same helpers run in the client script below so live words
+// drop into stable spots without reshuffling the existing ones.
+function hashString(str: string): number {
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+    return Math.abs(h);
+}
+function seeded(n: number): number {
+    const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+    return x - Math.floor(x);
+}
+function range(value: number, min: number, max: number): number {
+    return min + value * (max - min);
+}
+function styleFor(word: string): string {
+    const h = hashString(word);
+    const left = `${range(seeded(h * 4 + 1), 2, 94).toFixed(2)}%`;
+    const top = `${range(seeded(h * 4 + 2), 4, 90).toFixed(2)}%`;
+    const fontSize = `${range(seeded(h * 4 + 3), 0.8, 2.2).toFixed(2)}rem`;
+    const delay = `${range(seeded(h * 4 + 4), 0, 8).toFixed(2)}s`;
+    const duration = `${range(seeded(h * 4 + 5), 10, 22).toFixed(2)}s`;
+    return `left:${left};top:${top};font-size:${fontSize};--delay:${delay};--duration:${duration}`;
+}
+
+// Build-time fallback: render the curated words so the layer is populated even
+// with JS disabled / no backend. The script swaps in live words when available.
+const fallback = HERO_WORDS.slice(0, MAX_FLOATING_WORDS);
+---
+
+<div class="floating-words" aria-hidden="true" data-floating-words>
+    {fallback.map((word) => <span class="floating-word" style={styleFor(word)}>{word}</span>)}
+</div>
+
+<script>
+    import { HERO_WORDS, MAX_FLOATING_WORDS } from "../content";
+
+    const POLL_MS = 30_000;
+
+    function hashString(str: string): number {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+        return Math.abs(h);
+    }
+    function seeded(n: number): number {
+        const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
+        return x - Math.floor(x);
+    }
+    function range(value: number, min: number, max: number): number {
+        return min + value * (max - min);
+    }
+
+    const layer = document.querySelector<HTMLElement>("[data-floating-words]");
+    const base = import.meta.env.PUBLIC_WORDS_API_URL as string | undefined;
+
+    function render(words: string[]): void {
+        if (!layer) return;
+        const shown = words.slice(0, MAX_FLOATING_WORDS);
+        layer.replaceChildren(
+            ...shown.map((word) => {
+                const h = hashString(word);
+                const span = document.createElement("span");
+                span.className = "floating-word";
+                span.textContent = word;
+                span.style.left = `${range(seeded(h * 4 + 1), 2, 94).toFixed(2)}%`;
+                span.style.top = `${range(seeded(h * 4 + 2), 4, 90).toFixed(2)}%`;
+                span.style.fontSize = `${range(seeded(h * 4 + 3), 0.8, 2.2).toFixed(2)}rem`;
+                span.style.setProperty("--delay", `${range(seeded(h * 4 + 4), 0, 8).toFixed(2)}s`);
+                span.style.setProperty(
+                    "--duration",
+                    `${range(seeded(h * 4 + 5), 10, 22).toFixed(2)}s`,
+                );
+                return span;
+            }),
+        );
+    }
+
+    async function load(): Promise<void> {
+        if (!base) return; // No server configured — keep the build-time fallback.
+        try {
+            const res = await fetch(`${base}/words?order=top&limit=80`);
+            if (!res.ok) return;
+            const data = (await res.json()) as { word: string; count: number }[];
+            const list = Array.isArray(data) ? data.map((r) => r.word).filter(Boolean) : [];
+            if (list.length > 0) render(list);
+        } catch {
+            // Keep whatever is currently shown (fallback or previous poll).
+        }
+    }
+
+    // HERO_WORDS is imported so the script and the build-time render share one source.
+    void HERO_WORDS;
+    if (base) {
+        load();
+        setInterval(load, POLL_MS);
+    }
+</script>

@@ -1,0 +1,29 @@
+---
+import FloatingWords from "./FloatingWords.astro";
+import PhoneMockup from "./PhoneMockup.astro";
+---
+
+<section id="top" class="hero">
+    <FloatingWords />
+    <div class="container hero-inner">
+        <div class="hero-copy">
+            <h1>
+                Turn the books you read into <span class="accent">vocabulary you keep</span>.
+            </h1>
+            <p class="hero-sub">
+                Word Bank is a reading companion. Track what you want to read, are reading, or have
+                read — and every time a word stops you, save it with its definition, your sentence,
+                and your notes. In your preferred language.
+            </p>
+            <div id="download" class="hero-actions">
+                <a class="button" href="#">
+                    Download for Android <small>(beta)</small>
+                </a>
+                <span class="button button-ghost" aria-disabled="true">iOS — coming soon</span>
+                <span class="button button-ghost" aria-disabled="true">Web — coming soon</span>
+            </div>
+            <p class="hero-note">Free during beta · No account · Works offline</p>
+        </div>
+        <PhoneMockup />
+    </div>
+</section>
