@@ -276,7 +276,8 @@ a {
 
 .hero-inner {
     position: relative;
-    z-index: 1; /* keep the copy above the floating words */
+    z-index: 1;
+    /* keep the copy above the floating words */
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
     align-items: center;
@@ -309,15 +310,19 @@ a {
         opacity: 0;
         transform: translateY(14px);
     }
+
     15% {
         opacity: 0.5;
     }
+
     50% {
         transform: translateY(-14px);
     }
+
     85% {
         opacity: 0.5;
     }
+
     100% {
         opacity: 0;
         transform: translateY(14px);
@@ -367,7 +372,7 @@ a {
 .hero-sub {
     color: var(--text-secondary);
     font-size: 1.1rem;
-    max-width: 520px;
+    max-width: 518px;
 }
 
 .hero-actions {
@@ -872,6 +877,7 @@ a {
 /* Responsive                                                          */
 /* ------------------------------------------------------------------ */
 @media (max-width: 900px) {
+
     .features-grid,
     .steps {
         grid-template-columns: repeat(2, 1fr);
@@ -930,6 +936,7 @@ a {
 }
 
 @media (max-width: 520px) {
+
     .features-grid,
     .steps {
         grid-template-columns: 1fr;

@@ -10,17 +10,26 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
 ];
 ---
 
+<!-- Make it interactive -->
 <div
     class="phone"
     role="img"
-    aria-label="Word Bank app showing a read list with statuses and word counts">
+    aria-label="Word Bank app showing a read list with statuses and word counts"
+>
     <div class="phone-screen">
         <div class="phone-header">Read List</div>
 
         <div class="phone-filters">
             {
                 FILTERS.map(({ value, label }) => (
-                    <span class:list={["phone-pill", { selected: value === "all" }]}>{label}</span>
+                    <span
+                        class:list={[
+                            "phone-pill",
+                            { selected: value === "all" },
+                        ]}
+                    >
+                        {label}
+                    </span>
                 ))
             }
         </div>
@@ -29,16 +38,23 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
             {
                 MOCK_BOOKS.map((book) => (
                     <div class="phone-row">
-                        <span class="phone-cover" style={`background-color:${book.coverColor}`} />
+                        <span
+                            class="phone-cover"
+                            style={`background-color:${book.coverColor}`}
+                        />
                         <span class="phone-row-info">
                             <span class="phone-row-title">{book.title}</span>
                             <span class="phone-row-author">{book.author}</span>
-                            <span class={`phone-status phone-status-${book.status}`}>
+                            <span
+                                class={`phone-status phone-status-${book.status}`}
+                            >
                                 {STATUS_LABELS[book.status]}
                             </span>
                         </span>
                         <span class="phone-badge">
-                            <span class="phone-badge-count">{book.wordCount}</span>
+                            <span class="phone-badge-count">
+                                {book.wordCount}
+                            </span>
                             <span class="phone-badge-label">
                                 {book.wordCount === 1 ? "word" : "words"}
                             </span>
