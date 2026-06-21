@@ -1,4 +1,4 @@
-# word-bank-web
+# word-bank-site
 
 Landing page for the Word Bank app. React + TypeScript + Vite.
 
