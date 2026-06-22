@@ -1,23 +1,25 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/* Design tokens — accent matches the app's splash color (#208AEF).    */
-/* Plain custom properties; the @theme block below exposes them to     */
-/* Tailwind so utilities (bg-accent, text-ink, border-line, …) work    */
-/* and dark mode flips by overriding these vars via data-theme.        */
+/* Design tokens — palette synced with the app's Colors/ACCENT in       */
+/* word-bank/src/styles/global.ts (source of truth). Accent is the brand */
+/* blue #208AEF used by the icon/splash/logo. Plain custom properties;   */
+/* the @theme block below exposes them to Tailwind so utilities          */
+/* (bg-accent, text-ink, border-line, …) work and dark mode flips by     */
+/* overriding these vars via data-theme.                                 */
 /* ------------------------------------------------------------------ */
 :root {
     --accent: #208aef;
     --accent-strong: #1572cc;
     --accent-soft: rgba(32, 138, 239, 0.12);
 
-    --bg: #ffffff;
-    --bg-soft: #f4f7fa;
-    --card: #ffffff;
-    --border: #e3e8ee;
-    --text: #16202a;
-    --text-secondary: #44505c;
-    --text-muted: #6b7884;
+    --bg: #ffffff; /* app: background */
+    --bg-soft: #f9f9f9; /* app: backgroundInput (section tint) */
+    --card: #f5f8fa; /* app: backgroundCard */
+    --border: #e0e0e0; /* app: border */
+    --text: #11181c; /* app: text */
+    --text-secondary: #555555; /* app: textSecondary */
+    --text-muted: #888888; /* app: textMuted */
     --shadow: 0 12px 32px rgba(22, 32, 42, 0.09);
 
     --radius: 14px;
@@ -28,25 +30,25 @@
    the OS. The media query is the no-JS fallback: apply dark only when no explicit
    theme has been set. */
 :root[data-theme="dark"] {
-    --bg: #0e1419;
-    --bg-soft: #131b23;
-    --card: #18222b;
-    --border: #243140;
-    --text: #f1f5f9;
-    --text-secondary: #c4cdd6;
-    --text-muted: #8a97a4;
+    --bg: #151718; /* app: background */
+    --bg-soft: #252b2d; /* app: backgroundInput (section tint) */
+    --card: #1e2426; /* app: backgroundCard */
+    --border: #2d3438; /* app: border */
+    --text: #ecedee; /* app: text */
+    --text-secondary: #9ba1a6; /* app: textSecondary */
+    --text-muted: #687076; /* app: textMuted */
     --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
-        --bg: #0e1419;
-        --bg-soft: #131b23;
-        --card: #18222b;
-        --border: #243140;
-        --text: #f1f5f9;
-        --text-secondary: #c4cdd6;
-        --text-muted: #8a97a4;
+        --bg: #151718; /* app: background */
+        --bg-soft: #252b2d; /* app: backgroundInput (section tint) */
+        --card: #1e2426; /* app: backgroundCard */
+        --border: #2d3438; /* app: border */
+        --text: #ecedee; /* app: text */
+        --text-secondary: #9ba1a6; /* app: textSecondary */
+        --text-muted: #687076; /* app: textMuted */
         --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
     }
 }
@@ -67,6 +69,13 @@
     --color-ink: var(--text);
     --color-ink-soft: var(--text-secondary);
     --color-ink-muted: var(--text-muted);
+
+    /* Font roles mirror the app's Fonts.web (word-bank/src/styles/global.ts):
+       sans for UI, serif for book titles, mono for IPA/phonetics. Defining
+       them here gives the font-sans/font-serif/font-mono utilities. */
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-serif: Georgia, 'Times New Roman', serif;
+    --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
 
 /* ------------------------------------------------------------------ */
@@ -78,7 +87,7 @@ html {
 
 body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: var(--font-sans);
     background: var(--bg);
     color: var(--text);
     line-height: 1.6;
@@ -229,7 +238,7 @@ a {
     border-radius: 8px;
     background: var(--accent);
     color: #fff;
-    font-family: Georgia, serif;
+    font-family: var(--font-serif);
     font-weight: 700;
 }
 
@@ -426,6 +435,7 @@ a {
 }
 
 .phone-row-title {
+    font-family: var(--font-serif);
     font-size: 0.68rem;
     font-weight: 600;
     white-space: nowrap;
