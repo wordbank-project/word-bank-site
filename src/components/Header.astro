@@ -11,7 +11,7 @@ const iconClass = "w-[18px] h-[18px]";
 
 <header class="nav">
     <div class="mx-auto max-w-270 px-6 nav-inner">
-        <a href="#top" class="nav-logo">
+        <a id="back-to-top" class="nav-logo">
             <span class="nav-logo-mark">W</span>
             Word Bank
         </a>
@@ -19,7 +19,7 @@ const iconClass = "w-[18px] h-[18px]";
         <div class="flex items-center gap-4">
             <nav class="nav-links" aria-label="Main" data-nav-links>
                 {LINKS.map(({ href, label }) => <a href={href}>{label}</a>)}
-                <a href="#top" class="button button-small">Get the app</a>
+                <a id="back-to-top" class="button button-small">Get the app</a>
             </nav>
 
             <button
@@ -155,4 +155,13 @@ const iconClass = "w-[18px] h-[18px]";
             if (getPref() === "system") apply("system");
         });
     }
+
+    const backToTopButton: any = document.getElementById("back-to-top");
+
+    backToTopButton.addEventListener("click", () => {
+        window.scroll({
+            top: 0,
+            behavior: "smooth",
+        });
+    });
 </script>
