@@ -11,7 +11,7 @@ const iconClass = "w-[18px] h-[18px]";
 
 <header class="nav">
     <div class="mx-auto max-w-270 px-6 nav-inner">
-        <a id="back-to-top" class="nav-logo">
+        <a href="#top" class="nav-logo" data-scroll-top>
             <span class="nav-logo-mark">W</span>
             Word Bank
         </a>
@@ -19,7 +19,7 @@ const iconClass = "w-[18px] h-[18px]";
         <div class="flex items-center gap-4">
             <nav class="nav-links" aria-label="Main" data-nav-links>
                 {LINKS.map(({ href, label }) => <a href={href}>{label}</a>)}
-                <a id="back-to-top" class="button button-small">Get the app</a>
+                <a href="#top" class="button button-small" data-scroll-top>Get the app</a>
             </nav>
 
             <button
@@ -91,13 +91,15 @@ const iconClass = "w-[18px] h-[18px]";
         document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
     const links = document.querySelector<HTMLElement>("[data-nav-links]");
 
+    const closeMenu = () => {
+        if (!navToggle || !links) return;
+        links.classList.remove("open");
+        navToggle.setAttribute("aria-expanded", "false");
+        navToggle.setAttribute("aria-label", "Open menu");
+        navToggle.textContent = "☰";
+    };
+
     if (navToggle && links) {
-        const close = () => {
-            links.classList.remove("open");
-            navToggle.setAttribute("aria-expanded", "false");
-            navToggle.setAttribute("aria-label", "Open menu");
-            navToggle.textContent = "☰";
-        };
         navToggle.addEventListener("click", () => {
             const open = links.classList.toggle("open");
             navToggle.setAttribute("aria-expanded", String(open));
@@ -109,7 +111,7 @@ const iconClass = "w-[18px] h-[18px]";
         });
         links
             .querySelectorAll("a")
-            .forEach((a) => a.addEventListener("click", close));
+            .forEach((a) => a.addEventListener("click", closeMenu));
     }
 
     // --- Theme toggle: light → dark → system, persisted in localStorage ------
@@ -156,12 +158,19 @@ const iconClass = "w-[18px] h-[18px]";
         });
     }
 
-    const backToTopButton: any = document.getElementById("back-to-top");
-
-    backToTopButton.addEventListener("click", () => {
-        window.scroll({
-            top: 0,
-            behavior: "smooth",
-        });
-    });
+    // --- Scroll to top: the logo and the "Get the app" button. Works on mobile
+    //     too, and closes the open nav menu first. Falls back to the #top anchor
+    //     when JS is off. Honors reduced-motion.
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+    ).matches;
+    document
+        .querySelectorAll<HTMLAnchorElement>("[data-scroll-top]")
+        .forEach((el) =>
+            el.addEventListener("click", (e) => {
+                e.preventDefault();
+                closeMenu();
+                window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+            }),
+        );
 </script>
