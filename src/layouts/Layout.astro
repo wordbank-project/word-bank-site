@@ -7,7 +7,7 @@ interface Props {
 }
 
 const {
-    title = "Word Bank — turn the books you read into vocabulary you keep",
+    title = "Word Bank — your personal words vault",
     description = "Word Bank is a reading companion: track what you read and save every new word with its definition, your sentence, and your notes — in your preferred language.",
 } = Astro.props;
 
@@ -54,8 +54,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
                     const dark =
                         pref === "dark" ||
                         (pref === "system" &&
-                            window.matchMedia("(prefers-color-scheme: dark)").matches);
-                    document.documentElement.dataset.theme = dark ? "dark" : "light";
+                            window.matchMedia("(prefers-color-scheme: dark)")
+                                .matches);
+                    document.documentElement.dataset.theme = dark
+                        ? "dark"
+                        : "light";
                 } catch {
                     /* localStorage blocked — fall back to the CSS media query. */
                 }
