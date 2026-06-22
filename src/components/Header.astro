@@ -19,22 +19,56 @@ const iconClass = "w-[18px] h-[18px]";
         <div class="flex items-center gap-4">
             <nav class="nav-links" aria-label="Main" data-nav-links>
                 {LINKS.map(({ href, label }) => <a href={href}>{label}</a>)}
-                <a href="#download" class="button button-small">Get the app</a>
+                <a href="#top" class="button button-small">Get the app</a>
             </nav>
 
             <button
                 type="button"
                 class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-line bg-transparent text-ink transition-colors hover:border-accent hover:text-accent"
                 aria-label="Theme: system"
-                data-theme-toggle>
-                <svg class={`${iconClass} hidden`} data-icon="light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                data-theme-toggle
+            >
+                <svg
+                    class={`${iconClass} hidden`}
+                    data-icon="light"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
                     <circle cx="12" cy="12" r="4"></circle>
-                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+                    <path
+                        d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"
+                    ></path>
                 </svg>
-                <svg class={`${iconClass} hidden`} data-icon="dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"></path>
+                <svg
+                    class={`${iconClass} hidden`}
+                    data-icon="dark"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"
+                    ></path>
                 </svg>
-                <svg class={iconClass} data-icon="system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <svg
+                    class={iconClass}
+                    data-icon="system"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
                     <rect x="3" y="4" width="18" height="13" rx="2"></rect>
                     <path d="M8 21h8M12 17v4"></path>
                 </svg>
@@ -45,14 +79,16 @@ const iconClass = "w-[18px] h-[18px]";
                 class="nav-toggle"
                 aria-expanded="false"
                 aria-label="Open menu"
-                data-nav-toggle>☰</button>
+                data-nav-toggle>☰</button
+            >
         </div>
     </div>
 </header>
 
 <script>
     // --- Mobile menu ---------------------------------------------------------
-    const navToggle = document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
+    const navToggle =
+        document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
     const links = document.querySelector<HTMLElement>("[data-nav-links]");
 
     if (navToggle && links) {
@@ -65,16 +101,23 @@ const iconClass = "w-[18px] h-[18px]";
         navToggle.addEventListener("click", () => {
             const open = links.classList.toggle("open");
             navToggle.setAttribute("aria-expanded", String(open));
-            navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+            navToggle.setAttribute(
+                "aria-label",
+                open ? "Close menu" : "Open menu",
+            );
             navToggle.textContent = open ? "✕" : "☰";
         });
-        links.querySelectorAll("a").forEach((a) => a.addEventListener("click", close));
+        links
+            .querySelectorAll("a")
+            .forEach((a) => a.addEventListener("click", close));
     }
 
     // --- Theme toggle: light → dark → system, persisted in localStorage ------
     type Pref = "light" | "dark" | "system";
     const ORDER: Pref[] = ["light", "dark", "system"];
-    const themeBtn = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+    const themeBtn = document.querySelector<HTMLButtonElement>(
+        "[data-theme-toggle]",
+    );
     const mql = window.matchMedia("(prefers-color-scheme: dark)");
 
     const getPref = (): Pref => {
@@ -82,14 +125,18 @@ const iconClass = "w-[18px] h-[18px]";
         return v === "light" || v === "dark" || v === "system" ? v : "system";
     };
     const resolve = (pref: Pref): "dark" | "light" =>
-        pref === "dark" || (pref === "system" && mql.matches) ? "dark" : "light";
+        pref === "dark" || (pref === "system" && mql.matches)
+            ? "dark"
+            : "light";
 
     const apply = (pref: Pref) => {
         document.documentElement.dataset.theme = resolve(pref);
         if (!themeBtn) return;
         themeBtn
             .querySelectorAll<SVGElement>("[data-icon]")
-            .forEach((el) => el.classList.toggle("hidden", el.dataset.icon !== pref));
+            .forEach((el) =>
+                el.classList.toggle("hidden", el.dataset.icon !== pref),
+            );
         themeBtn.setAttribute("aria-label", `Theme: ${pref} (click to change)`);
     };
 
