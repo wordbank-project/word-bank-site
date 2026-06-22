@@ -1,4 +1,6 @@
 ---
+import Logo from "./Logo.astro";
+
 const year = new Date().getFullYear();
 ---
 
@@ -6,8 +8,8 @@ const year = new Date().getFullYear();
     <div
         class="mx-auto flex max-w-270 flex-wrap items-center justify-between gap-3 px-6 text-ink-soft"
     >
-        <span>
-            <span class="nav-logo-mark">W</span> Word Bank © {year}
+        <span class="inline-flex items-center gap-2">
+            <Logo size={24} /> Word Bank © {year}
         </span>
         <span class="text-[0.9rem] text-ink-muted"
             >Your personal words vault</span

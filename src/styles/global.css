@@ -70,6 +70,15 @@
     --color-ink-soft: var(--text-secondary);
     --color-ink-muted: var(--text-muted);
 
+    /* Part-of-speech colors mirror the app's POS_COLORS (word-bank/src/
+       components/DefinitionModal.tsx) so the dictionary showcase color-codes
+       parts of speech the same way the app does. Mid-tone hues that read on
+       both light and dark; unknown POS falls back to the accent. */
+    --color-pos-noun: #3b82f6;
+    --color-pos-verb: #10b981;
+    --color-pos-adjective: #f59e0b;
+    --color-pos-adverb: #8b5cf6;
+
     /* Font roles mirror the app's Fonts.web (word-bank/src/styles/global.ts):
        sans for UI, serif for book titles, mono for IPA/phonetics. Defining
        them here gives the font-sans/font-serif/font-mono utilities. */
@@ -227,19 +236,6 @@ a {
     font-weight: 700;
     font-size: 1.1rem;
     color: var(--text);
-}
-
-.nav-logo-mark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 8px;
-    background: var(--accent);
-    color: #fff;
-    font-family: var(--font-serif);
-    font-weight: 700;
 }
 
 .nav-links {

@@ -7,7 +7,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check": "astro check"
+    "check": "astro check",
+    "gen:favicons": "node scripts/gen-favicons.mjs"
   },
   "dependencies": {
     "@astrojs/netlify": "^6.5.10",

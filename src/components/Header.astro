@@ -1,4 +1,6 @@
 ---
+import Logo from "./Logo.astro";
+
 const LINKS = [
     { href: "#features", label: "Features" },
     { href: "#how-it-works", label: "How it works" },
@@ -11,9 +13,8 @@ const iconClass = "w-[18px] h-[18px]";
 
 <header class="nav">
     <div class="mx-auto max-w-270 px-6 nav-inner">
-        <a href="#top" class="nav-logo" data-scroll-top>
-            <span class="nav-logo-mark">W</span>
-            Word Bank
+        <a href="#top" class="nav-logo" data-scroll-top aria-label="Word Bank — back to top">
+            <Logo withWordmark />
         </a>
 
         <div class="flex items-center gap-4">

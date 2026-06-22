@@ -10,6 +10,11 @@ const {
     title = "Word Bank — turn the books you read into vocabulary you keep",
     description = "Word Bank is a reading companion: track what you read and save every new word with its definition, your sentence, and your notes — in your preferred language.",
 } = Astro.props;
+
+// Absolute URL for the social card; falls back gracefully when the site isn't
+// configured with a deploy URL (Astro.site).
+const ogImage = new URL("/og-image.png", Astro.site ?? Astro.url).href;
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
@@ -18,9 +23,23 @@ const {
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="generator" content={Astro.generator} />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
         <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="canonical" href={canonical} />
         <title>{title}</title>
         <meta name="description" content={description} />
+
+        <!-- Open Graph / Twitter card — brand-consistent link previews. -->
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:image" content={ogImage} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImage} />
 
         <!-- Apply the saved theme before paint (no flash). Preference is
              "light" | "dark" | "system" (default system); we resolve it to a
