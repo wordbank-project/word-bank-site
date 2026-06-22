@@ -12,8 +12,10 @@ const {
 } = Astro.props;
 
 // Absolute URL for the social card; falls back gracefully when the site isn't
-// configured with a deploy URL (Astro.site).
-const ogImage = new URL("/og-image.png", Astro.site ?? Astro.url).href;
+// configured with a deploy URL (Astro.site). The ?v= is a cache-buster — bump it
+// whenever og-image.png changes so Discord/Slack/etc. re-fetch instead of serving
+// a stale cached preview.
+const ogImage = new URL("/og-image.png?v=2", Astro.site ?? Astro.url).href;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 ---
 
