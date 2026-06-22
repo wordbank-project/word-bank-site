@@ -263,7 +263,7 @@ a {
 /* ------------------------------------------------------------------ */
 .hero {
     position: relative;
-    padding: 96px 0 88px;
+    padding: 20% 0 88px;
     overflow: hidden;
 }
 
@@ -603,13 +603,10 @@ a {
 /* Responsive (only the bits not handled by utility variants)          */
 /* ------------------------------------------------------------------ */
 @media (max-width: 720px) {
-    .hero {
-        padding-top: 30%;
-    }
 
     /* Keep the mobile hero clean — drop the floating words layer. */
     .floating-words {
-        display: none;
+        /* display: none; */
     }
 
     .nav-toggle {
