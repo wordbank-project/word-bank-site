@@ -32,7 +32,13 @@ const fallback = HERO_WORDS.slice(0, MAX_FLOATING_WORDS);
 ---
 
 <div class="floating-words" aria-hidden="true" data-floating-words>
-    {fallback.map((word) => <span class="floating-word" style={styleFor(word)}>{word}</span>)}
+    {
+        fallback.map((word) => (
+            <span class="floating-word" style={styleFor(word)}>
+                {word}
+            </span>
+        ))
+    }
 </div>
 
 <script>
@@ -42,7 +48,8 @@ const fallback = HERO_WORDS.slice(0, MAX_FLOATING_WORDS);
 
     function hashString(str: string): number {
         let h = 0;
-        for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+        for (let i = 0; i < str.length; i++)
+            h = (h * 31 + str.charCodeAt(i)) | 0;
         return Math.abs(h);
     }
     function seeded(n: number): number {
@@ -68,7 +75,10 @@ const fallback = HERO_WORDS.slice(0, MAX_FLOATING_WORDS);
                 span.style.left = `${range(seeded(h * 4 + 1), 2, 94).toFixed(2)}%`;
                 span.style.top = `${range(seeded(h * 4 + 2), 4, 90).toFixed(2)}%`;
                 span.style.fontSize = `${range(seeded(h * 4 + 3), 0.8, 2.2).toFixed(2)}rem`;
-                span.style.setProperty("--delay", `${range(seeded(h * 4 + 4), 0, 8).toFixed(2)}s`);
+                span.style.setProperty(
+                    "--delay",
+                    `${range(seeded(h * 4 + 4), 0, 8).toFixed(2)}s`,
+                );
                 span.style.setProperty(
                     "--duration",
                     `${range(seeded(h * 4 + 5), 10, 22).toFixed(2)}s`,
@@ -83,8 +93,13 @@ const fallback = HERO_WORDS.slice(0, MAX_FLOATING_WORDS);
         try {
             const res = await fetch(`${base}/words?order=top&limit=80`);
             if (!res.ok) return;
-            const data = (await res.json()) as { word: string; count: number }[];
-            const list = Array.isArray(data) ? data.map((r) => r.word).filter(Boolean) : [];
+            const data = (await res.json()) as {
+                word: string;
+                count: number;
+            }[];
+            const list = Array.isArray(data)
+                ? data.map((r) => r.word).filter(Boolean)
+                : [];
             if (list.length > 0) render(list);
         } catch {
             // Keep whatever is currently shown (fallback or previous poll).

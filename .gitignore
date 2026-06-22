@@ -6,3 +6,6 @@ dist/
 
 # Local Netlify folder
 .netlify
+
+# Astro generated types/cache
+.astro/

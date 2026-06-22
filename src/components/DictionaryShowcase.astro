@@ -2,52 +2,52 @@
 import Section from "./Section.astro";
 ---
 
-<Section id="dictionary" class="dictionary">
-    <div class="dictionary-inner">
-        <div class="dictionary-copy">
-            <h2>A dictionary that speaks your language</h2>
-            <p>
+<Section id="dictionary">
+    <div class="grid grid-cols-2 items-center gap-12 max-[720px]:grid-cols-1">
+        <div>
+            <h2 class="text-left max-[720px]:text-center">A dictionary that speaks your language</h2>
+            <p class="text-ink-soft">
                 Look a word up the moment you meet it. Word Bank shows the definition, part of
                 speech, and IPA pronunciation — then lets you anchor it with the sentence you found
                 it in and your own notes.
             </p>
-            <p>
+            <p class="text-ink-soft">
                 Words rarely mean just one thing, so every meaning is fetched at once. Search and
                 pick the definition that fits, with parts of speech colour-coded at a glance.
             </p>
-            <p>
+            <p class="text-ink-soft">
                 Lookups are powered by Wiktionary data through a dedicated dictionary engine, with
                 support for over a hundred languages. English and Dutch are live today; more are on
                 the way.
             </p>
-            <div class="language-chips" aria-label="Available languages">
-                <span class="chip live">English</span>
-                <span class="chip live">Nederlands</span>
-                <span class="chip">more soon</span>
+            <div class="mt-4.5 flex gap-2.5" aria-label="Available languages">
+                <span class="rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">English</span>
+                <span class="rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">Nederlands</span>
+                <span class="rounded-full border border-line px-3.5 py-1.25 text-[0.85rem] font-semibold text-ink-muted">more soon</span>
             </div>
         </div>
 
         <div
-            class="word-card"
+            class="w-full max-w-105 justify-self-center rounded-[14px] border border-line bg-card p-6.5 shadow-(--shadow)"
             role="img"
             aria-label="Example saved word card for the word serendipity">
-            <div class="word-card-head">
-                <span class="word-card-word">serendipity</span>
-                <span class="word-card-ipa">/ˌsɛɹ.ənˈdɪp.ɪ.ti/</span>
+            <div class="flex flex-wrap items-baseline gap-3">
+                <span class="text-[1.4rem] font-bold">serendipity</span>
+                <span class="text-[0.9rem] text-ink-muted">/ˌsɛɹ.ənˈdɪp.ɪ.ti/</span>
             </div>
-            <span class="word-card-pos">noun</span>
-            <p class="word-card-definition">
+            <span class="mt-0.5 mb-2 inline-block text-[0.85rem] italic text-accent">noun</span>
+            <p class="text-[0.95rem] text-ink-soft">
                 A combination of events which have come together by chance to make a surprisingly
                 good or wonderful outcome.
             </p>
-            <span class="word-card-switch">Choose other definition (3) ›</span>
-            <div class="word-card-meta">
-                <span class="word-card-label">Sentence</span>
-                <p>“Finding that bookshop in the rain was pure serendipity.”</p>
+            <span class="mt-2 inline-block text-[0.8rem] font-semibold text-accent">Choose other definition (3) ›</span>
+            <div class="mt-2.5 border-t border-line pt-2.5">
+                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">Sentence</span>
+                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">“Finding that bookshop in the rain was pure serendipity.”</p>
             </div>
-            <div class="word-card-meta">
-                <span class="word-card-label">Notes</span>
-                <p>From a Persian fairy tale — “The Three Princes of Serendip”.</p>
+            <div class="mt-2.5 border-t border-line pt-2.5">
+                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">Notes</span>
+                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">From a Persian fairy tale — “The Three Princes of Serendip”.</p>
             </div>
         </div>
     </div>

@@ -3,16 +3,18 @@ import { STEPS } from "../content";
 import Section from "./Section.astro";
 ---
 
-<Section id="how-it-works" class="how">
+<Section id="how-it-works">
     <h2>How it works</h2>
     <p class="section-sub">Three steps, then it becomes a habit.</p>
-    <ol class="steps">
+    <ol class="m-0 grid list-none grid-cols-3 gap-5.5 p-0 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1">
         {
             STEPS.map(({ title, description }, i) => (
-                <li class="step">
-                    <span class="step-number">{i + 1}</span>
-                    <h3>{title}</h3>
-                    <p>{description}</p>
+                <li class="rounded-[14px] border border-line bg-card p-6.5">
+                    <span class="mb-3.5 inline-flex h-8.5 w-8.5 items-center justify-center rounded-full bg-accent font-bold text-white">
+                        {i + 1}
+                    </span>
+                    <h3 class="text-[1.05rem]">{title}</h3>
+                    <p class="m-0 text-[0.93rem] text-ink-muted">{description}</p>
                 </li>
             ))
         }

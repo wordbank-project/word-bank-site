@@ -22,16 +22,19 @@ const ICONS: Record<IconName, string> = {
 };
 ---
 
-<Section id="features" class="features">
+<Section id="features">
     <h2>Everything a reading habit needs</h2>
     <p class="section-sub">One app for the books you read and the words they teach you.</p>
-    <div class="features-grid">
+    <div class="grid grid-cols-3 gap-5.5 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1">
         {
             FEATURES.map(({ icon, title, description }) => (
-                <article class="feature-card">
-                    <span class="feature-icon" set:html={ICONS[icon]} />
-                    <h3>{title}</h3>
-                    <p>{description}</p>
+                <article class="rounded-[14px] border border-line bg-card p-6.5">
+                    <span
+                        class="inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent"
+                        set:html={ICONS[icon]}
+                    />
+                    <h3 class="mt-3.5 mb-2 text-[1.05rem]">{title}</h3>
+                    <p class="m-0 text-[0.93rem] text-ink-muted">{description}</p>
                 </article>
             ))
         }

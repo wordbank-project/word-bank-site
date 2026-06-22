@@ -10,16 +10,13 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@astrojs/netlify": "^7.0.13",
-    "astro": "^6.4.8"
+    "@astrojs/netlify": "^6.5.10",
+    "astro": "^5.16.2"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.9",
+    "@astrojs/check": "^0.9.4",
     "@tailwindcss/vite": "^4.1.0",
     "tailwindcss": "^4.1.0",
     "typescript": "~5.9.2"
-  },
-  "overrides": {
-    "vite": "^7.3.2"
   }
 }

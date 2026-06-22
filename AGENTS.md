@@ -32,7 +32,7 @@ src/
   content.ts               # ALL copy/data (single source of truth) — edit this first
   styles/global.css        # Tailwind import + design tokens + component styles
   components/
-    Nav.astro              # top nav + mobile-toggle <script>
+    Header.astro           # top nav + mobile-toggle <script>
     Hero.astro             # headline + FloatingWords + PhoneMockup
     FloatingWords.astro    # decorative drifting words; build-time fallback + live fetch <script>
     PhoneMockup.astro      # fake phone rendering MOCK_BOOKS with STATUS_LABELS
@@ -66,21 +66,30 @@ hand-written — edit them directly.
 
 ## Styling
 
-- Tailwind v4 is the build pipeline. Design tokens live at the top of
-  [global.css](src/styles/global.css) as CSS custom properties (`--accent`, `--bg`, `--text`, …),
-  with dark mode auto-flipping under `@media (prefers-color-scheme: dark)` (no toggle).
-- An `@theme inline` block maps those tokens onto Tailwind so utilities exist and follow the live
-  vars: `bg-accent`/`text-accent`, `bg-surface` (= `--bg`), `bg-surface-soft`, `bg-card`,
-  `border-line` (= `--border`), `text-ink`/`text-ink-soft`/`text-ink-muted`. Use these utilities in
-  markup for new/simple styling.
-- The bespoke, intricate visuals (phone mockup, floating-words + `@keyframes float-drift`, the
-  marquee + `@keyframes marquee-scroll`, the FAQ `summary` marker, the stats sparkline, buttons,
-  cards, the `.reveal` fade) are kept as component classes in `global.css` — they're token-driven,
-  so they flip with the theme. Keep new bespoke styles there; reach for Tailwind utilities first.
+- Tailwind v4 is the styling system; **markup uses utility classes**. Most layout / spacing /
+  typography / color lives in the `.astro` files as utilities — colors go through token utilities
+  so they follow the theme: `bg-accent`/`text-accent`/`bg-accent-soft`, `bg-surface` (= `--bg`),
+  `bg-surface-soft`, `bg-card`, `border-line` (= `--border`), `text-ink`/`text-ink-soft`/`text-ink-muted`.
+- Design tokens are CSS custom properties at the top of [global.css](src/styles/global.css)
+  (`--accent`, `--bg`, `--text`, …). An `@theme inline` block maps them onto the Tailwind utilities
+  above. **Theming is driven by `data-theme` on `<html>`** (light/dark), set pre-paint by the inline
+  script in `Layout.astro` from the saved preference; dark tokens are overridden under
+  `:root[data-theme="dark"]` with a `prefers-color-scheme` fallback for no-JS. Because the token
+  utilities resolve to these live vars, flipping `data-theme` re-themes the page — **no Tailwind
+  `dark:` variants needed**.
+- `global.css` also keeps the irreducible bits that aren't expressible as utilities (and the few
+  reused primitives): the `.container`/`.section`/`.section-sub` wrappers, `.button*`, the nav bar +
+  mobile dropdown, the phone mockup (`.phone*`), floating-words + `@keyframes float-drift`, the
+  marquee + `@keyframes marquee-scroll`, the FAQ `summary` +/– marker, the `.reveal` fade, and the
+  stats classes (built by JS). All token-driven, so they theme too. Reach for utilities first; add
+  to `global.css` only for animations, pseudo-elements, or genuinely-reused primitives.
 
 ## Interactivity (vanilla `<script>`, no framework)
 
-- **Mobile nav** — `Nav.astro` toggles `.open` on the menu.
+- **Mobile nav** — `Header.astro` toggles `.open` on the menu.
+- **Theme toggle** — `Header.astro` has a button cycling **light → dark → system**, saved in
+  `localStorage` under `theme`; it sets `<html data-theme>` and, while on `system`, follows the OS
+  live. `Layout.astro`'s inline `<head>` script applies the saved theme before paint (no flash).
 - **Scroll reveal** — one IntersectionObserver in `Layout.astro` adds `revealed` to `.reveal`.
 - **Floating words** — `FloatingWords.astro` renders the `HERO_WORDS` fallback at build, then a
   script fetches `${PUBLIC_WORDS_API_URL}/words?order=top` and polls every ~30s, re-rendering with

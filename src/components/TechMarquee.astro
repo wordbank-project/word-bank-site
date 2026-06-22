@@ -5,14 +5,15 @@ import { REPO_URL, TECH } from "../content";
 // second copy is decorative (hidden from assistive tech, out of the tab order).
 ---
 
-<section class="section tech reveal" aria-label="Built with open source">
-    <div class="container tech-head">
+<section class="section reveal" aria-label="Built with open source">
+    <div class="mx-auto mb-9 max-w-270 px-6 text-center">
         <h2>Built with open source</h2>
-        <p>
-            Word Bank is free and <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
-                open source</a>. <br />
+        <a class="max-w-135 text-ink-soft">
+            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+                Word Bank is free and open source.</a
+            ><br />
             Feel free to report issues and contribute.
-        </p>
+        </a>
     </div>
 
     <div class="marquee">
@@ -20,10 +21,14 @@ import { REPO_URL, TECH } from "../content";
             {
                 TECH.map((tech) => (
                     <a
-                        class:list={["tech-chip", { "tech-chip-accent": tech.highlight }]}
+                        class:list={[
+                            "tech-chip",
+                            { "tech-chip-accent": tech.highlight },
+                        ]}
                         href={tech.url}
                         target="_blank"
-                        rel="noopener noreferrer">
+                        rel="noopener noreferrer"
+                    >
                         {tech.name}
                     </a>
                 ))
@@ -31,12 +36,16 @@ import { REPO_URL, TECH } from "../content";
             {
                 TECH.map((tech) => (
                     <a
-                        class:list={["tech-chip", { "tech-chip-accent": tech.highlight }]}
+                        class:list={[
+                            "tech-chip",
+                            { "tech-chip-accent": tech.highlight },
+                        ]}
                         href={tech.url}
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-hidden="true"
-                        tabindex="-1">
+                        tabindex="-1"
+                    >
                         {tech.name}
                     </a>
                 ))

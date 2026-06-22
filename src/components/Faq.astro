@@ -3,9 +3,9 @@ import { FAQS } from "../content";
 import Section from "./Section.astro";
 ---
 
-<Section id="faq" class="faq">
+<Section id="faq">
     <h2>Frequently asked questions</h2>
-    <div class="faq-list">
+    <div class="mx-auto flex max-w-170 flex-col gap-3">
         {
             FAQS.map(({ question, answer }) => (
                 <details class="faq-item">

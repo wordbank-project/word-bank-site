@@ -4,7 +4,7 @@
 /* Design tokens — accent matches the app's splash color (#208AEF).    */
 /* Plain custom properties; the @theme block below exposes them to     */
 /* Tailwind so utilities (bg-accent, text-ink, border-line, …) work    */
-/* and dark mode flips automatically by overriding these vars.         */
+/* and dark mode flips by overriding these vars via data-theme.        */
 /* ------------------------------------------------------------------ */
 :root {
     --accent: #208aef;
@@ -53,9 +53,9 @@
 
 /* Map the tokens above onto Tailwind theme variables. `inline` emits the
    referenced var directly, so `bg-surface` etc. resolve to the live `--bg`
-   value and flip with the dark media query. Utility names:
-   bg/text/border-accent, -surface, -surface-soft, -card, -line, -ink,
-   -ink-soft, -ink-muted. */
+   value and flip with the theme. Utility names: bg/text/border-accent,
+   -accent-soft, -surface, -surface-soft, -card, -line, -ink, -ink-soft,
+   -ink-muted. */
 @theme inline {
     --color-accent: var(--accent);
     --color-accent-strong: var(--accent-strong);
@@ -106,16 +106,9 @@ a {
     text-decoration: none;
 }
 
-.container {
-    max-width: 1080px;
-    margin-inline: auto;
-    padding-inline: 24px;
-}
-
-.accent {
-    color: var(--accent);
-}
-
+/* Reused layout primitives (kept as classes — referenced from many components).
+   NOTE: do not add a `.container` class — `container` is a reserved Tailwind
+   utility and the two collide. The page wrapper is `mx-auto max-w-270 px-6`. */
 .section {
     padding: 88px 0;
 }
@@ -131,7 +124,7 @@ a {
     margin: 0 auto 48px;
 }
 
-/* Reveal-on-scroll */
+/* Reveal-on-scroll (JS toggles `.revealed` from Layout.astro). */
 .reveal {
     opacity: 0;
     transform: translateY(24px);
@@ -162,7 +155,7 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Buttons                                                             */
+/* Buttons (reused across hero/nav)                                    */
 /* ------------------------------------------------------------------ */
 .button {
     display: inline-block;
@@ -200,7 +193,7 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Nav                                                                 */
+/* Nav (sticky bar + mobile dropdown — bespoke, kept as classes)       */
 /* ------------------------------------------------------------------ */
 .nav {
     position: sticky;
@@ -266,7 +259,7 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Hero                                                                */
+/* Hero shell (positioning + floating-words layer; copy is utilities)  */
 /* ------------------------------------------------------------------ */
 .hero {
     position: relative;
@@ -274,19 +267,6 @@ a {
     overflow: hidden;
 }
 
-.hero-inner {
-    position: relative;
-    z-index: 1;
-    /* keep the copy above the floating words */
-    display: grid;
-    grid-template-columns: 1.15fr 0.85fr;
-    align-items: center;
-    gap: 48px;
-}
-
-/* ------------------------------------------------------------------ */
-/* Floating words — decorative drifting vocabulary behind the Hero    */
-/* ------------------------------------------------------------------ */
 .floating-words {
     position: absolute;
     inset: 0;
@@ -330,7 +310,7 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Live stats — total / word-of-the-week / per-day sparkline          */
+/* Live stats — markup is built by Stats.astro's script, so styled here */
 /* ------------------------------------------------------------------ */
 .stats-inner {
     display: flex;
@@ -365,31 +345,8 @@ a {
     height: auto;
 }
 
-.hero h1 {
-    font-size: clamp(2rem, 5vw, 3.1rem);
-}
-
-.hero-sub {
-    color: var(--text-secondary);
-    font-size: 1.1rem;
-    max-width: 518px;
-}
-
-.hero-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-top: 28px;
-}
-
-.hero-note {
-    margin-top: 16px;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
 /* ------------------------------------------------------------------ */
-/* Phone mockup (Read List screen)                                     */
+/* Phone mockup (dense self-contained widget — kept as classes)        */
 /* ------------------------------------------------------------------ */
 .phone {
     width: 290px;
@@ -535,205 +492,8 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Features                                                            */
+/* FAQ — box + the +/– summary marker (pseudo-element, kept as class)  */
 /* ------------------------------------------------------------------ */
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-}
-
-.feature-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 26px;
-}
-
-.feature-card h3 {
-    font-size: 1.05rem;
-    margin: 14px 0 8px;
-}
-
-.feature-card p {
-    color: var(--text-muted);
-    font-size: 0.93rem;
-    margin: 0;
-}
-
-.feature-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-    background: var(--accent-soft);
-    color: var(--accent);
-}
-
-/* ------------------------------------------------------------------ */
-/* How it works                                                        */
-/* ------------------------------------------------------------------ */
-.steps {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    counter-reset: step;
-}
-
-.step {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 26px;
-}
-
-.step-number {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--accent);
-    color: #fff;
-    font-weight: 700;
-    margin-bottom: 14px;
-}
-
-.step h3 {
-    font-size: 1.05rem;
-}
-
-.step p {
-    color: var(--text-muted);
-    font-size: 0.93rem;
-    margin: 0;
-}
-
-/* ------------------------------------------------------------------ */
-/* Dictionary showcase                                                 */
-/* ------------------------------------------------------------------ */
-.dictionary-inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 48px;
-    align-items: center;
-}
-
-.dictionary h2 {
-    text-align: left;
-}
-
-.dictionary-copy p {
-    color: var(--text-secondary);
-}
-
-.language-chips {
-    display: flex;
-    gap: 10px;
-    margin-top: 18px;
-}
-
-.chip {
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    border-radius: 999px;
-    padding: 5px 14px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.chip.live {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-soft);
-}
-
-.word-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    padding: 26px;
-    max-width: 420px;
-    justify-self: center;
-    width: 100%;
-}
-
-.word-card-head {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.word-card-word {
-    font-size: 1.4rem;
-    font-weight: 700;
-}
-
-.word-card-ipa {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-.word-card-pos {
-    display: inline-block;
-    font-style: italic;
-    color: var(--accent);
-    font-size: 0.85rem;
-    margin: 2px 0 8px;
-}
-
-.word-card-definition {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-}
-
-.word-card-switch {
-    display: inline-block;
-    margin-top: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--accent);
-}
-
-.word-card-meta {
-    border-top: 1px solid var(--border);
-    padding-top: 10px;
-    margin-top: 10px;
-}
-
-.word-card-meta p {
-    margin: 2px 0 0;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-.word-card-label {
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
-/* ------------------------------------------------------------------ */
-/* FAQ                                                                 */
-/* ------------------------------------------------------------------ */
-.faq-list {
-    max-width: 680px;
-    margin-inline: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
 .faq-item {
     background: var(--card);
     border: 1px solid var(--border);
@@ -774,42 +534,8 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Footer                                                              */
+/* Tech marquee — scrolling strip (animation/mask, kept as classes)    */
 /* ------------------------------------------------------------------ */
-.footer {
-    border-top: 1px solid var(--border);
-    padding: 28px 0;
-}
-
-.footer-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    flex-wrap: wrap;
-    color: var(--text-secondary);
-}
-
-.footer-note {
-    color: var(--text-muted);
-    font-size: 0.9rem;
-}
-
-/* ------------------------------------------------------------------ */
-/* Tech marquee — continuously scrolling "Built with" strip          */
-/* ------------------------------------------------------------------ */
-.tech-head {
-    text-align: center;
-    margin-bottom: 36px;
-}
-
-.tech-head p {
-    color: var(--text-secondary);
-    max-width: 540px;
-    margin-inline: auto;
-}
-
-/* Full-bleed track; fade the edges so chips slide in/out softly. */
 .marquee {
     overflow: hidden;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
@@ -874,33 +600,16 @@ a {
 }
 
 /* ------------------------------------------------------------------ */
-/* Responsive                                                          */
+/* Responsive (only the bits not handled by utility variants)          */
 /* ------------------------------------------------------------------ */
-@media (max-width: 900px) {
-
-    .features-grid,
-    .steps {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
 @media (max-width: 720px) {
     .hero {
-        padding-top: 56px;
+        padding-top: 30%;
     }
 
     /* Keep the mobile hero clean — drop the floating words layer. */
     .floating-words {
         display: none;
-    }
-
-    .hero-inner,
-    .dictionary-inner {
-        grid-template-columns: 1fr;
-    }
-
-    .dictionary h2 {
-        text-align: center;
     }
 
     .nav-toggle {
@@ -936,12 +645,6 @@ a {
 }
 
 @media (max-width: 520px) {
-
-    .features-grid,
-    .steps {
-        grid-template-columns: 1fr;
-    }
-
     .section {
         padding: 64px 0;
     }
