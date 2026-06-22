@@ -5,7 +5,7 @@ import type { ReadStatus } from "../content";
 const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
     { value: "all", label: "All" },
     { value: "want", label: "Want to read" },
-    { value: "reading", label: "Reading" },
+    { value: "reading", label: "Currently Reading" },
     { value: "read", label: "Have read" },
 ];
 ---
@@ -67,7 +67,7 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         <div class="phone-tabbar">
             <span>Search</span>
             <span class="active">Read List</span>
-            <span>More</span>
+            <span>Word list</span>
         </div>
     </div>
 </div>
