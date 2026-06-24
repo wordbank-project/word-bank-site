@@ -268,8 +268,40 @@ a {
 /* ------------------------------------------------------------------ */
 .hero {
     position: relative;
-    padding: 70px 0 88px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertical centering → equal space top & bottom */
+    /* Fill the viewport below the 64px sticky nav. svh keeps the centered content
+       from jumping on mobile when the URL bar shows/hides; the vh line is a
+       fallback for engines without svh. */
+    min-height: calc(100vh - 64px);
+    min-height: calc(100svh - 64px);
+    /* Breathing room on short (e.g. landscape) screens; vh-based so it still
+       scales — no fixed layout px. */
+    padding-block: clamp(1.5rem, 4vh, 4rem);
+}
+
+/* Hero entrance: a one-time fade-up on load. CSS-only (runs without JS, so it
+   never leaves the above-the-fold content hidden like the JS .reveal would) and
+   gated by prefers-reduced-motion. Excludes the floating-words layer, which has
+   its own animation. */
+@media (prefers-reduced-motion: no-preference) {
+    .hero > :not(.floating-words) {
+        animation: hero-in 0.6s ease both;
+    }
+}
+
+@keyframes hero-in {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
 }
 
 .floating-words {
