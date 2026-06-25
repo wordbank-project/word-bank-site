@@ -1,5 +1,17 @@
 ---
 import Section from "./Section.astro";
+
+// Sample word for the interactive demo card. All senses are nouns (true to
+// "serendipity"), so the picker shows a single colour-coded "noun" group —
+// mirroring the app's DefinitionModal (grouped by part of speech).
+const WORD = "serendipity";
+const IPA = "/ˌsɛɹ.ənˈdɪp.ɪ.ti/";
+const POS = "noun";
+const DEFINITIONS = [
+    "A combination of events which have come together by chance to make a surprisingly good or wonderful outcome.",
+    "An unsought, unintended, or unexpected, but fortunate, discovery or learning experience that occurs by accident.",
+    "Good luck in making unexpected and fortunate discoveries.",
+];
 ---
 
 <Section id="dictionary">
@@ -27,20 +39,22 @@ import Section from "./Section.astro";
             </div>
         </div>
 
-        <div
-            class="w-full max-w-105 justify-self-center rounded-[14px] border border-line bg-card p-6.5 shadow-(--shadow)"
-            role="img"
-            aria-label="Example saved word card for the word serendipity">
+        <div class="w-full max-w-105 justify-self-center rounded-[14px] border border-line bg-card p-6.5 shadow-(--shadow)">
             <div class="flex flex-wrap items-baseline gap-3">
-                <span class="text-[1.4rem] font-bold">serendipity</span>
-                <span class="font-mono text-[0.9rem] text-ink-muted">/ˌsɛɹ.ənˈdɪp.ɪ.ti/</span>
+                <span class="text-[1.4rem] font-bold">{WORD}</span>
+                <span class="font-mono text-[0.9rem] text-ink-muted">{IPA}</span>
             </div>
-            <span class="mt-0.5 mb-2 inline-block text-[0.85rem] italic text-pos-noun">noun</span>
-            <p class="text-[0.95rem] text-ink-soft">
-                A combination of events which have come together by chance to make a surprisingly
-                good or wonderful outcome.
-            </p>
-            <span class="mt-2 inline-block text-[0.8rem] font-semibold text-accent">Choose other definition (3) ›</span>
+            <span class="mt-0.5 mb-2 inline-block text-[0.85rem] italic text-pos-noun">{POS}</span>
+            <p id="dict-definition" class="text-[0.95rem] text-ink-soft">{DEFINITIONS[0]}</p>
+            <button
+                id="dict-open"
+                type="button"
+                class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
+                aria-haspopup="dialog"
+                aria-label={`Choose another definition of ${WORD}`}
+            >
+                Choose other definition ({DEFINITIONS.length}) ›
+            </button>
             <div class="mt-2.5 border-t border-line pt-2.5">
                 <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">Sentence</span>
                 <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">“Finding that bookshop in the rain was pure serendipity.”</p>
@@ -52,3 +66,137 @@ import Section from "./Section.astro";
         </div>
     </div>
 </Section>
+
+{/* App-style bottom-sheet picker — hidden until "Choose other definition" is pressed.
+    Layout mirrors the app's DefinitionModal: the list sits on top, with the title +
+    "Search definitions…" field anchored at the bottom of the sheet. */}
+<div
+    id="dict-modal"
+    class="fixed inset-0 z-50 hidden items-end justify-center"
+    aria-hidden="true"
+>
+    <div data-dict-backdrop class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-200"></div>
+    <div
+        data-dict-panel
+        role="dialog"
+        aria-modal="true"
+        aria-label="Choose a definition"
+        class="relative flex max-h-[70%] w-full max-w-[480px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
+    >
+        <div class="flex-1 overflow-y-auto">
+            <div data-dict-poshead class="px-4 pt-3.5 pb-1 text-[0.7rem] font-bold uppercase tracking-[0.06em] text-pos-noun">{POS}</div>
+            {DEFINITIONS.map((def, i) => (
+                <button
+                    type="button"
+                    data-dict-row
+                    data-index={i}
+                    class:list={[
+                        "flex w-full items-start gap-2 border-t border-line px-4 py-3 text-left",
+                        i === 0 ? "bg-card" : "",
+                    ]}
+                >
+                    <span class:list={["dict-def-text flex-1 text-[0.95rem] leading-5", i === 0 ? "font-semibold text-accent" : "text-ink"]}>{def}</span>
+                    <span class="dict-check text-[0.9rem] font-bold text-accent" hidden={i !== 0}>✓</span>
+                </button>
+            ))}
+            <p data-dict-empty class="hidden p-6 text-center text-[0.9rem] text-ink-muted">No definitions match “<span data-dict-query></span>”.</p>
+        </div>
+
+        <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
+            <span class="truncate text-[1rem] font-bold text-ink">Definitions for: {WORD}</span>
+            <button data-dict-close type="button" class="cursor-pointer text-[1.1rem] leading-none text-ink-muted hover:text-ink" aria-label="Close">✕</button>
+        </div>
+
+        <input
+            data-dict-search
+            type="text"
+            placeholder="Search definitions..."
+            aria-label="Search definitions"
+            class="mx-4 mb-4 rounded-lg border border-line bg-surface-soft px-3 py-3 text-[0.95rem] text-ink placeholder:text-ink-muted"
+        />
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById("dict-modal");
+    const openBtn = document.getElementById("dict-open");
+    const definitionEl = document.getElementById("dict-definition");
+
+    if (modal && openBtn && definitionEl) {
+        const panel = modal.querySelector<HTMLElement>("[data-dict-panel]")!;
+        const backdrop = modal.querySelector<HTMLElement>("[data-dict-backdrop]")!;
+        const rows = Array.from(modal.querySelectorAll<HTMLButtonElement>("[data-dict-row]"));
+        const posHead = modal.querySelector<HTMLElement>("[data-dict-poshead]");
+        const empty = modal.querySelector<HTMLElement>("[data-dict-empty]");
+        const queryOut = modal.querySelector<HTMLElement>("[data-dict-query]");
+        const search = modal.querySelector<HTMLInputElement>("[data-dict-search]");
+        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        // Filter rows by definition text (or the part of speech), like the app.
+        const applyFilter = () => {
+            const q = (search?.value ?? "").trim().toLowerCase();
+            let anyVisible = false;
+            rows.forEach((row) => {
+                const text = row.querySelector(".dict-def-text")?.textContent?.toLowerCase() ?? "";
+                const match = !q || text.includes(q) || "noun".includes(q);
+                row.toggleAttribute("hidden", !match);
+                if (match) anyVisible = true;
+            });
+            posHead?.toggleAttribute("hidden", !anyVisible);
+            empty?.classList.toggle("hidden", anyVisible);
+            if (queryOut) queryOut.textContent = search?.value ?? "";
+        };
+
+        const open = () => {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            modal.setAttribute("aria-hidden", "false");
+            // Next frame so the transition runs from the hidden start state.
+            requestAnimationFrame(() => {
+                backdrop.classList.remove("opacity-0");
+                panel.classList.remove("translate-y-full");
+            });
+            panel.focus?.();
+        };
+
+        const close = () => {
+            backdrop.classList.add("opacity-0");
+            panel.classList.add("translate-y-full");
+            modal.setAttribute("aria-hidden", "true");
+            const hide = () => {
+                modal.classList.add("hidden");
+                modal.classList.remove("flex");
+            };
+            if (reduceMotion) hide();
+            else setTimeout(hide, 250);
+            // Reset the search so the sheet reopens fresh (matches the app).
+            if (search) search.value = "";
+            applyFilter();
+        };
+
+        const select = (index: number) => {
+            const chosen = rows[index];
+            if (!chosen) return;
+            const text = chosen.querySelector(".dict-def-text")?.textContent ?? "";
+            definitionEl.textContent = text;
+            rows.forEach((row, i) => {
+                const active = i === index;
+                row.classList.toggle("bg-card", active);
+                row.querySelector(".dict-def-text")?.classList.toggle("font-semibold", active);
+                row.querySelector(".dict-def-text")?.classList.toggle("text-accent", active);
+                row.querySelector(".dict-def-text")?.classList.toggle("text-ink", !active);
+                row.querySelector(".dict-check")?.toggleAttribute("hidden", !active);
+            });
+            close();
+        };
+
+        openBtn.addEventListener("click", open);
+        modal.querySelector("[data-dict-close]")?.addEventListener("click", close);
+        backdrop.addEventListener("click", close);
+        rows.forEach((row, i) => row.addEventListener("click", () => select(i)));
+        search?.addEventListener("input", applyFilter);
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && !modal.classList.contains("hidden")) close();
+        });
+    }
+</script>
