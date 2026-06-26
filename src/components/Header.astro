@@ -179,10 +179,13 @@ const iconClass = "w-[18px] h-[18px]";
             .forEach((a) => a.addEventListener("click", closeMenu));
     }
 
-    // --- Language toggle: keep the current #section when switching locale ----
+    // --- Language toggle: keep the current #section when switching locale,
+    //     and remember the choice so return visits land in the same language
+    //     (the pre-paint script in Layout.astro reads localStorage "lang"). ----
     const langLinks = Array.from(
         document.querySelectorAll<HTMLAnchorElement>("[data-lang-link]"),
     );
+    const langFor = (base: string): "en" | "nl" => (base === "/nl/" ? "nl" : "en");
     const syncLangHref = () =>
         langLinks.forEach((l) => {
             l.href = (l.dataset.base ?? "/") + location.hash;
@@ -190,6 +193,15 @@ const iconClass = "w-[18px] h-[18px]";
     if (langLinks.length) {
         syncLangHref();
         window.addEventListener("hashchange", syncLangHref);
+        langLinks.forEach((l) =>
+            l.addEventListener("click", () => {
+                try {
+                    localStorage.setItem("lang", langFor(l.dataset.base ?? "/"));
+                } catch {
+                    /* ignore */
+                }
+            }),
+        );
     }
 
     // --- Theme toggle: light → dark → system, persisted in localStorage ------
