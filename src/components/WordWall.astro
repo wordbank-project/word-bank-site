@@ -90,6 +90,8 @@ function posClass(pos: string): string {
 </div>
 
 <script>
+    import { backDismiss } from "../lib/back-dismiss";
+
     type FeedWord = {
         word: string;
         count?: number;
@@ -157,17 +159,6 @@ function posClass(pos: string): string {
             }
         };
 
-        const open = () => {
-            modal.classList.remove("hidden");
-            modal.classList.add("flex");
-            modal.setAttribute("aria-hidden", "false");
-            requestAnimationFrame(() => {
-                backdrop.classList.remove("opacity-0");
-                panel.classList.remove("translate-y-full");
-            });
-            panel.focus?.();
-        };
-
         const close = () => {
             backdrop.classList.add("opacity-0");
             panel.classList.add("translate-y-full");
@@ -180,14 +171,33 @@ function posClass(pos: string): string {
             else setTimeout(hide, 250);
         };
 
+        // Let the phone/browser Back button close the modal instead of leaving the site.
+        const { pushOnOpen, requestClose } = backDismiss({
+            key: "wwOpen",
+            isOpen: () => !modal.classList.contains("hidden"),
+            close,
+        });
+
+        const open = () => {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            modal.setAttribute("aria-hidden", "false");
+            requestAnimationFrame(() => {
+                backdrop.classList.remove("opacity-0");
+                panel.classList.remove("translate-y-full");
+            });
+            panel.focus?.();
+            pushOnOpen();
+        };
+
         openBtn.addEventListener("click", open);
         modal
             .querySelector("[data-ww-close]")
-            ?.addEventListener("click", close);
-        backdrop.addEventListener("click", close);
+            ?.addEventListener("click", requestClose);
+        backdrop.addEventListener("click", requestClose);
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape" && !modal.classList.contains("hidden"))
-                close();
+                requestClose();
         });
 
         // Pull live saved words once (they replace the curated fallback).

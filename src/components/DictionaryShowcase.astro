@@ -118,6 +118,8 @@ const DEFINITIONS = [
 </div>
 
 <script>
+    import { backDismiss } from "../lib/back-dismiss";
+
     const modal = document.getElementById("dict-modal");
     const openBtn = document.getElementById("dict-open");
     const definitionEl = document.getElementById("dict-definition");
@@ -157,6 +159,7 @@ const DEFINITIONS = [
                 panel.classList.remove("translate-y-full");
             });
             panel.focus?.();
+            pushOnOpen();
         };
 
         const close = () => {
@@ -174,6 +177,13 @@ const DEFINITIONS = [
             applyFilter();
         };
 
+        // Let the phone/browser Back button close the modal instead of leaving the site.
+        const { pushOnOpen, requestClose } = backDismiss({
+            key: "dictOpen",
+            isOpen: () => !modal.classList.contains("hidden"),
+            close,
+        });
+
         const select = (index: number) => {
             const chosen = rows[index];
             if (!chosen) return;
@@ -187,16 +197,16 @@ const DEFINITIONS = [
                 row.querySelector(".dict-def-text")?.classList.toggle("text-ink", !active);
                 row.querySelector(".dict-check")?.toggleAttribute("hidden", !active);
             });
-            close();
+            requestClose();
         };
 
         openBtn.addEventListener("click", open);
-        modal.querySelector("[data-dict-close]")?.addEventListener("click", close);
-        backdrop.addEventListener("click", close);
+        modal.querySelector("[data-dict-close]")?.addEventListener("click", requestClose);
+        backdrop.addEventListener("click", requestClose);
         rows.forEach((row, i) => row.addEventListener("click", () => select(i)));
         search?.addEventListener("input", applyFilter);
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && !modal.classList.contains("hidden")) close();
+            if (e.key === "Escape" && !modal.classList.contains("hidden")) requestClose();
         });
     }
 </script>
