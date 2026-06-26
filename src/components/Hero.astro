@@ -1,6 +1,7 @@
 ---
 import FloatingWords from "./FloatingWords.astro";
 import PhoneMockup from "./PhoneMockup.astro";
+import WordWall from "./WordWall.astro";
 ---
 
 <section id="top" class="hero">
@@ -22,6 +23,9 @@ import PhoneMockup from "./PhoneMockup.astro";
                 a word stops you, save it with its definition, your sentence, and
                 your personal notes.
             </p>
+            <p class="mt-4 text-[0.9rem] text-ink-muted">
+                Free during beta · No account · Works offline
+            </p>
             <div id="download" class="my-7 flex flex-wrap gap-3.5">
                 <a class="button" href="#">
                     Download for Android <small>(beta)</small>
@@ -33,9 +37,9 @@ import PhoneMockup from "./PhoneMockup.astro";
                     >Web — coming soon</span
                 >
             </div>
-            <p class="mt-4 text-[0.9rem] text-ink-muted">
-                Free during beta · No account · Works offline
-            </p>
+            <div class="mt-5">
+                <WordWall />
+            </div>
         </div>
         <PhoneMockup />
     </div>

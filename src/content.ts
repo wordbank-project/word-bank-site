@@ -249,3 +249,25 @@ export const HERO_WORDS: string[] = [
     'tranquil',
     'vestige',
 ];
+
+// Curated word + definition list for the "words people are saving" glossary.
+// Shown as a build-time / no-backend fallback; the live feed (with real saved
+// words + their dictionary definitions) replaces it when available. Covers each
+// part of speech so the colour-coded `text-pos-*` utilities are all generated.
+export type GlossaryWord = {
+    word: string;
+    partOfSpeech: string;
+    phonetic?: string;
+    definition: string;
+};
+
+export const GLOSSARY_FALLBACK: GlossaryWord[] = [
+    { word: 'serendipity', partOfSpeech: 'noun', phonetic: '/ˌsɛɹ.ənˈdɪp.ɪ.ti/', definition: 'The occurrence of events by chance in a happy or beneficial way.' },
+    { word: 'ephemeral', partOfSpeech: 'adjective', phonetic: '/ɪˈfɛm.ər.əl/', definition: 'Lasting for a very short time.' },
+    { word: 'saunter', partOfSpeech: 'verb', phonetic: '/ˈsɔːn.tər/', definition: 'To walk in a slow, relaxed manner, without hurry or effort.' },
+    { word: 'deftly', partOfSpeech: 'adverb', phonetic: '/ˈdɛft.li/', definition: 'In a neatly skilful and quick way.' },
+    { word: 'petrichor', partOfSpeech: 'noun', phonetic: '/ˈpɛt.rɪ.kɔːr/', definition: 'The pleasant, earthy smell after rain falls on dry ground.' },
+    { word: 'mellifluous', partOfSpeech: 'adjective', phonetic: '/məˈlɪf.lu.əs/', definition: 'Sweet or musical; pleasant to hear.' },
+    { word: 'reverie', partOfSpeech: 'noun', phonetic: '/ˈrɛv.ər.i/', definition: "A state of being pleasantly lost in one's thoughts; a daydream." },
+    { word: 'halcyon', partOfSpeech: 'adjective', phonetic: '/ˈhæl.si.ən/', definition: 'Denoting a past period that was idyllically happy and peaceful.' },
+];
