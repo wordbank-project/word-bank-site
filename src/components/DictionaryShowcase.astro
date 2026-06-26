@@ -1,17 +1,88 @@
 ---
 import Section from "./Section.astro";
 
-// Sample word for the interactive demo card. All senses are nouns (true to
-// "serendipity"), so the picker shows a single colour-coded "noun" group —
-// mirroring the app's DefinitionModal (grouped by part of speech).
-const WORD = "serendipity";
-const IPA = "/ˌsɛɹ.ənˈdɪp.ɪ.ti/";
-const POS = "noun";
-const DEFINITIONS = [
-    "A combination of events which have come together by chance to make a surprisingly good or wonderful outcome.",
-    "An unsought, unintended, or unexpected, but fortunate, discovery or learning experience that occurs by accident.",
-    "Good luck in making unexpected and fortunate discoveries.",
-];
+// The word demoed in the card. English, looked up at build time from the free
+// dictionary API (same source the app uses for English) and baked into the
+// static page. Change this to feature a different word — but then also update
+// the Sentence/Notes below, which are written for "flourish".
+const WORD = "flourish";
+
+type Item = { partOfSpeech: string; definition: string };
+
+// Used if the API is unreachable at build time, so the page always renders.
+const FALLBACK = {
+    word: "flourish",
+    phonetic: "/ˈflʌ.ɹɪʃ/",
+    items: [
+        { partOfSpeech: "noun", definition: "A dramatic gesture such as the waving of a flag." },
+        { partOfSpeech: "noun", definition: "A ceremonious passage such as a fanfare; an ornamental embellishment." },
+        { partOfSpeech: "verb", definition: "To thrive or grow well." },
+        { partOfSpeech: "verb", definition: "To prosper or fare well." },
+        { partOfSpeech: "verb", definition: "To make bold, sweeping movements with." },
+    ] as Item[],
+};
+
+// Map a part of speech to the colour-coded utility (mirrors the app's POS_COLORS;
+// duplicated in the client script for the live recolour on select).
+function posClass(pos: string): string {
+    const p = pos.toLowerCase();
+    if (p.startsWith("noun")) return "text-pos-noun";
+    if (p.startsWith("verb")) return "text-pos-verb";
+    if (p.startsWith("adject") || p === "adj") return "text-pos-adjective";
+    if (p.startsWith("adverb") || p === "adv") return "text-pos-adverb";
+    return "text-accent";
+}
+
+// Build-time lookup, mirroring the app's English path (words-api.ts → fetchEnglish).
+let word = FALLBACK.word;
+let phonetic = FALLBACK.phonetic;
+let items: Item[] = FALLBACK.items;
+try {
+    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(WORD)}`);
+    if (res.ok) {
+        const data = await res.json();
+        const flat: Item[] = [];
+        for (const entry of data ?? []) {
+            for (const meaning of entry.meanings ?? []) {
+                for (const def of meaning.definitions ?? []) {
+                    if (def?.definition) {
+                        flat.push({ partOfSpeech: (meaning.partOfSpeech ?? "").toLowerCase(), definition: def.definition });
+                    }
+                }
+            }
+        }
+        const seen = new Set<string>();
+        const unique = flat
+            .filter((it) => {
+                const id = `${it.partOfSpeech}|${it.definition}`;
+                if (seen.has(id)) return false;
+                seen.add(id);
+                return true;
+            })
+            .slice(0, 12);
+        if (unique.length > 0) {
+            items = unique;
+            phonetic = data.find((e: { phonetic?: string }) => e.phonetic)?.phonetic ?? "";
+            word = data[0]?.word ?? WORD;
+        }
+    }
+} catch {
+    // Network unavailable at build — keep the FALLBACK above.
+}
+
+// Group definitions by part of speech (in order); each row keeps its global
+// index into `items` so a selection maps back correctly.
+const groups: { pos: string; rows: { index: number; definition: string }[] }[] = [];
+items.forEach((it, index) => {
+    let group = groups.find((g) => g.pos === it.partOfSpeech);
+    if (!group) {
+        group = { pos: it.partOfSpeech, rows: [] };
+        groups.push(group);
+    }
+    group.rows.push({ index, definition: it.definition });
+});
+
+const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass(items[0].partOfSpeech)}`;
 ---
 
 <Section id="dictionary">
@@ -41,81 +112,80 @@ const DEFINITIONS = [
 
         <div class="w-full max-w-105 justify-self-center rounded-[14px] border border-line bg-card p-6.5 shadow-(--shadow)">
             <div class="flex flex-wrap items-baseline gap-3">
-                <span class="text-[1.4rem] font-bold">{WORD}</span>
-                <span class="font-mono text-[0.9rem] text-ink-muted">{IPA}</span>
+                <span class="text-[1.4rem] font-bold">{word}</span>
+                {phonetic && <span class="font-mono text-[0.9rem] text-ink-muted">{phonetic}</span>}
             </div>
-            <span class="mt-0.5 mb-2 inline-block text-[0.85rem] italic text-pos-noun">{POS}</span>
-            <p id="dict-definition" class="text-[0.95rem] text-ink-soft">{DEFINITIONS[0]}</p>
-            <button
-                id="dict-open"
-                type="button"
-                class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
-                aria-haspopup="dialog"
-                aria-label={`Choose another definition of ${WORD}`}
-            >
-                Choose other definition ({DEFINITIONS.length}) ›
-            </button>
+            <span id="dict-pos" class={posLabelClass}>{items[0].partOfSpeech}</span>
+            <p id="dict-definition" class="text-[0.95rem] text-ink-soft">{items[0].definition}</p>
+            {items.length > 1 && (
+                <button
+                    id="dict-open"
+                    type="button"
+                    class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
+                    aria-haspopup="dialog"
+                    aria-label={`Choose another definition of ${word}`}
+                >
+                    Choose other definition ({items.length}) ›
+                </button>
+            )}
             <div class="mt-2.5 border-t border-line pt-2.5">
                 <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">Sentence</span>
-                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">“Finding that bookshop in the rain was pure serendipity.”</p>
+                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">“She ended the letter with a flourish of the pen.”</p>
             </div>
             <div class="mt-2.5 border-t border-line pt-2.5">
                 <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">Notes</span>
-                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">From a Persian fairy tale — “The Three Princes of Serendip”.</p>
+                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">From Latin <span class="italic">florere</span>, “to bloom” — same root as <span class="italic">flora</span> and <span class="italic">flower</span>.</p>
             </div>
         </div>
     </div>
 </Section>
 
-{/* App-style bottom-sheet picker — hidden until "Choose other definition" is pressed.
-    Layout mirrors the app's DefinitionModal: the list sits on top, with the title +
-    "Search definitions…" field anchored at the bottom of the sheet. */}
-<div
-    id="dict-modal"
-    class="fixed inset-0 z-50 hidden items-end justify-center"
-    aria-hidden="true"
->
-    <div data-dict-backdrop class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-200"></div>
-    <div
-        data-dict-panel
-        role="dialog"
-        aria-modal="true"
-        aria-label="Choose a definition"
-        class="relative flex max-h-[70%] w-full max-w-[480px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
-    >
-        <div class="flex-1 overflow-y-auto">
-            <div data-dict-poshead class="px-4 pt-3.5 pb-1 text-[0.7rem] font-bold uppercase tracking-[0.06em] text-pos-noun">{POS}</div>
-            {DEFINITIONS.map((def, i) => (
-                <button
-                    type="button"
-                    data-dict-row
-                    data-index={i}
-                    class:list={[
-                        "flex w-full items-start gap-2 border-t border-line px-4 py-3 text-left",
-                        i === 0 ? "bg-card" : "",
-                    ]}
-                >
-                    <span class:list={["dict-def-text flex-1 text-[0.95rem] leading-5", i === 0 ? "font-semibold text-accent" : "text-ink"]}>{def}</span>
-                    <span class="dict-check text-[0.9rem] font-bold text-accent" hidden={i !== 0}>✓</span>
-                </button>
-            ))}
-            <p data-dict-empty class="hidden p-6 text-center text-[0.9rem] text-ink-muted">No definitions match “<span data-dict-query></span>”.</p>
-        </div>
+{items.length > 1 && (
+    <div id="dict-modal" class="fixed inset-0 z-50 hidden items-end justify-center" aria-hidden="true">
+        <div data-dict-backdrop class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-200"></div>
+        <div
+            data-dict-panel
+            role="dialog"
+            aria-modal="true"
+            aria-label="Choose a definition"
+            class="relative flex max-h-[70%] w-full max-w-[480px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
+        >
+            <div class="flex-1 overflow-y-auto">
+                {groups.map((g) => (
+                    <Fragment>
+                        <div data-dict-poshead data-pos={g.pos} class:list={["px-4 pt-3.5 pb-1 text-[0.7rem] font-bold uppercase tracking-[0.06em]", posClass(g.pos)]}>{g.pos}</div>
+                        {g.rows.map((r) => (
+                            <button
+                                type="button"
+                                data-dict-row
+                                data-index={r.index}
+                                data-pos={g.pos}
+                                class:list={["flex w-full items-start gap-2 border-t border-line px-4 py-3 text-left", r.index === 0 ? "bg-card" : ""]}
+                            >
+                                <span class:list={["dict-def-text flex-1 text-[0.95rem] leading-5", r.index === 0 ? "font-semibold text-accent" : "text-ink"]}>{r.definition}</span>
+                                <span class="dict-check text-[0.9rem] font-bold text-accent" hidden={r.index !== 0}>✓</span>
+                            </button>
+                        ))}
+                    </Fragment>
+                ))}
+                <p data-dict-empty class="hidden p-6 text-center text-[0.9rem] text-ink-muted">No definitions match “<span data-dict-query></span>”.</p>
+            </div>
 
-        <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
-            <span class="truncate text-[1rem] font-bold text-ink">Definitions for: {WORD}</span>
-            <button data-dict-close type="button" class="cursor-pointer text-[1.1rem] leading-none text-ink-muted hover:text-ink" aria-label="Close">✕</button>
-        </div>
+            <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
+                <span class="truncate text-[1rem] font-bold text-ink">Definitions for: {word}</span>
+                <button data-dict-close type="button" class="cursor-pointer text-[1.1rem] leading-none text-ink-muted hover:text-ink" aria-label="Close">✕</button>
+            </div>
 
-        <input
-            data-dict-search
-            type="text"
-            placeholder="Search definitions..."
-            aria-label="Search definitions"
-            class="mx-4 mb-4 rounded-lg border border-line bg-surface-soft px-3 py-3 text-[0.95rem] text-ink placeholder:text-ink-muted"
-        />
+            <input
+                data-dict-search
+                type="text"
+                placeholder="Search definitions..."
+                aria-label="Search definitions"
+                class="mx-4 mb-4 rounded-lg border border-line bg-surface-soft px-3 py-3 text-[0.95rem] text-ink placeholder:text-ink-muted"
+            />
+        </div>
     </div>
-</div>
+)}
 
 <script>
     import { backDismiss } from "../lib/back-dismiss";
@@ -123,43 +193,45 @@ const DEFINITIONS = [
     const modal = document.getElementById("dict-modal");
     const openBtn = document.getElementById("dict-open");
     const definitionEl = document.getElementById("dict-definition");
+    const posEl = document.getElementById("dict-pos");
 
-    if (modal && openBtn && definitionEl) {
+    if (modal && openBtn && definitionEl && posEl) {
         const panel = modal.querySelector<HTMLElement>("[data-dict-panel]")!;
         const backdrop = modal.querySelector<HTMLElement>("[data-dict-backdrop]")!;
         const rows = Array.from(modal.querySelectorAll<HTMLButtonElement>("[data-dict-row]"));
-        const posHead = modal.querySelector<HTMLElement>("[data-dict-poshead]");
+        const heads = Array.from(modal.querySelectorAll<HTMLElement>("[data-dict-poshead]"));
         const empty = modal.querySelector<HTMLElement>("[data-dict-empty]");
         const queryOut = modal.querySelector<HTMLElement>("[data-dict-query]");
         const search = modal.querySelector<HTMLInputElement>("[data-dict-search]");
         const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-        // Filter rows by definition text (or the part of speech), like the app.
-        const applyFilter = () => {
-            const q = (search?.value ?? "").trim().toLowerCase();
-            let anyVisible = false;
-            rows.forEach((row) => {
-                const text = row.querySelector(".dict-def-text")?.textContent?.toLowerCase() ?? "";
-                const match = !q || text.includes(q) || "noun".includes(q);
-                row.toggleAttribute("hidden", !match);
-                if (match) anyVisible = true;
-            });
-            posHead?.toggleAttribute("hidden", !anyVisible);
-            empty?.classList.toggle("hidden", anyVisible);
-            if (queryOut) queryOut.textContent = search?.value ?? "";
+        const posClass = (pos: string): string => {
+            const p = pos.toLowerCase();
+            if (p.startsWith("noun")) return "text-pos-noun";
+            if (p.startsWith("verb")) return "text-pos-verb";
+            if (p.startsWith("adject") || p === "adj") return "text-pos-adjective";
+            if (p.startsWith("adverb") || p === "adv") return "text-pos-adverb";
+            return "text-accent";
         };
 
-        const open = () => {
-            modal.classList.remove("hidden");
-            modal.classList.add("flex");
-            modal.setAttribute("aria-hidden", "false");
-            // Next frame so the transition runs from the hidden start state.
-            requestAnimationFrame(() => {
-                backdrop.classList.remove("opacity-0");
-                panel.classList.remove("translate-y-full");
+        // Filter rows by text / part of speech, and hide a POS header when none of
+        // its rows are visible.
+        const applyFilter = () => {
+            const q = (search?.value ?? "").trim().toLowerCase();
+            rows.forEach((row) => {
+                const text = row.querySelector(".dict-def-text")?.textContent?.toLowerCase() ?? "";
+                const pos = (row.getAttribute("data-pos") ?? "").toLowerCase();
+                row.toggleAttribute("hidden", !(!q || text.includes(q) || pos.includes(q)));
             });
-            panel.focus?.();
-            pushOnOpen();
+            let anyVisible = false;
+            heads.forEach((head) => {
+                const pos = head.getAttribute("data-pos");
+                const hasVisible = rows.some((r) => r.getAttribute("data-pos") === pos && !r.hasAttribute("hidden"));
+                head.toggleAttribute("hidden", !hasVisible);
+                if (hasVisible) anyVisible = true;
+            });
+            empty?.classList.toggle("hidden", anyVisible);
+            if (queryOut) queryOut.textContent = search?.value ?? "";
         };
 
         const close = () => {
@@ -184,13 +256,27 @@ const DEFINITIONS = [
             close,
         });
 
+        const open = () => {
+            modal.classList.remove("hidden");
+            modal.classList.add("flex");
+            modal.setAttribute("aria-hidden", "false");
+            requestAnimationFrame(() => {
+                backdrop.classList.remove("opacity-0");
+                panel.classList.remove("translate-y-full");
+            });
+            panel.focus?.();
+            pushOnOpen();
+        };
+
         const select = (index: number) => {
-            const chosen = rows[index];
+            const chosen = rows.find((r) => Number(r.getAttribute("data-index")) === index);
             if (!chosen) return;
-            const text = chosen.querySelector(".dict-def-text")?.textContent ?? "";
-            definitionEl.textContent = text;
-            rows.forEach((row, i) => {
-                const active = i === index;
+            definitionEl.textContent = chosen.querySelector(".dict-def-text")?.textContent ?? "";
+            const pos = chosen.getAttribute("data-pos") ?? "";
+            posEl.textContent = pos;
+            posEl.className = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass(pos)}`;
+            rows.forEach((row) => {
+                const active = Number(row.getAttribute("data-index")) === index;
                 row.classList.toggle("bg-card", active);
                 row.querySelector(".dict-def-text")?.classList.toggle("font-semibold", active);
                 row.querySelector(".dict-def-text")?.classList.toggle("text-accent", active);
@@ -203,7 +289,7 @@ const DEFINITIONS = [
         openBtn.addEventListener("click", open);
         modal.querySelector("[data-dict-close]")?.addEventListener("click", requestClose);
         backdrop.addEventListener("click", requestClose);
-        rows.forEach((row, i) => row.addEventListener("click", () => select(i)));
+        rows.forEach((row) => row.addEventListener("click", () => select(Number(row.getAttribute("data-index")))));
         search?.addEventListener("input", applyFilter);
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape" && !modal.classList.contains("hidden")) requestClose();
