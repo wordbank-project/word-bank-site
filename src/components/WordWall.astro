@@ -22,7 +22,7 @@ function posClass(pos: string): string {
     class="inline-flex cursor-pointer items-center gap-1.5 rounded-[10px] border border-line px-4 py-2.5 text-[0.95rem] font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
     aria-haspopup="dialog"
 >
-    ✦ See the words people have currently saved
+    ✦ See the words users have currently saved
 </button>
 
 {/* Glossary modal — app-style bottom sheet, hidden until opened. */}
@@ -40,14 +40,14 @@ function posClass(pos: string): string {
         data-ww-panel
         role="dialog"
         aria-modal="true"
-        aria-label="Words people are saving"
+        aria-label="Words users are saving"
         class="relative flex max-h-[80%] w-full max-w-[520px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
     >
         <div
             class="flex items-center justify-between gap-3 border-b border-line px-4 py-3.5"
         >
             <span class="truncate text-[1rem] font-bold text-ink"
-                >Words people have currently saved:</span
+                >Words users have currently saved:</span
             >
             <button
                 data-ww-close
