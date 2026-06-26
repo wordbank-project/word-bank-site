@@ -1,5 +1,13 @@
 ---
 import Section from "./Section.astro";
+import { getCopy, type Lang } from "../i18n";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 
 // The word demoed in the card. English, looked up at build time from the free
 // dictionary API (same source the app uses for English) and baked into the
@@ -88,25 +96,14 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 <Section id="dictionary">
     <div class="grid grid-cols-2 items-center gap-12 max-[720px]:grid-cols-1">
         <div>
-            <h2 class="text-left max-[720px]:text-center">A dictionary that speaks your language</h2>
-            <p class="text-ink-soft">
-                Look a word up the moment you meet it. Word Bank shows the definition, part of
-                speech, and IPA pronunciation — then lets you anchor it with the sentence you found
-                it in and your own notes.
-            </p>
-            <p class="text-ink-soft">
-                Words rarely mean just one thing, so every meaning is fetched at once. Search and
-                pick the definition that fits, with parts of speech colour-coded at a glance.
-            </p>
-            <p class="text-ink-soft">
-                Lookups are powered by Wiktionary data through a dedicated dictionary engine, with
-                support for over a hundred languages. English and Dutch are live today; more are on
-                the way.
-            </p>
-            <div class="mt-4.5 flex gap-2.5" aria-label="Available languages">
-                <span class="rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">English</span>
-                <span class="rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">Nederlands</span>
-                <span class="rounded-full border border-line px-3.5 py-1.25 text-[0.85rem] font-semibold text-ink-muted">more soon</span>
+            <h2 class="text-left max-[720px]:text-center">{t.dictionary.heading}</h2>
+            <p class="text-ink-soft">{t.dictionary.paragraphs[0]}</p>
+            <p class="text-ink-soft">{t.dictionary.paragraphs[1]}</p>
+            <p class="text-ink-soft">{t.dictionary.paragraphs[2]}</p>
+            <div class="mt-4.5 flex gap-2.5" aria-label={t.dictionary.chipsAria}>
+                <span class="rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">{t.dictionary.chips.english}</span>
+                <span class="rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">{t.dictionary.chips.dutch}</span>
+                <span class="rounded-full border border-line px-3.5 py-1.25 text-[0.85rem] font-semibold text-ink-muted">{t.dictionary.chips.more}</span>
             </div>
         </div>
 
@@ -123,18 +120,18 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                     type="button"
                     class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
                     aria-haspopup="dialog"
-                    aria-label={`Choose another definition of ${word}`}
+                    aria-label={`${t.dictionary.chooseOtherAriaPre}${word}`}
                 >
-                    Choose other definition ({items.length}) ›
+                    {t.dictionary.chooseOther} ({items.length}) ›
                 </button>
             )}
             <div class="mt-2.5 border-t border-line pt-2.5">
-                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">Sentence</span>
-                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">“She ended the letter with a flourish of the pen.”</p>
+                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">{t.dictionary.sentenceLabel}</span>
+                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">“{t.dictionary.demoSentence}”</p>
             </div>
             <div class="mt-2.5 border-t border-line pt-2.5">
-                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">Notes</span>
-                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">From Latin <span class="italic">florere</span>, “to bloom” — same root as <span class="italic">flora</span> and <span class="italic">flower</span>.</p>
+                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">{t.dictionary.notesLabel}</span>
+                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft" set:html={t.dictionary.demoNotesHtml}></p>
             </div>
         </div>
     </div>
@@ -147,7 +144,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             data-dict-panel
             role="dialog"
             aria-modal="true"
-            aria-label="Choose a definition"
+            aria-label={t.dictionary.dialogAria}
             class="relative flex max-h-[70%] w-full max-w-[480px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
         >
             <div class="flex-1 overflow-y-auto">
@@ -168,19 +165,19 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                         ))}
                     </Fragment>
                 ))}
-                <p data-dict-empty class="hidden p-6 text-center text-[0.9rem] text-ink-muted">No definitions match “<span data-dict-query></span>”.</p>
+                <p data-dict-empty class="hidden p-6 text-center text-[0.9rem] text-ink-muted">{t.dictionary.emptyPre}<span data-dict-query></span>{t.dictionary.emptyPost}</p>
             </div>
 
             <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
-                <span class="truncate text-[1rem] font-bold text-ink">Definitions for: {word}</span>
-                <button data-dict-close type="button" class="cursor-pointer text-[1.1rem] leading-none text-ink-muted hover:text-ink" aria-label="Close">✕</button>
+                <span class="truncate text-[1rem] font-bold text-ink">{t.dictionary.definitionsForPre}{word}</span>
+                <button data-dict-close type="button" class="cursor-pointer text-[1.1rem] leading-none text-ink-muted hover:text-ink" aria-label={t.dictionary.close}>✕</button>
             </div>
 
             <input
                 data-dict-search
                 type="text"
-                placeholder="Search definitions..."
-                aria-label="Search definitions"
+                placeholder={t.dictionary.searchPlaceholder}
+                aria-label={t.dictionary.searchPlaceholder}
                 class="mx-4 mb-4 rounded-lg border border-line bg-surface-soft px-3 py-3 text-[0.95rem] text-ink placeholder:text-ink-muted"
             />
         </div>

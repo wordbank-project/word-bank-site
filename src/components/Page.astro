@@ -1,0 +1,36 @@
+---
+// The full page body, parameterised by locale. Both route files render this:
+// src/pages/index.astro (en) and src/pages/nl/index.astro (nl). Keeping the
+// composition in one place means the two routes stay in sync.
+import type { Lang } from "../i18n";
+import Layout from "../layouts/Layout.astro";
+import Header from "./Header.astro";
+import Hero from "./Hero.astro";
+import Stats from "./Stats.astro";
+import Features from "./Features.astro";
+import HowItWorks from "./HowItWorks.astro";
+import DictionaryShowcase from "./DictionaryShowcase.astro";
+import Faq from "./Faq.astro";
+import TechMarquee from "./TechMarquee.astro";
+import Footer from "./Footer.astro";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<Layout lang={lang}>
+    <Header lang={lang} />
+    <main>
+        <Hero lang={lang} />
+        <Stats lang={lang} />
+        <Features lang={lang} />
+        <HowItWorks lang={lang} />
+        <DictionaryShowcase lang={lang} />
+        <Faq lang={lang} />
+        <TechMarquee lang={lang} />
+    </main>
+    <Footer lang={lang} />
+</Layout>

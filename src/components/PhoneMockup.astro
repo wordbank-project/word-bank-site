@@ -1,23 +1,27 @@
 ---
-import { MOCK_BOOKS, STATUS_LABELS } from "../content";
+import { MOCK_BOOKS } from "../content";
 import type { ReadStatus } from "../content";
+import { getCopy, type Lang } from "../i18n";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 
 const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
-    { value: "all", label: "All" },
-    { value: "want", label: "Want to read" },
-    { value: "reading", label: "Currently Reading" },
-    { value: "read", label: "Have read" },
+    { value: "all", label: t.phone.filters.all },
+    { value: "want", label: t.phone.filters.want },
+    { value: "reading", label: t.phone.filters.reading },
+    { value: "read", label: t.phone.filters.read },
 ];
 ---
 
 <!-- TODO: make it interactive -->
-<div
-    class="phone"
-    role="img"
-    aria-label="Word Bank app showing a read list with statuses and word counts"
->
+<div class="phone" role="img" aria-label={t.phone.aria}>
     <div class="phone-screen">
-        <div class="phone-header">Read List</div>
+        <div class="phone-header">{t.phone.readList}</div>
 
         <div class="phone-filters">
             {
@@ -48,7 +52,7 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                             <span
                                 class={`phone-status phone-status-${book.status}`}
                             >
-                                {STATUS_LABELS[book.status]}
+                                {t.statusLabels[book.status]}
                             </span>
                         </span>
                         <span class="phone-badge">
@@ -56,7 +60,9 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                                 {book.wordCount}
                             </span>
                             <span class="phone-badge-label">
-                                {book.wordCount === 1 ? "word" : "words"}
+                                {book.wordCount === 1
+                                    ? t.phone.wordSingular
+                                    : t.phone.wordPlural}
                             </span>
                         </span>
                     </div>
@@ -65,9 +71,9 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         </div>
 
         <div class="phone-tabbar">
-            <span>Search</span>
-            <span class="active">Read List</span>
-            <span>Word list</span>
+            <span>{t.phone.tabs.search}</span>
+            <span class="active">{t.phone.tabs.readList}</span>
+            <span>{t.phone.tabs.wordList}</span>
         </div>
     </div>
 </div>

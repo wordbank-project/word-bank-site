@@ -1,15 +1,17 @@
 ---
 import "../styles/global.css";
+import { getCopy, type Lang } from "../i18n";
 
 interface Props {
+    lang?: Lang;
     title?: string;
     description?: string;
 }
 
-const {
-    title = "Word Bank — your personal words vault",
-    description = "Word Bank is a reading companion: track what you read and save every new word with its definition, your sentence, and your notes — in your preferred language.",
-} = Astro.props;
+const { lang = "en", title, description } = Astro.props;
+const t = getCopy(lang);
+const pageTitle = title ?? t.meta.title;
+const pageDescription = description ?? t.meta.description;
 
 // Absolute URL for the social card; falls back gracefully when the site isn't
 // configured with a deploy URL (Astro.site). The ?v= is a cache-buster — bump it
@@ -17,10 +19,12 @@ const {
 // a stale cached preview.
 const ogImage = new URL("/og-image.png?v=2", Astro.site ?? Astro.url).href;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
+const enUrl = new URL("/", Astro.site ?? Astro.url).href;
+const nlUrl = new URL("/nl/", Astro.site ?? Astro.url).href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,18 +33,23 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="canonical" href={canonical} />
-        <title>{title}</title>
-        <meta name="description" content={description} />
+        <!-- Locale alternates so search engines pair the English and Dutch pages. -->
+        <link rel="alternate" hreflang="en" href={enUrl} />
+        <link rel="alternate" hreflang="nl" href={nlUrl} />
+        <link rel="alternate" hreflang="x-default" href={enUrl} />
+        <title>{pageTitle}</title>
+        <meta name="description" content={pageDescription} />
 
         <!-- Open Graph / Twitter card — brand-consistent link previews. -->
         <meta property="og:type" content="website" />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
+        <meta property="og:title" content={pageTitle} />
+        <meta property="og:description" content={pageDescription} />
+        <meta property="og:locale" content={lang === "nl" ? "nl_NL" : "en_US"} />
         <meta property="og:url" content={canonical} />
         <meta property="og:image" content={ogImage} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
+        <meta name="twitter:title" content={pageTitle} />
+        <meta name="twitter:description" content={pageDescription} />
         <meta name="twitter:image" content={ogImage} />
 
         <!-- Apply the saved theme before paint (no flash). Preference is

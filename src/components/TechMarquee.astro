@@ -1,18 +1,26 @@
 ---
 import { REPO_URL, TECH } from "../content";
+import { getCopy, type Lang } from "../i18n";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 
 // Rendered twice so the track can translate -50% and loop seamlessly; the
 // second copy is decorative (hidden from assistive tech, out of the tab order).
 ---
 
-<section class="section reveal" aria-label="Built with open source">
+<section class="section reveal" aria-label={t.tech.heading}>
     <div class="mx-auto mb-9 max-w-270 px-6 text-center">
-        <h2>Built with open source</h2>
+        <h2>{t.tech.heading}</h2>
         <a class="max-w-135 text-ink-soft">
             <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
-                Word Bank is free and open source.</a
+                {t.tech.blurbLink}</a
             ><br />
-            Feel free to report issues and contribute.
+            {t.tech.blurbRest}
         </a>
     </div>
 

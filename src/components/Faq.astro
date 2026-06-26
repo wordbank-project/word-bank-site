@@ -1,13 +1,20 @@
 ---
-import { FAQS } from "../content";
+import { getCopy, type Lang } from "../i18n";
 import Section from "./Section.astro";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 ---
 
 <Section id="faq">
-    <h2>Frequently asked questions</h2>
+    <h2>{t.faq.heading}</h2>
     <div class="mx-auto flex max-w-170 flex-col gap-3">
         {
-            FAQS.map(({ question, answer }) => (
+            t.faq.items.map(({ question, answer }) => (
                 <details class="faq-item">
                     <summary>{question}</summary>
                     <p>{answer}</p>

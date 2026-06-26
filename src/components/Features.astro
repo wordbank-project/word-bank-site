@@ -1,7 +1,14 @@
 ---
-import { FEATURES } from "../content";
 import type { IconName } from "../content";
+import { getCopy, type Lang } from "../i18n";
 import Section from "./Section.astro";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 
 const svg = (inner: string) =>
     `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
@@ -41,15 +48,15 @@ const ICONS: Record<IconName, string> = {
 ---
 
 <Section id="features">
-    <h2>Everything a reading habit needs</h2>
+    <h2>{t.features.heading}</h2>
     <p class="section-sub">
-        One app for the books you read and the words they teach you.
+        {t.features.sub}
     </p>
     <div
         class="grid grid-cols-3 gap-5.5 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1"
     >
         {
-            FEATURES.map(({ icon, title, description }) => (
+            t.features.items.map(({ icon, title, description }) => (
                 <article class="rounded-[14px] border border-line bg-card p-6.5">
                     <span
                         class="inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent mb-4"

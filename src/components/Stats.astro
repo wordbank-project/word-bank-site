@@ -1,9 +1,27 @@
 ---
 // Renders hidden; the script fills it from the feed server's /stats and unhides
 // it only when there's data — so the page is unaffected when there's no backend.
+// The stat labels are localised here and read by the (bundled) script via
+// data-* attributes, since the script can't see Astro frontmatter.
+import { getCopy, type Lang } from "../i18n";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 ---
 
-<section class="section stats" aria-label="Live word stats" hidden data-stats>
+<section
+    class="section stats"
+    aria-label={t.stats.aria}
+    hidden
+    data-stats
+    data-label-collected={t.stats.collected}
+    data-label-top={t.stats.topWord}
+    data-label-perday={t.stats.perDay}
+>
     <div class="mx-auto max-w-270 px-6 stats-inner" data-stats-inner></div>
 </section>
 
@@ -46,20 +64,25 @@
         const inner = document.querySelector<HTMLElement>("[data-stats-inner]");
         if (!section || !inner) return;
 
+        // Localised labels, injected as data-* attributes by the component.
+        const labelCollected = section.dataset.labelCollected ?? "words readers have collected";
+        const labelTop = section.dataset.labelTop ?? "most-saved word";
+        const labelPerDay = section.dataset.labelPerday ?? "words added per day";
+
         try {
             const res = await fetch(`${base}/stats?limit=1`);
             if (!res.ok) return;
             const data = (await res.json()) as StatsData;
             if (!data || typeof data.total !== "number" || data.total === 0) return;
 
-            const parts = [stat(data.total.toLocaleString(), "words readers have collected")];
+            const parts = [stat(data.total.toLocaleString(), labelCollected)];
             const wordOfTheWeek = data.top?.[0]?.word;
-            if (wordOfTheWeek) parts.push(stat(escapeHtml(wordOfTheWeek), "most-saved word", true));
+            if (wordOfTheWeek) parts.push(stat(escapeHtml(wordOfTheWeek), labelTop, true));
 
             const points = sparklinePoints(data.perDay ?? [], 240, 48);
             if (points) {
                 parts.push(
-                    `<div class="stat stat-spark"><svg viewBox="0 0 240 48" width="240" height="48" aria-hidden="true"><polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg><span class="stat-label">words added per day</span></div>`,
+                    `<div class="stat stat-spark"><svg viewBox="0 0 240 48" width="240" height="48" aria-hidden="true"><polyline points="${points}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg><span class="stat-label">${labelPerDay}</span></div>`,
                 );
             }
 

@@ -1,33 +1,95 @@
 ---
 import Logo from "./Logo.astro";
+import { getCopy, otherLang, localeRoot, LANG_META, type Lang } from "../i18n";
 
-const LINKS = [
-    { href: "#features", label: "Features" },
-    { href: "#how-it-works", label: "How it works" },
-    { href: "#dictionary", label: "Dictionary" },
-    { href: "#faq", label: "FAQ" },
-];
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
+
+// The language toggle always points at the *other* locale.
+const other = otherLang(lang);
+const otherRoot = localeRoot(other);
+const otherMeta = LANG_META[other];
 
 const iconClass = "w-[18px] h-[18px]";
 ---
 
 <header class="nav">
     <div class="mx-auto max-w-270 px-6 nav-inner">
-        <a href="#top" class="nav-logo" data-scroll-top aria-label="Word Bank — back to top">
+        <a href="#top" class="nav-logo" data-scroll-top aria-label={t.nav.backToTop}>
             <Logo withWordmark />
         </a>
 
         <div class="flex items-center gap-4">
             <nav class="nav-links" aria-label="Main" data-nav-links>
-                {LINKS.map(({ href, label }) => <a href={href}>{label}</a>)}
-                <a href="#top" class="button button-small" data-scroll-top>Get the app</a>
+                {t.nav.links.map(({ href, label }) => <a href={href}>{label}</a>)}
+                <a href="#top" class="button button-small" data-scroll-top>{t.nav.cta}</a>
+                <!-- Language switch inside the mobile menu (hidden on desktop, where
+                     the globe button in the top bar is used instead). -->
+                <a
+                    href={otherRoot}
+                    hreflang={other}
+                    data-lang-link
+                    data-base={otherRoot}
+                    class="hidden max-[720px]:inline-flex items-center gap-2"
+                    aria-label={t.nav.langSwitch}
+                >
+                    <svg
+                        class={iconClass}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"
+                        ></path>
+                    </svg>
+                    {otherMeta.name}
+                </a>
             </nav>
+
+            <!-- Language switch in the top bar (desktop only; subtle). -->
+            <a
+                href={otherRoot}
+                hreflang={other}
+                data-lang-link
+                data-base={otherRoot}
+                class="max-[720px]:hidden inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-line bg-transparent px-2.5 text-[0.8rem] font-semibold text-ink no-underline transition-colors hover:border-accent hover:text-accent"
+                aria-label={t.nav.langSwitch}
+            >
+                <svg
+                    class={iconClass}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                >
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"
+                    ></path>
+                </svg>
+                {otherMeta.code}
+            </a>
 
             <button
                 type="button"
                 class="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-[10px] border border-line bg-transparent text-ink transition-colors hover:border-accent hover:text-accent"
-                aria-label="Theme: system"
+                aria-label={`${t.nav.theme.prefix}: ${t.nav.theme.system}`}
                 data-theme-toggle
+                data-theme-prefix={t.nav.theme.prefix}
+                data-theme-light={t.nav.theme.light}
+                data-theme-dark={t.nav.theme.dark}
+                data-theme-system={t.nav.theme.system}
             >
                 <svg
                     class={`${iconClass} hidden`}
@@ -79,8 +141,10 @@ const iconClass = "w-[18px] h-[18px]";
                 type="button"
                 class="nav-toggle"
                 aria-expanded="false"
-                aria-label="Open menu"
-                data-nav-toggle>☰</button
+                aria-label={t.nav.openMenu}
+                data-nav-toggle
+                data-open-label={t.nav.openMenu}
+                data-close-label={t.nav.closeMenu}>☰</button
             >
         </div>
     </div>
@@ -92,11 +156,14 @@ const iconClass = "w-[18px] h-[18px]";
         document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
     const links = document.querySelector<HTMLElement>("[data-nav-links]");
 
+    const openLabel = navToggle?.dataset.openLabel ?? "Open menu";
+    const closeLabel = navToggle?.dataset.closeLabel ?? "Close menu";
+
     const closeMenu = () => {
         if (!navToggle || !links) return;
         links.classList.remove("open");
         navToggle.setAttribute("aria-expanded", "false");
-        navToggle.setAttribute("aria-label", "Open menu");
+        navToggle.setAttribute("aria-label", openLabel);
         navToggle.textContent = "☰";
     };
 
@@ -104,15 +171,25 @@ const iconClass = "w-[18px] h-[18px]";
         navToggle.addEventListener("click", () => {
             const open = links.classList.toggle("open");
             navToggle.setAttribute("aria-expanded", String(open));
-            navToggle.setAttribute(
-                "aria-label",
-                open ? "Close menu" : "Open menu",
-            );
+            navToggle.setAttribute("aria-label", open ? closeLabel : openLabel);
             navToggle.textContent = open ? "✕" : "☰";
         });
         links
             .querySelectorAll("a")
             .forEach((a) => a.addEventListener("click", closeMenu));
+    }
+
+    // --- Language toggle: keep the current #section when switching locale ----
+    const langLinks = Array.from(
+        document.querySelectorAll<HTMLAnchorElement>("[data-lang-link]"),
+    );
+    const syncLangHref = () =>
+        langLinks.forEach((l) => {
+            l.href = (l.dataset.base ?? "/") + location.hash;
+        });
+    if (langLinks.length) {
+        syncLangHref();
+        window.addEventListener("hashchange", syncLangHref);
     }
 
     // --- Theme toggle: light → dark → system, persisted in localStorage ------
@@ -140,7 +217,13 @@ const iconClass = "w-[18px] h-[18px]";
             .forEach((el) =>
                 el.classList.toggle("hidden", el.dataset.icon !== pref),
             );
-        themeBtn.setAttribute("aria-label", `Theme: ${pref} (click to change)`);
+        const prefix = themeBtn.dataset.themePrefix ?? "Theme";
+        const names: Record<Pref, string> = {
+            light: themeBtn.dataset.themeLight ?? "light",
+            dark: themeBtn.dataset.themeDark ?? "dark",
+            system: themeBtn.dataset.themeSystem ?? "system",
+        };
+        themeBtn.setAttribute("aria-label", `${prefix}: ${names[pref]}`);
     };
 
     if (themeBtn) {
@@ -172,6 +255,13 @@ const iconClass = "w-[18px] h-[18px]";
                 e.preventDefault();
                 closeMenu();
                 window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+                // Drop the section hash so the URL reflects the top of the page
+                // (just / or /nl/) — otherwise switching language would jump back
+                // to the last-visited section.
+                if (location.hash) {
+                    history.replaceState(null, "", location.pathname + location.search);
+                    syncLangHref();
+                }
             }),
         );
 </script>

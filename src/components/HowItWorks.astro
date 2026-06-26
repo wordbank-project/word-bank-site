@@ -1,14 +1,21 @@
 ---
-import { STEPS } from "../content";
+import { getCopy, type Lang } from "../i18n";
 import Section from "./Section.astro";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 ---
 
 <Section id="how-it-works">
-    <h2>How it works</h2>
-    <p class="section-sub">Three steps, then it becomes a habit.</p>
+    <h2>{t.howItWorks.heading}</h2>
+    <p class="section-sub">{t.howItWorks.sub}</p>
     <ol class="m-0 grid list-none grid-cols-3 gap-5.5 p-0 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1">
         {
-            STEPS.map(({ title, description }, i) => (
+            t.howItWorks.steps.map(({ title, description }, i) => (
                 <li class="rounded-[14px] border border-line bg-card p-6.5">
                     <span class="mb-3.5 inline-flex h-8.5 w-8.5 items-center justify-center rounded-full bg-accent font-bold text-white">
                         {i + 1}

@@ -1,6 +1,13 @@
 ---
 import Logo from "./Logo.astro";
+import { getCopy, type Lang } from "../i18n";
 
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
 const year = new Date().getFullYear();
 ---
 
@@ -11,8 +18,6 @@ const year = new Date().getFullYear();
         <span class="inline-flex items-center gap-2">
             <Logo size={24} /> Word Bank © {year}
         </span>
-        <span class="text-[0.9rem] text-ink-muted"
-            >Your personal words vault</span
-        >
+        <span class="text-[0.9rem] text-ink-muted">{t.footer.tagline}</span>
     </div>
 </footer>
