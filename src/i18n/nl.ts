@@ -37,76 +37,28 @@ export const nl: Copy = {
         sub: 'Eén app voor de boeken die je leest en de woorden die ze je leren.',
         items: [
             {
-                icon: 'search',
-                title: 'Doorzoek miljoenen boeken',
-                description:
-                    'Vind elke titel of auteur via Open Library, compleet met covers — en blijf scrollen, resultaten laden terwijl je gaat.',
-            },
-            {
                 icon: 'list',
-                title: 'Eén leeslijst, drie statussen',
+                title: 'Houd elk boek bij dat je leest',
                 description:
-                    'Elk boek staat in één lijst als Wil ik lezen, Aan het lezen of Gelezen. Filter met één tik op status, en boeken sorteren op hoeveel woorden ze je hebben geleerd.',
-            },
-            {
-                icon: 'stack',
-                title: 'Een woordbank voor elk boek',
-                description:
-                    'Elk boek heeft zijn eigen woordenschat. Zie in één oogopslag hoeveel woorden een boek je heeft geleerd.',
-            },
-            {
-                icon: 'bolt',
-                title: 'Directe definities',
-                description:
-                    'Typ een woord en krijg meteen de betekenis — inclusief woordsoort en IPA-uitspraak.',
+                    'Doorzoek miljoenen boeken en orden ze als Wil ik lezen, Aan het lezen of Gelezen.',
             },
             {
                 icon: 'layers',
-                title: 'Kies de juiste definitie',
+                title: 'Directe, precieze definities',
                 description:
-                    'De meeste woorden hebben meerdere betekenissen. Word Bank haalt ze allemaal op en laat je de juiste zoeken en kiezen — met woordsoorten in kleur, zodat zelfstandig naamwoord, werkwoord en bijvoeglijk naamwoord opvallen.',
+                    'Alle betekenissen in één keer, met woordsoort en IPA — zoek en kies de juiste.',
+            },
+            {
+                icon: 'pencil',
+                title: 'Laat woorden beklijven',
+                description:
+                    'Bewaar elk woord met de zin waarin je het vond en je eigen notities.',
             },
             {
                 icon: 'sort',
                 title: 'Al je woorden op één plek',
                 description:
-                    'De Woordenlijst verzamelt elk woord uit elk boek. Zoek direct, filter op alleen zelfstandige of bijvoeglijke naamwoorden, en sorteer A–Z, op boek of op meest recent toegevoegd.',
-            },
-            {
-                icon: 'pencil',
-                title: 'Zinnen & notities',
-                description:
-                    'Laat woorden beklijven: bewaar de zin waarin je ze vond en voeg je eigen notities en associaties toe.',
-            },
-            {
-                icon: 'star',
-                title: 'Recensies & notities per boek',
-                description:
-                    'Naast notities per woord schrijf je voor elk boek een recensie en algemene notities — tik op de tekst om ze altijd te bewerken.',
-            },
-            {
-                icon: 'globe',
-                title: 'Lees in jouw voorkeurstaal',
-                description:
-                    'Definities in de taal waarin je leest — mogelijk gemaakt door Wiktionary-data met ondersteuning voor 100+ talen. Engels en Nederlands nu, meer volgt.',
-            },
-            {
-                icon: 'camera',
-                title: 'Eigen boeken',
-                description:
-                    'Lees je iets dat in geen enkele catalogus staat? Voeg je eigen boek toe en maak een cover met je camera of fotobibliotheek.',
-            },
-            {
-                icon: 'lock',
-                title: 'Privé van nature',
-                description:
-                    'Geen account, geen cloud, geen tracking. Je boeken en woorden staan op je toestel en werken offline.',
-            },
-            {
-                icon: 'moon',
-                title: 'Donkere modus inbegrepen',
-                description:
-                    'Een volwaardig donker thema voor leessessies laat op de avond — schakel het op elk moment in de app in.',
+                    'De Woordenlijst verzamelt elk woord uit elk boek — direct zoeken, filteren en sorteren.',
             },
         ],
     },

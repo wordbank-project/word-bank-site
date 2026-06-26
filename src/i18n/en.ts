@@ -37,76 +37,28 @@ export const en: Copy = {
         sub: 'One app for the books you read and the words they teach you.',
         items: [
             {
-                icon: 'search',
-                title: 'Search millions of books',
-                description:
-                    'Find any title or author through Open Library, complete with covers — and keep scrolling, results load as you go.',
-            },
-            {
                 icon: 'list',
-                title: 'One read list, three statuses',
+                title: 'Track every book you read',
                 description:
-                    'Every book lives in a single list as Want to read, Currently reading, or Have read. Filter by status with one tap, and books sort by how many words each has taught you.',
-            },
-            {
-                icon: 'stack',
-                title: 'A word bank for every book',
-                description:
-                    'Each book carries its own vocabulary. See at a glance how many words a book has taught you.',
-            },
-            {
-                icon: 'bolt',
-                title: 'Instant definitions',
-                description:
-                    'Type a word and get its meaning right away — including part of speech and IPA pronunciation.',
+                    'Search millions of books and sort them into Want to read, Currently reading, or Have read.',
             },
             {
                 icon: 'layers',
-                title: 'Choose the right definition',
+                title: 'Instant, precise definitions',
                 description:
-                    'Most words have several meanings. Word Bank fetches them all and lets you search and pick the exact one — with parts of speech colour-coded so noun, verb and adjective stand apart.',
+                    'Every meaning at once, with part of speech and IPA — search and pick the one that fits.',
+            },
+            {
+                icon: 'pencil',
+                title: 'Make words stick',
+                description:
+                    'Save each word with the sentence you found it in and your own notes.',
             },
             {
                 icon: 'sort',
                 title: 'All your words in one place',
                 description:
-                    'The Words List gathers every word from every book. Search instantly, filter to just nouns or adjectives, and sort A–Z, by book, or by most recently added.',
-            },
-            {
-                icon: 'pencil',
-                title: 'Sentences & notes',
-                description:
-                    'Make words stick: save the sentence where you found them and add your own notes and associations.',
-            },
-            {
-                icon: 'star',
-                title: 'Reviews & notes per book',
-                description:
-                    'Beyond per-word notes, write a review and general notes for each book — tap the text to edit any time.',
-            },
-            {
-                icon: 'globe',
-                title: 'Read in your preferred language',
-                description:
-                    'Definitions in the language you read in — powered by Wiktionary data with support for 100+ languages. English and Dutch today, more coming.',
-            },
-            {
-                icon: 'camera',
-                title: 'Custom books',
-                description:
-                    'Reading something that is not in any catalog? Add your own book and snap a cover with your camera or photo library.',
-            },
-            {
-                icon: 'lock',
-                title: 'Private by design',
-                description:
-                    'No account, no cloud, no tracking. Your books and words are stored on your device and work offline.',
-            },
-            {
-                icon: 'moon',
-                title: 'Dark mode included',
-                description:
-                    'A proper dark theme for late-night reading sessions — toggle it any time from inside the app.',
+                    'The Words List gathers every word from every book — search, filter, and sort instantly.',
             },
         ],
     },
