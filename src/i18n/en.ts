@@ -86,9 +86,8 @@ export const en: Copy = {
     dictionary: {
         heading: 'A dictionary that speaks your language',
         paragraphs: [
-            'Look a word up the moment you meet it. Word Bank shows the definition, part of speech, and IPA pronunciation — then lets you anchor it with the sentence you found it in and your own notes.',
-            'Words rarely mean just one thing, so every meaning is fetched at once. Search and pick the definition that fits, with parts of speech colour-coded at a glance.',
-            'Lookups are powered by Wiktionary data through a dedicated dictionary engine, with support for over a hundred languages. English and Dutch are live today; more are on the way.',
+            'Words rarely mean just one thing. Word Bank fetches every meaning and lets you pick the right one — with part of speech, IPA pronunciation, and colour-coding.',
+            'Powered by Wiktionary data with support for 100+ languages. English and Dutch are live today; more on the way.',
         ],
         chipsAria: 'Available languages',
         chips: { english: 'English', dutch: 'Nederlands', more: 'more soon' },

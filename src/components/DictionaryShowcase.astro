@@ -22,11 +22,21 @@ const FALLBACK = {
     word: "flourish",
     phonetic: "/ˈflʌ.ɹɪʃ/",
     items: [
-        { partOfSpeech: "noun", definition: "A dramatic gesture such as the waving of a flag." },
-        { partOfSpeech: "noun", definition: "A ceremonious passage such as a fanfare; an ornamental embellishment." },
+        {
+            partOfSpeech: "noun",
+            definition: "A dramatic gesture such as the waving of a flag.",
+        },
+        {
+            partOfSpeech: "noun",
+            definition:
+                "A ceremonious passage such as a fanfare; an ornamental embellishment.",
+        },
         { partOfSpeech: "verb", definition: "To thrive or grow well." },
         { partOfSpeech: "verb", definition: "To prosper or fare well." },
-        { partOfSpeech: "verb", definition: "To make bold, sweeping movements with." },
+        {
+            partOfSpeech: "verb",
+            definition: "To make bold, sweeping movements with.",
+        },
     ] as Item[],
 };
 
@@ -46,7 +56,9 @@ let word = FALLBACK.word;
 let phonetic = FALLBACK.phonetic;
 let items: Item[] = FALLBACK.items;
 try {
-    const res = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(WORD)}`);
+    const res = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(WORD)}`,
+    );
     if (res.ok) {
         const data = await res.json();
         const flat: Item[] = [];
@@ -54,7 +66,12 @@ try {
             for (const meaning of entry.meanings ?? []) {
                 for (const def of meaning.definitions ?? []) {
                     if (def?.definition) {
-                        flat.push({ partOfSpeech: (meaning.partOfSpeech ?? "").toLowerCase(), definition: def.definition });
+                        flat.push({
+                            partOfSpeech: (
+                                meaning.partOfSpeech ?? ""
+                            ).toLowerCase(),
+                            definition: def.definition,
+                        });
                     }
                 }
             }
@@ -70,7 +87,9 @@ try {
             .slice(0, 12);
         if (unique.length > 0) {
             items = unique;
-            phonetic = data.find((e: { phonetic?: string }) => e.phonetic)?.phonetic ?? "";
+            phonetic =
+                data.find((e: { phonetic?: string }) => e.phonetic)?.phonetic ??
+                "";
             word = data[0]?.word ?? WORD;
         }
     }
@@ -80,7 +99,8 @@ try {
 
 // Group definitions by part of speech (in order); each row keeps its global
 // index into `items` so a selection maps back correctly.
-const groups: { pos: string; rows: { index: number; definition: string }[] }[] = [];
+const groups: { pos: string; rows: { index: number; definition: string }[] }[] =
+    [];
 items.forEach((it, index) => {
     let group = groups.find((g) => g.pos === it.partOfSpeech);
     if (!group) {
@@ -96,93 +116,182 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 <Section id="dictionary">
     <div class="grid grid-cols-2 items-center gap-12 max-[720px]:grid-cols-1">
         <div>
-            <h2 class="text-left max-[720px]:text-center">{t.dictionary.heading}</h2>
-            <p class="text-ink-soft">{t.dictionary.paragraphs[0]}</p>
-            <p class="text-ink-soft">{t.dictionary.paragraphs[1]}</p>
-            <p class="text-ink-soft">{t.dictionary.paragraphs[2]}</p>
-            <div class="mt-4.5 flex flex-wrap gap-2.5 gap-y-2" aria-label={t.dictionary.chipsAria}>
-                <span class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">{t.dictionary.chips.english}</span>
-                <span class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">{t.dictionary.chips.dutch}</span>
-                <span class="whitespace-nowrap rounded-full border border-line px-3.5 py-1.25 text-[0.85rem] font-semibold text-ink-muted">{t.dictionary.chips.more}</span>
+            <h2 class="text-left max-[720px]:text-center">
+                {t.dictionary.heading}
+            </h2>
+            {t.dictionary.paragraphs.map((p) => <p class="text-ink-soft">{p}</p>)}
+            <div
+                class="mt-2 flex flex-wrap gap-2.5 gap-y-2"
+                aria-label={t.dictionary.chipsAria}
+            >
+                <span
+                    class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent"
+                    >{t.dictionary.chips.english}</span
+                >
+                <span
+                    class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent"
+                    >{t.dictionary.chips.dutch}</span
+                >
+                <span
+                    class="whitespace-nowrap rounded-full border border-line px-3.5 py-1.25 text-[0.85rem] font-semibold text-ink-muted"
+                    >{t.dictionary.chips.more}</span
+                >
             </div>
         </div>
 
-        <div class="w-full max-w-105 justify-self-center rounded-[14px] border border-line bg-card p-6.5 shadow-(--shadow)">
+        <div
+            class="w-full max-w-105 justify-self-center rounded-[14px] border border-line bg-card p-6.5 shadow-(--shadow)"
+        >
             <div class="flex flex-wrap items-baseline gap-3">
                 <span class="text-[1.4rem] font-bold">{word}</span>
-                {phonetic && <span class="font-mono text-[0.9rem] text-ink-muted">{phonetic}</span>}
+                {
+                    phonetic && (
+                        <span class="font-mono text-[0.9rem] text-ink-muted">
+                            {phonetic}
+                        </span>
+                    )
+                }
             </div>
-            <span id="dict-pos" class={posLabelClass}>{items[0].partOfSpeech}</span>
-            <p id="dict-definition" class="text-[0.95rem] text-ink-soft">{items[0].definition}</p>
-            {items.length > 1 && (
-                <button
-                    id="dict-open"
-                    type="button"
-                    class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
-                    aria-haspopup="dialog"
-                    aria-label={`${t.dictionary.chooseOtherAriaPre}${word}`}
+            <span id="dict-pos" class={posLabelClass}
+                >{items[0].partOfSpeech}</span
+            >
+            <p id="dict-definition" class="text-[0.95rem] text-ink-soft">
+                {items[0].definition}
+            </p>
+            {
+                items.length > 1 && (
+                    <button
+                        id="dict-open"
+                        type="button"
+                        class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
+                        aria-haspopup="dialog"
+                        aria-label={`${t.dictionary.chooseOtherAriaPre}${word}`}
+                    >
+                        {t.dictionary.chooseOther} ({items.length}) ›
+                    </button>
+                )
+            }
+            <div class="mt-2.5 border-t border-line pt-2.5">
+                <span
+                    class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted"
+                    >{t.dictionary.sentenceLabel}</span
                 >
-                    {t.dictionary.chooseOther} ({items.length}) ›
-                </button>
-            )}
-            <div class="mt-2.5 border-t border-line pt-2.5">
-                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">{t.dictionary.sentenceLabel}</span>
-                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">“{t.dictionary.demoSentence}”</p>
+                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">
+                    “{t.dictionary.demoSentence}”
+                </p>
             </div>
             <div class="mt-2.5 border-t border-line pt-2.5">
-                <span class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">{t.dictionary.notesLabel}</span>
-                <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft" set:html={t.dictionary.demoNotesHtml}></p>
+                <span
+                    class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted"
+                    >{t.dictionary.notesLabel}</span
+                >
+                <p
+                    class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft"
+                    set:html={t.dictionary.demoNotesHtml}
+                />
             </div>
         </div>
     </div>
 </Section>
 
-{items.length > 1 && (
-    <div id="dict-modal" class="fixed inset-0 z-50 hidden items-end justify-center" aria-hidden="true">
-        <div data-dict-backdrop class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-200"></div>
+{
+    items.length > 1 && (
         <div
-            data-dict-panel
-            role="dialog"
-            aria-modal="true"
-            aria-label={t.dictionary.dialogAria}
-            class="relative flex max-h-[70%] w-full max-w-[480px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
+            id="dict-modal"
+            class="fixed inset-0 z-50 hidden items-end justify-center"
+            aria-hidden="true"
         >
-            <div class="flex-1 overflow-y-auto">
-                {groups.map((g) => (
-                    <Fragment>
-                        <div data-dict-poshead data-pos={g.pos} class:list={["px-4 pt-3.5 pb-1 text-[0.7rem] font-bold uppercase tracking-[0.06em]", posClass(g.pos)]}>{g.pos}</div>
-                        {g.rows.map((r) => (
-                            <button
-                                type="button"
-                                data-dict-row
-                                data-index={r.index}
-                                data-pos={g.pos}
-                                class:list={["flex w-full items-start gap-2 border-t border-line px-4 py-3 text-left", r.index === 0 ? "bg-card" : ""]}
-                            >
-                                <span class:list={["dict-def-text flex-1 text-[0.95rem] leading-5", r.index === 0 ? "font-semibold text-accent" : "text-ink"]}>{r.definition}</span>
-                                <span class="dict-check text-[0.9rem] font-bold text-accent" hidden={r.index !== 0}>✓</span>
-                            </button>
-                        ))}
-                    </Fragment>
-                ))}
-                <p data-dict-empty class="hidden p-6 text-center text-[0.9rem] text-ink-muted">{t.dictionary.emptyPre}<span data-dict-query></span>{t.dictionary.emptyPost}</p>
-            </div>
-
-            <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
-                <span class="truncate text-[1rem] font-bold text-ink">{t.dictionary.definitionsForPre}{word}</span>
-                <button data-dict-close type="button" class="cursor-pointer text-[1.1rem] leading-none text-ink-muted hover:text-ink" aria-label={t.dictionary.close}>✕</button>
-            </div>
-
-            <input
-                data-dict-search
-                type="text"
-                placeholder={t.dictionary.searchPlaceholder}
-                aria-label={t.dictionary.searchPlaceholder}
-                class="mx-4 mb-4 rounded-lg border border-line bg-surface-soft px-3 py-3 text-[0.95rem] text-ink placeholder:text-ink-muted"
+            <div
+                data-dict-backdrop
+                class="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-200"
             />
+            <div
+                data-dict-panel
+                role="dialog"
+                aria-modal="true"
+                aria-label={t.dictionary.dialogAria}
+                class="relative flex max-h-[70%] w-full max-w-[480px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
+            >
+                <div class="flex-1 overflow-y-auto">
+                    {groups.map((g) => (
+                        <Fragment>
+                            <div
+                                data-dict-poshead
+                                data-pos={g.pos}
+                                class:list={[
+                                    "px-4 pt-3.5 pb-1 text-[0.7rem] font-bold uppercase tracking-[0.06em]",
+                                    posClass(g.pos),
+                                ]}
+                            >
+                                {g.pos}
+                            </div>
+                            {g.rows.map((r) => (
+                                <button
+                                    type="button"
+                                    data-dict-row
+                                    data-index={r.index}
+                                    data-pos={g.pos}
+                                    class:list={[
+                                        "flex w-full items-start gap-2 border-t border-line px-4 py-3 text-left",
+                                        r.index === 0 ? "bg-card" : "",
+                                    ]}
+                                >
+                                    <span
+                                        class:list={[
+                                            "dict-def-text flex-1 text-[0.95rem] leading-5",
+                                            r.index === 0
+                                                ? "font-semibold text-accent"
+                                                : "text-ink",
+                                        ]}
+                                    >
+                                        {r.definition}
+                                    </span>
+                                    <span
+                                        class="dict-check text-[0.9rem] font-bold text-accent"
+                                        hidden={r.index !== 0}
+                                    >
+                                        ✓
+                                    </span>
+                                </button>
+                            ))}
+                        </Fragment>
+                    ))}
+                    <p
+                        data-dict-empty
+                        class="hidden p-6 text-center text-[0.9rem] text-ink-muted"
+                    >
+                        {t.dictionary.emptyPre}
+                        <span data-dict-query />
+                        {t.dictionary.emptyPost}
+                    </p>
+                </div>
+
+                <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
+                    <span class="truncate text-[1rem] font-bold text-ink">
+                        {t.dictionary.definitionsForPre}
+                        {word}
+                    </span>
+                    <button
+                        data-dict-close
+                        type="button"
+                        class="cursor-pointer text-[1.1rem] leading-none text-ink-muted hover:text-ink"
+                        aria-label={t.dictionary.close}
+                    >
+                        ✕
+                    </button>
+                </div>
+
+                <input
+                    data-dict-search
+                    type="text"
+                    placeholder={t.dictionary.searchPlaceholder}
+                    aria-label={t.dictionary.searchPlaceholder}
+                    class="mx-4 mb-4 rounded-lg border border-line bg-surface-soft px-3 py-3 text-[0.95rem] text-ink placeholder:text-ink-muted"
+                />
+            </div>
         </div>
-    </div>
-)}
+    )
+}
 
 <script>
     import { backDismiss } from "../lib/back-dismiss";
@@ -194,19 +303,29 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 
     if (modal && openBtn && definitionEl && posEl) {
         const panel = modal.querySelector<HTMLElement>("[data-dict-panel]")!;
-        const backdrop = modal.querySelector<HTMLElement>("[data-dict-backdrop]")!;
-        const rows = Array.from(modal.querySelectorAll<HTMLButtonElement>("[data-dict-row]"));
-        const heads = Array.from(modal.querySelectorAll<HTMLElement>("[data-dict-poshead]"));
+        const backdrop = modal.querySelector<HTMLElement>(
+            "[data-dict-backdrop]",
+        )!;
+        const rows = Array.from(
+            modal.querySelectorAll<HTMLButtonElement>("[data-dict-row]"),
+        );
+        const heads = Array.from(
+            modal.querySelectorAll<HTMLElement>("[data-dict-poshead]"),
+        );
         const empty = modal.querySelector<HTMLElement>("[data-dict-empty]");
         const queryOut = modal.querySelector<HTMLElement>("[data-dict-query]");
-        const search = modal.querySelector<HTMLInputElement>("[data-dict-search]");
-        const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const search =
+            modal.querySelector<HTMLInputElement>("[data-dict-search]");
+        const reduceMotion = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
 
         const posClass = (pos: string): string => {
             const p = pos.toLowerCase();
             if (p.startsWith("noun")) return "text-pos-noun";
             if (p.startsWith("verb")) return "text-pos-verb";
-            if (p.startsWith("adject") || p === "adj") return "text-pos-adjective";
+            if (p.startsWith("adject") || p === "adj")
+                return "text-pos-adjective";
             if (p.startsWith("adverb") || p === "adv") return "text-pos-adverb";
             return "text-accent";
         };
@@ -216,14 +335,24 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
         const applyFilter = () => {
             const q = (search?.value ?? "").trim().toLowerCase();
             rows.forEach((row) => {
-                const text = row.querySelector(".dict-def-text")?.textContent?.toLowerCase() ?? "";
+                const text =
+                    row
+                        .querySelector(".dict-def-text")
+                        ?.textContent?.toLowerCase() ?? "";
                 const pos = (row.getAttribute("data-pos") ?? "").toLowerCase();
-                row.toggleAttribute("hidden", !(!q || text.includes(q) || pos.includes(q)));
+                row.toggleAttribute(
+                    "hidden",
+                    !(!q || text.includes(q) || pos.includes(q)),
+                );
             });
             let anyVisible = false;
             heads.forEach((head) => {
                 const pos = head.getAttribute("data-pos");
-                const hasVisible = rows.some((r) => r.getAttribute("data-pos") === pos && !r.hasAttribute("hidden"));
+                const hasVisible = rows.some(
+                    (r) =>
+                        r.getAttribute("data-pos") === pos &&
+                        !r.hasAttribute("hidden"),
+                );
                 head.toggleAttribute("hidden", !hasVisible);
                 if (hasVisible) anyVisible = true;
             });
@@ -266,30 +395,52 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
         };
 
         const select = (index: number) => {
-            const chosen = rows.find((r) => Number(r.getAttribute("data-index")) === index);
+            const chosen = rows.find(
+                (r) => Number(r.getAttribute("data-index")) === index,
+            );
             if (!chosen) return;
-            definitionEl.textContent = chosen.querySelector(".dict-def-text")?.textContent ?? "";
+            definitionEl.textContent =
+                chosen.querySelector(".dict-def-text")?.textContent ?? "";
             const pos = chosen.getAttribute("data-pos") ?? "";
             posEl.textContent = pos;
             posEl.className = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass(pos)}`;
             rows.forEach((row) => {
                 const active = Number(row.getAttribute("data-index")) === index;
                 row.classList.toggle("bg-card", active);
-                row.querySelector(".dict-def-text")?.classList.toggle("font-semibold", active);
-                row.querySelector(".dict-def-text")?.classList.toggle("text-accent", active);
-                row.querySelector(".dict-def-text")?.classList.toggle("text-ink", !active);
-                row.querySelector(".dict-check")?.toggleAttribute("hidden", !active);
+                row.querySelector(".dict-def-text")?.classList.toggle(
+                    "font-semibold",
+                    active,
+                );
+                row.querySelector(".dict-def-text")?.classList.toggle(
+                    "text-accent",
+                    active,
+                );
+                row.querySelector(".dict-def-text")?.classList.toggle(
+                    "text-ink",
+                    !active,
+                );
+                row.querySelector(".dict-check")?.toggleAttribute(
+                    "hidden",
+                    !active,
+                );
             });
             requestClose();
         };
 
         openBtn.addEventListener("click", open);
-        modal.querySelector("[data-dict-close]")?.addEventListener("click", requestClose);
+        modal
+            .querySelector("[data-dict-close]")
+            ?.addEventListener("click", requestClose);
         backdrop.addEventListener("click", requestClose);
-        rows.forEach((row) => row.addEventListener("click", () => select(Number(row.getAttribute("data-index")))));
+        rows.forEach((row) =>
+            row.addEventListener("click", () =>
+                select(Number(row.getAttribute("data-index"))),
+            ),
+        );
         search?.addEventListener("input", applyFilter);
         document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && !modal.classList.contains("hidden")) requestClose();
+            if (e.key === "Escape" && !modal.classList.contains("hidden"))
+                requestClose();
         });
     }
 </script>

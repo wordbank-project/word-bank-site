@@ -13,13 +13,20 @@
     --accent-strong: #1572cc;
     --accent-soft: rgba(32, 138, 239, 0.12);
 
-    --bg: #ffffff; /* app: background */
-    --bg-soft: #f9f9f9; /* app: backgroundInput (section tint) */
-    --card: #f5f8fa; /* app: backgroundCard */
-    --border: #e0e0e0; /* app: border */
-    --text: #11181c; /* app: text */
-    --text-secondary: #555555; /* app: textSecondary */
-    --text-muted: #888888; /* app: textMuted */
+    --bg: #ffffff;
+    /* app: background */
+    --bg-soft: #f9f9f9;
+    /* app: backgroundInput (section tint) */
+    --card: #f5f8fa;
+    /* app: backgroundCard */
+    --border: #e0e0e0;
+    /* app: border */
+    --text: #11181c;
+    /* app: text */
+    --text-secondary: #555555;
+    /* app: textSecondary */
+    --text-muted: #888888;
+    /* app: textMuted */
     --shadow: 0 12px 32px rgba(22, 32, 42, 0.09);
 
     --radius: 14px;
@@ -30,25 +37,39 @@
    the OS. The media query is the no-JS fallback: apply dark only when no explicit
    theme has been set. */
 :root[data-theme="dark"] {
-    --bg: #151718; /* app: background */
-    --bg-soft: #252b2d; /* app: backgroundInput (section tint) */
-    --card: #1e2426; /* app: backgroundCard */
-    --border: #2d3438; /* app: border */
-    --text: #ecedee; /* app: text */
-    --text-secondary: #9ba1a6; /* app: textSecondary */
-    --text-muted: #687076; /* app: textMuted */
+    --bg: #151718;
+    /* app: background */
+    --bg-soft: #252b2d;
+    /* app: backgroundInput (section tint) */
+    --card: #1e2426;
+    /* app: backgroundCard */
+    --border: #2d3438;
+    /* app: border */
+    --text: #ecedee;
+    /* app: text */
+    --text-secondary: #9ba1a6;
+    /* app: textSecondary */
+    --text-muted: #687076;
+    /* app: textMuted */
     --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
-        --bg: #151718; /* app: background */
-        --bg-soft: #252b2d; /* app: backgroundInput (section tint) */
-        --card: #1e2426; /* app: backgroundCard */
-        --border: #2d3438; /* app: border */
-        --text: #ecedee; /* app: text */
-        --text-secondary: #9ba1a6; /* app: textSecondary */
-        --text-muted: #687076; /* app: textMuted */
+        --bg: #151718;
+        /* app: background */
+        --bg-soft: #252b2d;
+        /* app: backgroundInput (section tint) */
+        --card: #1e2426;
+        /* app: backgroundCard */
+        --border: #2d3438;
+        /* app: border */
+        --text: #ecedee;
+        /* app: text */
+        --text-secondary: #9ba1a6;
+        /* app: textSecondary */
+        --text-muted: #687076;
+        /* app: textMuted */
         --shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
     }
 }
@@ -271,7 +292,8 @@ a {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: center; /* vertical centering → equal space top & bottom */
+    justify-content: center;
+    /* vertical centering → equal space top & bottom */
     /* Fill the viewport below the 64px sticky nav. svh keeps the centered content
        from jumping on mobile when the URL bar shows/hides; the vh line is a
        fallback for engines without svh. */
@@ -287,7 +309,7 @@ a {
    gated by prefers-reduced-motion. Excludes the floating-words layer, which has
    its own animation. */
 @media (prefers-reduced-motion: no-preference) {
-    .hero > :not(.floating-words) {
+    .hero> :not(.floating-words) {
         animation: hero-in 0.6s ease both;
     }
 }
@@ -676,6 +698,7 @@ a {
     .nav-links .button {
         text-align: center;
         margin-top: 8px;
+        margin-bottom: 8px;
     }
 }
 

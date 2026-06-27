@@ -86,9 +86,8 @@ export const nl: Copy = {
     dictionary: {
         heading: 'Een woordenboek dat jouw taal spreekt',
         paragraphs: [
-            'Zoek een woord op zodra je het tegenkomt. Word Bank toont de definitie, woordsoort en IPA-uitspraak — en laat je het verankeren met de zin waarin je het vond en je eigen notities.',
-            'Woorden betekenen zelden maar één ding, dus elke betekenis wordt in één keer opgehaald. Zoek en kies de definitie die past, met woordsoorten in kleur voor een snel overzicht.',
-            'Opzoekingen draaien op Wiktionary-data via een eigen woordenboekmotor, met ondersteuning voor meer dan honderd talen. Engels en Nederlands zijn nu beschikbaar; meer volgt.',
+            'Woorden betekenen zelden maar één ding. Word Bank haalt elke betekenis op en laat je de juiste kiezen — met woordsoort, IPA-uitspraak en kleurcodering.',
+            'Mogelijk gemaakt door Wiktionary-data, met ondersteuning voor 100+ talen. Engels en Nederlands zijn nu beschikbaar; meer volgt.',
         ],
         chipsAria: 'Beschikbare talen',
         chips: { english: 'Engels', dutch: 'Nederlands', more: 'meer binnenkort' },
