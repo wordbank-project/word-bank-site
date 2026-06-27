@@ -100,7 +100,7 @@ export const en: Copy = {
         chooseOtherAriaPre: 'Choose another definition of ',
         dialogAria: 'Choose a definition',
         searchPlaceholder: 'Search definitions...',
-        emptyPre: 'No definitions match “',
+        emptyPre: 'No definitions match: “',
         emptyPost: '”.',
         close: 'Close',
         definitionsForPre: 'Definitions for: ',
