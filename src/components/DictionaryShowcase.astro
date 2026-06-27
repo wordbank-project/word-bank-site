@@ -119,9 +119,13 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             <h2 class="text-left max-[720px]:text-center">
                 {t.dictionary.heading}
             </h2>
-            {t.dictionary.paragraphs.map((p) => <p class="text-ink-soft">{p}</p>)}
+            {
+                t.dictionary.paragraphs.map((p) => (
+                    <p class="text-ink-soft">{p}</p>
+                ))
+            }
             <div
-                class="mt-2 flex flex-wrap gap-2.5 gap-y-2"
+                class="mt-8 flex flex-wrap gap-2.5 gap-y-2"
                 aria-label={t.dictionary.chipsAria}
             >
                 <span
