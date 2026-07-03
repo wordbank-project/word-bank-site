@@ -97,7 +97,7 @@ export const en: Copy = {
         tryButton: 'Look up',
         tryLoading: 'Looking up…',
         tryError: 'Could not reach the dictionary — please try again.',
-        tryNotFoundPre: 'No English entry found for “',
+        tryNotFoundPre: 'No English entry found for: “',
         tryNotFoundPost: '”.',
         tryHint:
             'In the app, you would now anchor this word with the sentence you found it in and your own notes.',

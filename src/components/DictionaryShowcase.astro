@@ -15,6 +15,11 @@ const t = getCopy(lang);
 // the Sentence/Notes below, which are written for "flourish".
 const WORD = "flourish";
 
+// Example word the "try it" form looks up when submitted with an empty input.
+// The placeholder copy (tryPlaceholder in i18n/{en,nl}.ts) mentions this word —
+// keep them in sync if you change it.
+const TRY_WORD = "petrichor";
+
 type Item = { partOfSpeech: string; definition: string };
 
 // Used if the API is unreachable at build time, so the page always renders.
@@ -148,6 +153,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
         >
             <form
                 data-dict-try
+                data-example-word={TRY_WORD}
                 data-msg-loading={t.dictionary.tryLoading}
                 data-msg-error={t.dictionary.tryError}
                 data-msg-notfound-pre={t.dictionary.tryNotFoundPre}
@@ -677,7 +683,9 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             let busy = false;
             form.addEventListener("submit", async (e) => {
                 e.preventDefault();
-                const q = input.value.trim();
+                // An empty submit looks up the placeholder example word.
+                const q =
+                    input.value.trim() || (form.dataset.exampleWord ?? "");
                 if (!q || busy) return;
                 busy = true;
                 const submit = form.querySelector<HTMLButtonElement>(
