@@ -30,6 +30,7 @@ export interface Copy {
         closeMenu: string; // aria
         theme: { prefix: string; light: string; dark: string; system: string }; // aria pieces
         langSwitch: string; // aria-label on the language toggle (phrased in the other language)
+        skipToContent: string; // keyboard-only skip link
     };
     hero: {
         headlinePre: string;

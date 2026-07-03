@@ -18,22 +18,24 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
 ];
 ---
 
-<!-- TODO: make it interactive -->
-<div class="phone" role="img" aria-label={t.phone.aria}>
+<div class="phone" role="group" aria-label={t.phone.aria}>
     <div class="phone-screen">
         <div class="phone-header">{t.phone.readList}</div>
 
-        <div class="phone-filters">
+        <div class="phone-filters" data-phone-filters>
             {
                 FILTERS.map(({ value, label }) => (
-                    <span
+                    <button
+                        type="button"
+                        data-phone-filter={value}
+                        aria-pressed={value === "all"}
                         class:list={[
                             "phone-pill",
                             { selected: value === "all" },
                         ]}
                     >
                         {label}
-                    </span>
+                    </button>
                 ))
             }
         </div>
@@ -41,7 +43,7 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         <div class="phone-list">
             {
                 MOCK_BOOKS.map((book) => (
-                    <div class="phone-row">
+                    <div class="phone-row" data-status={book.status}>
                         <span
                             class="phone-cover"
                             style={`background-color:${book.coverColor}`}
@@ -77,3 +79,32 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         </div>
     </div>
 </div>
+
+<script>
+    // The status pills work like in the app: tap one to filter the book list.
+    const filters = document.querySelector<HTMLElement>("[data-phone-filters]");
+    if (filters) {
+        const pills = Array.from(
+            filters.querySelectorAll<HTMLButtonElement>("[data-phone-filter]"),
+        );
+        const rows = Array.from(
+            document.querySelectorAll<HTMLElement>(".phone-row[data-status]"),
+        );
+        pills.forEach((pill) =>
+            pill.addEventListener("click", () => {
+                const value = pill.dataset.phoneFilter;
+                pills.forEach((p) => {
+                    const selected = p === pill;
+                    p.classList.toggle("selected", selected);
+                    p.setAttribute("aria-pressed", String(selected));
+                });
+                rows.forEach((row) =>
+                    row.toggleAttribute(
+                        "hidden",
+                        value !== "all" && row.dataset.status !== value,
+                    ),
+                );
+            }),
+        );
+    }
+</script>

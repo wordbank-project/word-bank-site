@@ -2,7 +2,7 @@
 // The full page body, parameterised by locale. Both route files render this:
 // src/pages/index.astro (en) and src/pages/nl/index.astro (nl). Keeping the
 // composition in one place means the two routes stay in sync.
-import type { Lang } from "../i18n";
+import { getCopy, type Lang } from "../i18n";
 import Layout from "../layouts/Layout.astro";
 import Header from "./Header.astro";
 import Hero from "./Hero.astro";
@@ -19,11 +19,13 @@ interface Props {
 }
 
 const { lang } = Astro.props;
+const t = getCopy(lang);
 ---
 
 <Layout lang={lang}>
+    <a href="#main" class="skip-link">{t.nav.skipToContent}</a>
     <Header lang={lang} />
-    <main>
+    <main id="main">
         <Hero lang={lang} />
         <Stats lang={lang} />
         <Features lang={lang} />

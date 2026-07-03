@@ -20,6 +20,7 @@ export const nl: Copy = {
         closeMenu: 'Menu sluiten',
         theme: { prefix: 'Thema', light: 'licht', dark: 'donker', system: 'systeem' },
         langSwitch: 'View in English',
+        skipToContent: 'Direct naar inhoud',
     },
     hero: {
         headlinePre: 'Verander de boeken die je leest in ',

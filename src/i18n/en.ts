@@ -20,6 +20,7 @@ export const en: Copy = {
         closeMenu: 'Close menu',
         theme: { prefix: 'Theme', light: 'light', dark: 'dark', system: 'system' },
         langSwitch: 'Bekijk in het Nederlands',
+        skipToContent: 'Skip to content',
     },
     hero: {
         headlinePre: 'Turn the books you read into ',

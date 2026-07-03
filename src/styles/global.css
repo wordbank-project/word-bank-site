@@ -115,6 +115,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Anchor targets (#features, #faq, …) must not scroll under the 64px sticky
+   nav — reserve the bar height plus a little breathing room. */
+section[id],
+#download {
+    scroll-margin-top: 76px;
+}
+
 body {
     margin: 0;
     font-family: var(--font-sans);
@@ -175,15 +182,71 @@ a {
     transform: none;
 }
 
+/* Staggered reveal: direct children of a [data-stagger] container (feature
+   cards, steps, FAQ items) fade up one after another once their section is
+   revealed. An animation (not a transition) so it never fights the cards'
+   hover transitions. Delays cap at the 8th child — later items animate
+   together. */
+.reveal [data-stagger]>* {
+    opacity: 0;
+}
+
+.reveal.revealed [data-stagger]>* {
+    animation: stagger-in 0.55s ease both;
+}
+
+@keyframes stagger-in {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(2) {
+    animation-delay: 80ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(3) {
+    animation-delay: 160ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(4) {
+    animation-delay: 240ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(5) {
+    animation-delay: 320ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(6) {
+    animation-delay: 400ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(7) {
+    animation-delay: 480ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(n+8) {
+    animation-delay: 560ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
     }
 
-    .reveal {
+    .reveal,
+    .reveal [data-stagger]>*,
+    .reveal.revealed [data-stagger]>* {
         opacity: 1;
         transform: none;
         transition: none;
+        animation: none;
     }
 
     /* No drifting for motion-sensitive users — show static faint words. */
@@ -210,6 +273,11 @@ a {
     background: var(--accent-strong);
 }
 
+.button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
 .button small {
     font-weight: 400;
     opacity: 0.85;
@@ -234,6 +302,25 @@ a {
 /* ------------------------------------------------------------------ */
 /* Nav (sticky bar + mobile dropdown — bespoke, kept as classes)       */
 /* ------------------------------------------------------------------ */
+/* Skip link for keyboard users — visually hidden until focused, then a small
+   pill in the top-left corner above the sticky nav. */
+.skip-link {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+    transform: none;
+}
+
 .nav {
     position: sticky;
     top: 0;
@@ -241,6 +328,13 @@ a {
     background: color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
+    transition: box-shadow 0.25s ease;
+}
+
+/* Once the page scrolls, lift the bar off the content (class set by
+   Header.astro's script). */
+.nav.scrolled {
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.07);
 }
 
 .nav-inner {
@@ -271,6 +365,11 @@ a {
 }
 
 .nav-links a:not(.button):hover {
+    color: var(--accent);
+}
+
+/* Scroll-spy: the link of the section currently in view (set by Header.astro). */
+.nav-links a[aria-current="true"]:not(.button) {
     color: var(--accent);
 }
 
@@ -440,6 +539,7 @@ a {
 .phone-pill {
     flex: 1;
     text-align: center;
+    font-family: inherit;
     font-size: 0.52rem;
     font-weight: 600;
     color: var(--text-muted);
@@ -448,6 +548,18 @@ a {
     border-radius: 6px;
     padding: 4px 2px;
     white-space: nowrap;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.phone-pill:hover:not(.selected) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.phone-pill:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
 }
 
 .phone-pill.selected {
@@ -467,6 +579,12 @@ a {
     gap: 9px;
     padding: 9px 12px;
     border-top: 1px solid var(--border);
+}
+
+/* Rows filtered out by the (interactive) status pills. `display: flex` above
+   would otherwise beat the UA's [hidden] rule. */
+.phone-row[hidden] {
+    display: none;
 }
 
 .phone-cover {
@@ -582,10 +700,18 @@ a {
     color: var(--accent);
     font-size: 1.2rem;
     font-weight: 700;
+    transition: transform 0.2s ease;
 }
 
+/* The + rotates 45° into a × while open. */
 .faq-item[open] summary::after {
-    content: '–';
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.faq-item summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
 }
 
 .faq-item p {
@@ -663,11 +789,6 @@ a {
 /* Responsive (only the bits not handled by utility variants)          */
 /* ------------------------------------------------------------------ */
 @media (max-width: 720px) {
-
-    /* Keep the mobile hero clean — drop the floating words layer. */
-    .floating-words {
-        /* display: none; */
-    }
 
     .nav-toggle {
         display: block;
