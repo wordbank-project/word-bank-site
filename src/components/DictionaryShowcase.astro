@@ -683,10 +683,12 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             let busy = false;
             form.addEventListener("submit", async (e) => {
                 e.preventDefault();
-                // An empty submit looks up the placeholder example word.
+                // An empty submit looks up the placeholder example word —
+                // shown in the field so it's clear what was searched.
                 const q =
                     input.value.trim() || (form.dataset.exampleWord ?? "");
                 if (!q || busy) return;
+                input.value = q;
                 busy = true;
                 const submit = form.querySelector<HTMLButtonElement>(
                     'button[type="submit"]',
