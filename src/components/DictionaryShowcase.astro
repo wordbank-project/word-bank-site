@@ -146,15 +146,56 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
         <div
             class="w-full max-w-105 justify-self-center rounded-[14px] border border-line bg-card p-6.5 shadow-(--shadow)"
         >
+            <form
+                data-dict-try
+                data-msg-loading={t.dictionary.tryLoading}
+                data-msg-error={t.dictionary.tryError}
+                data-msg-notfound-pre={t.dictionary.tryNotFoundPre}
+                data-msg-notfound-post={t.dictionary.tryNotFoundPost}
+                class="mb-4 border-b border-line pb-4"
+            >
+                <label
+                    for="dict-try-input"
+                    class="mb-1.5 block text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted"
+                    >{t.dictionary.tryLabel}</label
+                >
+                <div class="flex gap-2">
+                    <input
+                        id="dict-try-input"
+                        type="search"
+                        maxlength="40"
+                        autocomplete="off"
+                        autocapitalize="none"
+                        spellcheck="false"
+                        placeholder={t.dictionary.tryPlaceholder}
+                        class="min-w-0 flex-1 rounded-[10px] border border-line bg-surface-soft px-3 py-2 text-[0.95rem] text-ink placeholder:text-ink-muted"
+                    />
+                    <button
+                        type="submit"
+                        class="button button-small disabled:opacity-60"
+                    >
+                        {t.dictionary.tryButton}
+                    </button>
+                </div>
+                <p
+                    data-dict-status
+                    role="status"
+                    hidden
+                    class="mt-2 mb-0 text-[0.85rem] text-ink-muted"
+                >
+                </p>
+            </form>
             <div class="flex flex-wrap items-baseline gap-3">
-                <span class="font-display text-[1.4rem] font-bold">{word}</span>
-                {
-                    phonetic && (
-                        <span class="font-mono text-[0.9rem] text-ink-muted">
-                            {phonetic}
-                        </span>
-                    )
-                }
+                <span data-dict-word class="font-display text-[1.4rem] font-bold"
+                    >{word}</span
+                >
+                <span
+                    data-dict-phonetic
+                    class="font-mono text-[0.9rem] text-ink-muted"
+                    hidden={!phonetic}
+                >
+                    {phonetic}
+                </span>
             </div>
             <span id="dict-pos" class={posLabelClass}
                 >{items[0].partOfSpeech}</span
@@ -170,12 +211,15 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                         class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
                         aria-haspopup="dialog"
                         aria-label={`${t.dictionary.chooseOtherAriaPre}${word}`}
+                        data-aria-pre={t.dictionary.chooseOtherAriaPre}
                     >
-                        {t.dictionary.chooseOther} ({items.length}) ›
+                        {t.dictionary.chooseOther} (<span data-dict-count
+                            >{items.length}</span
+                        >) ›
                     </button>
                 )
             }
-            <div class="mt-2.5 border-t border-line pt-2.5">
+            <div class="mt-2.5 border-t border-line pt-2.5" data-dict-example>
                 <span
                     class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted"
                     >{t.dictionary.sentenceLabel}</span
@@ -184,7 +228,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                     “{t.dictionary.demoSentence}”
                 </p>
             </div>
-            <div class="mt-2.5 border-t border-line pt-2.5">
+            <div class="mt-2.5 border-t border-line pt-2.5" data-dict-example>
                 <span
                     class="text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted"
                     >{t.dictionary.notesLabel}</span
@@ -193,6 +237,13 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                     class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft"
                     set:html={t.dictionary.demoNotesHtml}
                 />
+            </div>
+            <!-- Swapped in for the two blocks above after a live lookup — the
+                 baked-in Sentence/Notes are written for the original demo word. -->
+            <div class="mt-2.5 border-t border-line pt-2.5" data-dict-hint hidden>
+                <p class="mt-0.5 mb-0 text-[0.9rem] italic text-ink-muted">
+                    {t.dictionary.tryHint}
+                </p>
             </div>
         </div>
     </div>
@@ -216,7 +267,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 aria-label={t.dictionary.dialogAria}
                 class="relative flex max-h-[70%] w-full max-w-[480px] translate-y-full flex-col overflow-hidden rounded-t-[16px] border border-line bg-surface shadow-(--shadow) transition-transform duration-250"
             >
-                <div class="flex-1 overflow-y-auto">
+                <div class="flex-1 overflow-y-auto" data-dict-list>
                     {groups.map((g) => (
                         <Fragment>
                             <div
@@ -271,7 +322,11 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 </div>
 
                 <div class="flex items-center justify-between gap-3 px-4 pb-2 pt-4">
-                    <span class="truncate text-[1rem] font-bold text-ink">
+                    <span
+                        class="truncate text-[1rem] font-bold text-ink"
+                        data-dict-title
+                        data-pre={t.dictionary.definitionsForPre}
+                    >
                         {t.dictionary.definitionsForPre}
                         {word}
                     </span>
@@ -300,6 +355,8 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 <script>
     import { backDismiss } from "../lib/back-dismiss";
 
+    type Item = { pos: string; definition: string };
+
     const modal = document.getElementById("dict-modal");
     const openBtn = document.getElementById("dict-open");
     const definitionEl = document.getElementById("dict-definition");
@@ -310,10 +367,12 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
         const backdrop = modal.querySelector<HTMLElement>(
             "[data-dict-backdrop]",
         )!;
-        const rows = Array.from(
+        const listEl = modal.querySelector<HTMLElement>("[data-dict-list]")!;
+        // `let` — both are rebuilt when a visitor looks up a new word.
+        let rows = Array.from(
             modal.querySelectorAll<HTMLButtonElement>("[data-dict-row]"),
         );
-        const heads = Array.from(
+        let heads = Array.from(
             modal.querySelectorAll<HTMLElement>("[data-dict-poshead]"),
         );
         const empty = modal.querySelector<HTMLElement>("[data-dict-empty]");
@@ -398,7 +457,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             pushOnOpen();
         };
 
-        const select = (index: number) => {
+        const setSelected = (index: number) => {
             const chosen = rows.find(
                 (r) => Number(r.getAttribute("data-index")) === index,
             );
@@ -428,7 +487,6 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                     !active,
                 );
             });
-            requestClose();
         };
 
         openBtn.addEventListener("click", open);
@@ -436,15 +494,227 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             .querySelector("[data-dict-close]")
             ?.addEventListener("click", requestClose);
         backdrop.addEventListener("click", requestClose);
-        rows.forEach((row) =>
-            row.addEventListener("click", () =>
-                select(Number(row.getAttribute("data-index"))),
-            ),
-        );
+        // Row clicks are delegated to the list: rows are replaced wholesale
+        // when a visitor looks up a new word.
+        listEl.addEventListener("click", (e) => {
+            const row = (
+                e.target as HTMLElement | null
+            )?.closest<HTMLButtonElement>("[data-dict-row]");
+            if (!row) return;
+            setSelected(Number(row.getAttribute("data-index")));
+            requestClose();
+        });
         search?.addEventListener("input", applyFilter);
         document.addEventListener("keydown", (e) => {
             if (e.key === "Escape" && !modal.classList.contains("hidden"))
                 requestClose();
         });
+
+        // ---- Live lookup: type any English word, same API as the app's
+        //      English path (and the build-time demo word above). ----
+        const form = document.querySelector<HTMLFormElement>("[data-dict-try]");
+        const input =
+            document.querySelector<HTMLInputElement>("#dict-try-input");
+        const status = document.querySelector<HTMLElement>(
+            "[data-dict-status]",
+        );
+        const wordEl = document.querySelector<HTMLElement>("[data-dict-word]");
+        const phoneticEl = document.querySelector<HTMLElement>(
+            "[data-dict-phonetic]",
+        );
+        const countEl = document.querySelector<HTMLElement>(
+            "[data-dict-count]",
+        );
+        const titleEl = modal.querySelector<HTMLElement>("[data-dict-title]");
+        const examples = Array.from(
+            document.querySelectorAll<HTMLElement>("[data-dict-example]"),
+        );
+        const hint = document.querySelector<HTMLElement>("[data-dict-hint]");
+
+        if (form && input && wordEl) {
+            const setStatus = (text: string) => {
+                if (!status) return;
+                status.textContent = text;
+                status.hidden = !text;
+            };
+
+            const makeHead = (pos: string): HTMLElement => {
+                const div = document.createElement("div");
+                div.setAttribute("data-dict-poshead", "");
+                div.setAttribute("data-pos", pos);
+                div.className = `px-4 pt-3.5 pb-1 text-[0.7rem] font-bold uppercase tracking-[0.06em] ${posClass(pos)}`;
+                div.textContent = pos;
+                return div;
+            };
+
+            const makeRow = (
+                index: number,
+                pos: string,
+                definition: string,
+            ): HTMLButtonElement => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.setAttribute("data-dict-row", "");
+                btn.setAttribute("data-index", String(index));
+                btn.setAttribute("data-pos", pos);
+                btn.className =
+                    "flex w-full items-start gap-2 border-t border-line px-4 py-3 text-left";
+                const text = document.createElement("span");
+                text.className =
+                    "dict-def-text flex-1 text-[0.95rem] leading-5 text-ink";
+                text.textContent = definition;
+                const check = document.createElement("span");
+                check.className =
+                    "dict-check text-[0.9rem] font-bold text-accent";
+                check.hidden = true;
+                check.textContent = "✓";
+                btn.append(text, check);
+                return btn;
+            };
+
+            // Replace the sheet's rows, grouped by part of speech in order of
+            // first appearance — mirrors the build-time grouping above.
+            const renderRows = (items: Item[]) => {
+                heads.forEach((h) => h.remove());
+                rows.forEach((r) => r.remove());
+                heads = [];
+                rows = [];
+                const groups: { pos: string; items: typeof rows }[] = [];
+                items.forEach((it, index) => {
+                    let group = groups.find((g) => g.pos === it.pos);
+                    if (!group) {
+                        group = { pos: it.pos, items: [] };
+                        groups.push(group);
+                        const head = makeHead(it.pos);
+                        heads.push(head);
+                        listEl.insertBefore(head, empty);
+                    }
+                    const row = makeRow(index, it.pos, it.definition);
+                    group.items.push(row);
+                    rows.push(row);
+                });
+                // Rows go after their group head; heads were inserted in
+                // group order, so appending rows right after creation would
+                // interleave groups — reinsert per group instead.
+                for (const g of groups) {
+                    const head = heads.find(
+                        (h) => h.getAttribute("data-pos") === g.pos,
+                    )!;
+                    let anchor: ChildNode | null = head.nextSibling;
+                    for (const row of g.items) {
+                        listEl.insertBefore(row, anchor);
+                        anchor = row.nextSibling;
+                    }
+                }
+            };
+
+            // Same flatten/dedupe/cap the build-time lookup applies.
+            const parseEntries = (
+                data: unknown,
+            ): { word: string; phonetic: string; items: Item[] } => {
+                const entries: any[] = Array.isArray(data) ? data : [];
+                const flat: Item[] = [];
+                for (const entry of entries) {
+                    for (const meaning of entry?.meanings ?? []) {
+                        for (const def of meaning?.definitions ?? []) {
+                            if (def?.definition) {
+                                flat.push({
+                                    pos: String(
+                                        meaning.partOfSpeech ?? "",
+                                    ).toLowerCase(),
+                                    definition: String(def.definition),
+                                });
+                            }
+                        }
+                    }
+                }
+                const seen = new Set<string>();
+                const items = flat
+                    .filter((it) => {
+                        const id = `${it.pos}|${it.definition}`;
+                        if (seen.has(id)) return false;
+                        seen.add(id);
+                        return true;
+                    })
+                    .slice(0, 12);
+                return {
+                    word: String(entries[0]?.word ?? ""),
+                    phonetic: String(
+                        entries.find((e) => e?.phonetic)?.phonetic ?? "",
+                    ),
+                    items,
+                };
+            };
+
+            const showWord = (
+                word: string,
+                phonetic: string,
+                items: Item[],
+            ) => {
+                wordEl.textContent = word;
+                if (phoneticEl) {
+                    phoneticEl.textContent = phonetic;
+                    phoneticEl.hidden = !phonetic;
+                }
+                renderRows(items);
+                setSelected(0);
+                if (countEl) countEl.textContent = String(items.length);
+                openBtn.hidden = items.length < 2;
+                openBtn.setAttribute(
+                    "aria-label",
+                    `${openBtn.dataset.ariaPre ?? ""}${word}`,
+                );
+                if (titleEl)
+                    titleEl.textContent = `${titleEl.dataset.pre ?? ""}${word}`;
+                // The baked-in Sentence/Notes were written for the original
+                // demo word — swap them for the "in the app you'd…" hint.
+                examples.forEach((el) => (el.hidden = true));
+                if (hint) hint.hidden = false;
+                if (search) search.value = "";
+                applyFilter();
+            };
+
+            let busy = false;
+            form.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                const q = input.value.trim();
+                if (!q || busy) return;
+                busy = true;
+                const submit = form.querySelector<HTMLButtonElement>(
+                    'button[type="submit"]',
+                );
+                if (submit) submit.disabled = true;
+                setStatus(form.dataset.msgLoading ?? "…");
+                try {
+                    const res = await fetch(
+                        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(q)}`,
+                    );
+                    if (res.status === 404) {
+                        setStatus(
+                            `${form.dataset.msgNotfoundPre ?? ""}${q}${form.dataset.msgNotfoundPost ?? ""}`,
+                        );
+                        return;
+                    }
+                    if (!res.ok) {
+                        setStatus(form.dataset.msgError ?? "");
+                        return;
+                    }
+                    const parsed = parseEntries(await res.json());
+                    if (parsed.items.length === 0) {
+                        setStatus(
+                            `${form.dataset.msgNotfoundPre ?? ""}${q}${form.dataset.msgNotfoundPost ?? ""}`,
+                        );
+                        return;
+                    }
+                    showWord(parsed.word || q, parsed.phonetic, parsed.items);
+                    setStatus("");
+                } catch {
+                    setStatus(form.dataset.msgError ?? "");
+                } finally {
+                    busy = false;
+                    if (submit) submit.disabled = false;
+                }
+            });
+        }
     }
 </script>

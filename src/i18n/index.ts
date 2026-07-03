@@ -50,6 +50,14 @@ export interface Copy {
         paragraphs: string[];
         chipsAria: string;
         chips: { english: string; dutch: string; more: string };
+        tryLabel: string; // label above the live-lookup input in the demo card
+        tryPlaceholder: string;
+        tryButton: string;
+        tryLoading: string;
+        tryError: string;
+        tryNotFoundPre: string; // "No entry found for “" — query — tryNotFoundPost
+        tryNotFoundPost: string;
+        tryHint: string; // shown instead of the baked-in Sentence/Notes after a live lookup
         sentenceLabel: string;
         notesLabel: string;
         demoSentence: string;
