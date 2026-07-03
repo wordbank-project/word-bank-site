@@ -1,5 +1,9 @@
 ---
 import "../styles/global.css";
+// Display serif for headlines — self-hosted via Fontsource (subsetted woff2s
+// with unicode-range, font-display: swap). Mapped to --font-display in
+// global.css; body text stays on the system sans stack.
+import "@fontsource-variable/fraunces";
 import { getCopy, type Lang } from "../i18n";
 
 interface Props {
@@ -56,6 +60,7 @@ const faqSchema = {
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="canonical" href={canonical} />
+        <link rel="sitemap" href="/sitemap-index.xml" />
         <!-- Locale alternates so search engines pair the English and Dutch pages. -->
         <link rel="alternate" hreflang="en" href={enUrl} />
         <link rel="alternate" hreflang="nl" href={nlUrl} />

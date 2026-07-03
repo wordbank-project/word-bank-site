@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
+import sitemap from '@astrojs/sitemap';
 
 import netlify from '@astrojs/netlify';
 
@@ -12,6 +13,17 @@ export default defineConfig({
   // localhost) for link previews. Netlify injects `URL` (production address) at
   // build time; fall back to the dev server origin locally.
   site: process.env.URL || 'http://localhost:4321',
+
+  // sitemap-index.xml + per-page entries with hreflang alternates, so search
+  // engines pair / (en) and /nl/ the same way the <head> alternates do.
+  integrations: [
+    sitemap({
+      i18n: {
+        defaultLocale: 'en',
+        locales: { en: 'en', nl: 'nl' },
+      },
+    }),
+  ],
 
   vite: {
       plugins: [tailwindcss()],

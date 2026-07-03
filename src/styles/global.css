@@ -102,10 +102,13 @@
 
     /* Font roles mirror the app's Fonts.web (word-bank/src/styles/global.ts):
        sans for UI, serif for book titles, mono for IPA/phonetics. Defining
-       them here gives the font-sans/font-serif/font-mono utilities. */
+       them here gives the font-sans/font-serif/font-mono utilities. The
+       display face (headlines, dictionary headwords) is Fraunces, a warm
+       serif fitting the reading theme — self-hosted, imported in Layout.astro. */
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-serif: Georgia, 'Times New Roman', serif;
     --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
 }
 
 /* ------------------------------------------------------------------ */
@@ -134,13 +137,26 @@ body {
 h1,
 h2,
 h3 {
+    font-family: var(--font-display);
     line-height: 1.2;
     margin: 0 0 0.5em;
 }
 
+h1 {
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+}
+
 h2 {
     font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 620;
+    letter-spacing: -0.01em;
     text-align: center;
+}
+
+h3 {
+    font-weight: 600;
 }
 
 p {
@@ -403,6 +419,37 @@ a {
     padding-block: clamp(1.5rem, 4vh, 4rem);
 }
 
+/* Soft accent glows behind the hero — two offset radial washes give the flat
+   background some depth. Token-driven (color-mix off --accent) so they sit
+   right in both themes; painted before the floating-words layer, so words and
+   copy stay on top. */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(56rem 34rem at 82% 12%,
+            color-mix(in srgb, var(--accent) 13%, transparent),
+            transparent 70%),
+        radial-gradient(44rem 30rem at 4% 92%,
+            color-mix(in srgb, var(--accent) 8%, transparent),
+            transparent 70%);
+}
+
+/* Gradient headline accent ("vocabulary you keep") — accent blue running into
+   a brighter cyan-leaning tint, clipped to the text. */
+.text-gradient-accent {
+    background: linear-gradient(94deg,
+            var(--accent-strong),
+            var(--accent) 45%,
+            color-mix(in srgb, var(--accent) 55%, #22d3ee));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
 /* Hero entrance: a one-time fade-up on load. CSS-only (runs without JS, so it
    never leaves the above-the-fold content hidden like the JS .reveal would) and
    gated by prefers-reduced-motion. Excludes the floating-words layer, which has
@@ -487,8 +534,9 @@ a {
 }
 
 .stat-value {
+    font-family: var(--font-display);
     font-size: clamp(1.8rem, 4vw, 2.6rem);
-    font-weight: 700;
+    font-weight: 650;
     line-height: 1.1;
 }
 
