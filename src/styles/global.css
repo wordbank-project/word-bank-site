@@ -168,6 +168,10 @@ a {
     text-decoration: none;
 }
 
+.error-message {
+    margin-top: 0.375rem;
+}
+
 /* Reused layout primitives (kept as classes — referenced from many components).
    NOTE: do not add a `.container` class — `container` is a reserved Tailwind
    utility and the two collide. The page wrapper is `mx-auto max-w-270 px-6`. */
@@ -448,6 +452,13 @@ a {
     background-clip: text;
     color: transparent;
     -webkit-text-fill-color: transparent;
+}
+
+/* Links inside the gradient headline: a color utility can't show through the
+   transparent clipped text, so restore a solid fill in the site's usual hover
+   color (accent-strong, same as .button:hover). */
+.text-gradient-accent a:hover {
+    -webkit-text-fill-color: var(--accent-strong);
 }
 
 /* Hero entrance: a one-time fade-up on load. CSS-only (runs without JS, so it

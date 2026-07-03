@@ -187,13 +187,14 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                     data-dict-status
                     role="status"
                     hidden
-                    class="mt-2 mb-0 text-[0.85rem] text-ink-muted"
+                    class="error-message text-[0.85rem] text-ink-muted"
                 >
                 </p>
             </form>
             <div class="flex flex-wrap items-baseline gap-3">
-                <span data-dict-word class="font-display text-[1.4rem] font-bold"
-                    >{word}</span
+                <span
+                    data-dict-word
+                    class="font-display text-[1.4rem] font-bold">{word}</span
                 >
                 <span
                     data-dict-phonetic
@@ -214,14 +215,13 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                     <button
                         id="dict-open"
                         type="button"
-                        class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:saturate-200"
+                        class="mt-2 inline-block cursor-pointer text-[0.8rem] font-semibold text-accent transition-colors hover:text-accent-strong"
                         aria-haspopup="dialog"
                         aria-label={`${t.dictionary.chooseOtherAriaPre}${word}`}
                         data-aria-pre={t.dictionary.chooseOtherAriaPre}
                     >
-                        {t.dictionary.chooseOther} (<span data-dict-count
-                            >{items.length}</span
-                        >) ›
+                        {t.dictionary.chooseOther}
+                        <span data-dict-count>({items.length})</span> ›
                     </button>
                 )
             }
@@ -246,7 +246,11 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             </div>
             <!-- Swapped in for the two blocks above after a live lookup — the
                  baked-in Sentence/Notes are written for the original demo word. -->
-            <div class="mt-2.5 border-t border-line pt-2.5" data-dict-hint hidden>
+            <div
+                class="mt-2.5 border-t border-line pt-2.5"
+                data-dict-hint
+                hidden
+            >
                 <p class="mt-0.5 mb-0 text-[0.9rem] italic text-ink-muted">
                     {t.dictionary.tryHint}
                 </p>
@@ -521,16 +525,14 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
         const form = document.querySelector<HTMLFormElement>("[data-dict-try]");
         const input =
             document.querySelector<HTMLInputElement>("#dict-try-input");
-        const status = document.querySelector<HTMLElement>(
-            "[data-dict-status]",
-        );
+        const status =
+            document.querySelector<HTMLElement>("[data-dict-status]");
         const wordEl = document.querySelector<HTMLElement>("[data-dict-word]");
         const phoneticEl = document.querySelector<HTMLElement>(
             "[data-dict-phonetic]",
         );
-        const countEl = document.querySelector<HTMLElement>(
-            "[data-dict-count]",
-        );
+        const countEl =
+            document.querySelector<HTMLElement>("[data-dict-count]");
         const titleEl = modal.querySelector<HTMLElement>("[data-dict-title]");
         const examples = Array.from(
             document.querySelectorAll<HTMLElement>("[data-dict-example]"),
@@ -664,7 +666,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 }
                 renderRows(items);
                 setSelected(0);
-                if (countEl) countEl.textContent = String(items.length);
+                if (countEl) countEl.textContent = `(${items.length})`;
                 openBtn.hidden = items.length < 2;
                 openBtn.setAttribute(
                     "aria-label",
