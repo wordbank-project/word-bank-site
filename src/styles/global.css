@@ -269,6 +269,11 @@ a {
         animation: none;
     }
 
+    /* FAQ answers snap open/closed instead of animating. */
+    .faq-item::details-content {
+        transition: none;
+    }
+
     /* No drifting for motion-sensitive users — show static faint words. */
     .floating-word {
         animation: none;
@@ -736,6 +741,24 @@ a {
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px 20px;
+    /* Lets block-size transition to/from the `auto` keyword below. */
+    interpolate-size: allow-keywords;
+}
+
+/* Smoothly expand/collapse the answer. Progressive enhancement: browsers
+   without ::details-content / interpolate-size simply snap open as before.
+   The content-visibility transition (allow-discrete) keeps the answer
+   visible while the close animation runs. */
+.faq-item::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+        block-size 0.28s ease,
+        content-visibility 0.28s allow-discrete;
+}
+
+.faq-item[open]::details-content {
+    block-size: auto;
 }
 
 .faq-item summary {
