@@ -100,7 +100,7 @@ export const nl: Copy = {
         tryNotFoundPre: 'Geen Engelse vermelding gevonden voor “',
         tryNotFoundPost: '”.',
         tryHint:
-            'In de app zou je dit woord nu verankeren met de zin waarin je het tegenkwam en je eigen notities.',
+            'In de app zou je dit woord nu opslaan met de zin waarin je het tegenkwam en je eigen persoonlijke notities toevoegen.',
         sentenceLabel: 'Zin',
         notesLabel: 'Notities',
         demoSentence: 'Ze ondertekende de brief met een sierlijke pennenstreek.',

@@ -80,7 +80,7 @@ export const en: Copy = {
             {
                 title: 'Add words as you read',
                 description:
-                    'Hit a word you do not know? Type it in, pick the definition that fits, and anchor it with your own sentence and notes.',
+                    'Hit a word you do not know? Type it in, pick the definition that fits, and save it with your own sentence and notes.',
             },
         ],
     },
@@ -100,7 +100,7 @@ export const en: Copy = {
         tryNotFoundPre: 'No English entry found for: “',
         tryNotFoundPost: '”.',
         tryHint:
-            'In the app, you would now anchor this word with the sentence you found it in and your own notes.',
+            'In the app, you would now save this word with the sentence you found it in and add your own personal notes.',
         sentenceLabel: 'Sentence',
         notesLabel: 'Notes',
         demoSentence: 'She ended the letter with a flourish of the pen.',
