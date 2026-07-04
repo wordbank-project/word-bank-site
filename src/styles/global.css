@@ -459,11 +459,78 @@ a {
     -webkit-text-fill-color: transparent;
 }
 
-/* Links inside the gradient headline: a color utility can't show through the
-   transparent clipped text, so restore a solid fill in the site's usual hover
-   color (accent-strong, same as .button:hover). */
+/* Links inside the gradient headline ("vocabulary" → #dictionary) need a
+   visible click affordance: a tinted underline plus a soft accent halo that
+   breathes behind the word (on ::before, opacity-only animation).
+   IMPORTANT: the link paints its own gradient. Relying on the parent span's
+   background-clip:text fails once the link is positioned/filtered/layerized —
+   the clipped background stops reaching it and the word renders invisible. */
+.text-gradient-accent a {
+    position: relative;
+    background: linear-gradient(94deg,
+            var(--accent-strong),
+            var(--accent) 45%,
+            color-mix(in srgb, var(--accent) 55%, #22d3ee));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.14em;
+    /* Crossfade gradient → solid fill (and back) instead of snapping. */
+    transition: -webkit-text-fill-color 0.25s ease,
+        text-decoration-color 0.25s ease;
+}
+
+.text-gradient-accent a::before {
+    content: '';
+    position: absolute;
+    inset: -0.25em -0.35em;
+    z-index: -1;
+    border-radius: 999px;
+    background: radial-gradient(closest-side,
+            color-mix(in srgb, var(--accent) 22%, transparent),
+            transparent);
+    pointer-events: none;
+    animation: hero-link-glow 3.4s ease-in-out infinite;
+    /* Hover removes the animation; this eases from the current pulse
+       opacity to the steady hover strength instead of jumping. */
+    transition: opacity 0.3s ease;
+}
+
+@keyframes hero-link-glow {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Hover: a color utility can't show through the transparent clipped text, so
+   restore a solid fill in the site's usual hover color (accent-strong, same
+   as .button:hover); the halo holds steady at full strength. */
 .text-gradient-accent a:hover {
     -webkit-text-fill-color: var(--accent-strong);
+    text-decoration-color: var(--accent-strong);
+}
+
+.text-gradient-accent a:hover::before {
+    animation: none;
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    /* Static halo — the affordance stays, the motion goes. */
+    .text-gradient-accent a::before {
+        animation: none;
+        opacity: 0.6;
+    }
 }
 
 /* Hero entrance: a one-time fade-up on load. CSS-only (runs without JS, so it
