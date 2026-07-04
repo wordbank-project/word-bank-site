@@ -90,6 +90,12 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         const rows = Array.from(
             document.querySelectorAll<HTMLElement>(".phone-row[data-status]"),
         );
+        // Freeze the list at its full (unfiltered) height so picking a filter
+        // with fewer books doesn't shrink the phone.
+        const list = document.querySelector<HTMLElement>(".phone-list");
+        if (list) {
+            list.style.minHeight = `${list.offsetHeight}px`;
+        }
         pills.forEach((pill) =>
             pill.addEventListener("click", () => {
                 const value = pill.dataset.phoneFilter;
