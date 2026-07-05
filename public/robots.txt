@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://word-bank-vault.netlify.app/sitemap-index.xml

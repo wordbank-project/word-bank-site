@@ -10,6 +10,10 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getCopy(lang);
+
+// The badges line ("Free during beta · No account · Works offline") becomes
+// individual check-marked chips — split on the separator the copy already uses.
+const badges = t.hero.badges.split("·").map((b) => b.trim());
 ---
 
 <section id="top" class="hero">
@@ -19,8 +23,8 @@ const t = getCopy(lang);
     >
         <div>
             <h1 class="text-[clamp(2rem,5vw,3.1rem)]">
-                {t.hero.headlinePre}<span class="text-accent"
-                    ><a class="hover:saturate-200" href="#dictionary"
+                {t.hero.headlinePre}<span class="text-gradient-accent"
+                    ><a href="#dictionary"
                         >{t.hero.headlineLink}</a
                     >{t.hero.headlinePost}</span
                 >
@@ -28,9 +32,27 @@ const t = getCopy(lang);
             <p class="max-w-130 text-[1.1rem] text-ink-soft">
                 <span class="italic">Word Bank</span>{t.hero.sub}
             </p>
-            <p class="mt-4 text-[0.9rem] text-ink-muted">
-                {t.hero.badges}
-            </p>
+            <ul class="m-0 mt-4 flex list-none flex-wrap gap-2 p-0">
+                {
+                    badges.map((badge) => (
+                        <li class="inline-flex items-center gap-1.5 rounded-full border border-line bg-surface-soft px-3 py-1 text-[0.8rem] font-medium text-ink-soft">
+                            <svg
+                                class="h-3.5 w-3.5 text-accent"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="2.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                aria-hidden="true"
+                            >
+                                <path d="m4 12.5 5 5L20 6.5" />
+                            </svg>
+                            {badge}
+                        </li>
+                    ))
+                }
+            </ul>
             <div id="download" class="my-7 flex flex-wrap gap-3.5">
                 <a class="button" href="#">
                     {t.hero.downloadAndroid} <small>{t.hero.androidBeta}</small>

@@ -19,7 +19,8 @@ export const nl: Copy = {
         openMenu: 'Menu openen',
         closeMenu: 'Menu sluiten',
         theme: { prefix: 'Thema', light: 'licht', dark: 'donker', system: 'systeem' },
-        langSwitch: 'View in English',
+        language: { label: 'Taal wijzigen', search: 'Zoek een taal...', noResults: 'Geen talen gevonden' },
+        skipToContent: 'Direct naar inhoud',
     },
     hero: {
         headlinePre: 'Verander de boeken die je leest in ',
@@ -87,10 +88,19 @@ export const nl: Copy = {
         heading: 'Een woordenboek dat jouw taal spreekt',
         paragraphs: [
             'Woorden betekenen zelden maar één ding. Word Bank haalt elke betekenis op en laat je de juiste kiezen — met woordsoort, IPA-uitspraak en kleurcodering.',
-            'Mogelijk gemaakt door Wiktionary-data, met ondersteuning voor 100+ talen. Engels en Nederlands zijn nu beschikbaar; meer volgt.',
+            'Mogelijk gemaakt door Wiktionary-data, met ondersteuning voor 100+ talen. Engels, Nederlands en Frans zijn nu beschikbaar; meer volgt.',
         ],
         chipsAria: 'Beschikbare talen',
-        chips: { english: 'Engels', dutch: 'Nederlands', more: 'meer binnenkort' },
+        chips: { names: { en: 'Engels', nl: 'Nederlands', fr: 'Frans' }, more: 'meer binnenkort' },
+        tryLabel: 'Probeer het — zoek een Engels woord op',
+        tryPlaceholder: 'bv. petrichor',
+        tryButton: 'Zoek op',
+        tryLoading: 'Bezig met opzoeken…',
+        tryError: 'Kon het woordenboek niet bereiken — probeer het opnieuw.',
+        tryNotFoundPre: 'Geen Engelse vermelding gevonden voor “',
+        tryNotFoundPost: '”.',
+        tryHint:
+            'In de app zou je dit woord nu opslaan met de zin waarin je het tegenkwam en je eigen persoonlijke notities toevoegen.',
         sentenceLabel: 'Zin',
         notesLabel: 'Notities',
         demoSentence: 'Ze ondertekende de brief met een sierlijke pennenstreek.',
@@ -120,7 +130,7 @@ export const nl: Copy = {
             {
                 question: 'Welke talen worden ondersteund?',
                 answer:
-                    'De Engelse en Nederlandse woordenboeken zijn vandaag beschikbaar. De woordenboekmotor draait op Wiktionary-data met 100+ talen, dus er volgen er meer.',
+                    'De Engelse, Nederlandse en Franse woordenboeken zijn vandaag beschikbaar. De woordenboekmotor draait op Wiktionary-data met 100+ talen, dus er volgen er meer.',
             },
             {
                 question: 'Waar worden mijn gegevens bewaard?',

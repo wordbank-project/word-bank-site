@@ -13,10 +13,10 @@ const t = getCopy(lang);
 <Section id="how-it-works">
     <h2>{t.howItWorks.heading}</h2>
     <p class="section-sub">{t.howItWorks.sub}</p>
-    <ol class="m-0 grid list-none grid-cols-3 gap-5.5 p-0 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1">
+    <ol class="m-0 grid list-none grid-cols-3 gap-5.5 p-0 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1" data-stagger>
         {
             t.howItWorks.steps.map(({ title, description }, i) => (
-                <li class="rounded-[14px] border border-line bg-card p-6.5">
+                <li class="rounded-[14px] border border-line bg-card p-6.5 transition-[translate,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-(--shadow) motion-reduce:hover:translate-y-0">
                     <span class="mb-3.5 inline-flex h-8.5 w-8.5 items-center justify-center rounded-full bg-accent font-bold text-white">
                         {i + 1}
                     </span>

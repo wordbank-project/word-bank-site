@@ -19,7 +19,8 @@ export const en: Copy = {
         openMenu: 'Open menu',
         closeMenu: 'Close menu',
         theme: { prefix: 'Theme', light: 'light', dark: 'dark', system: 'system' },
-        langSwitch: 'Bekijk in het Nederlands',
+        language: { label: 'Change language', search: 'Search language...', noResults: 'No languages found' },
+        skipToContent: 'Skip to content',
     },
     hero: {
         headlinePre: 'Turn the books you read into ',
@@ -79,7 +80,7 @@ export const en: Copy = {
             {
                 title: 'Add words as you read',
                 description:
-                    'Hit a word you do not know? Type it in, pick the definition that fits, and anchor it with your own sentence and notes.',
+                    'Hit a word you do not know? Type it in, pick the definition that fits, and save it with your own sentence and notes.',
             },
         ],
     },
@@ -87,10 +88,19 @@ export const en: Copy = {
         heading: 'A dictionary that speaks your language',
         paragraphs: [
             'Words rarely mean just one thing. Word Bank fetches every meaning and lets you pick the right one — with part of speech, IPA pronunciation, and colour-coding.',
-            'Powered by Wiktionary data with support for 100+ languages. English and Dutch are live today; more on the way.',
+            'Powered by Wiktionary data with support for 100+ languages. English, Dutch, and French are live today; more on the way.',
         ],
         chipsAria: 'Available languages',
-        chips: { english: 'English', dutch: 'Nederlands', more: 'more soon' },
+        chips: { names: { en: 'English', nl: 'Dutch', fr: 'French' }, more: 'more soon' },
+        tryLabel: 'Try it — look up any English word',
+        tryPlaceholder: 'e.g. petrichor',
+        tryButton: 'Look up',
+        tryLoading: 'Looking up…',
+        tryError: 'Could not reach the dictionary — please try again.',
+        tryNotFoundPre: 'No English entry found for: “',
+        tryNotFoundPost: '”.',
+        tryHint:
+            'In the app, you would now save this word with the sentence you found it in and add your own personal notes.',
         sentenceLabel: 'Sentence',
         notesLabel: 'Notes',
         demoSentence: 'She ended the letter with a flourish of the pen.',
@@ -120,7 +130,7 @@ export const en: Copy = {
             {
                 question: 'Which languages are supported?',
                 answer:
-                    'English and Dutch dictionaries are live today. The dictionary engine is built on Wiktionary data covering 100+ languages, so more are on the way.',
+                    'English, Dutch, and French dictionaries are live today. The dictionary engine is built on Wiktionary data covering 100+ languages, so more are on the way.',
             },
             {
                 question: 'Where is my data stored?',

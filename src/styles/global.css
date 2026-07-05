@@ -102,10 +102,13 @@
 
     /* Font roles mirror the app's Fonts.web (word-bank/src/styles/global.ts):
        sans for UI, serif for book titles, mono for IPA/phonetics. Defining
-       them here gives the font-sans/font-serif/font-mono utilities. */
+       them here gives the font-sans/font-serif/font-mono utilities. The
+       display face (headlines, dictionary headwords) is Fraunces, a warm
+       serif fitting the reading theme — self-hosted, imported in Layout.astro. */
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
     --font-serif: Georgia, 'Times New Roman', serif;
     --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
 }
 
 /* ------------------------------------------------------------------ */
@@ -113,6 +116,13 @@
 /* ------------------------------------------------------------------ */
 html {
     scroll-behavior: smooth;
+}
+
+/* Anchor targets (#features, #faq, …) must not scroll under the 64px sticky
+   nav — reserve the bar height plus a little breathing room. */
+section[id],
+#download {
+    scroll-margin-top: 76px;
 }
 
 body {
@@ -127,13 +137,26 @@ body {
 h1,
 h2,
 h3 {
+    font-family: var(--font-display);
     line-height: 1.2;
     margin: 0 0 0.5em;
 }
 
+h1 {
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    line-height: 1.12;
+}
+
 h2 {
     font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    font-weight: 620;
+    letter-spacing: -0.01em;
     text-align: center;
+}
+
+h3 {
+    font-weight: 600;
 }
 
 p {
@@ -143,6 +166,10 @@ p {
 a {
     color: var(--accent);
     text-decoration: none;
+}
+
+.error-message {
+    margin-top: 0.375rem;
 }
 
 /* Reused layout primitives (kept as classes — referenced from many components).
@@ -175,14 +202,75 @@ a {
     transform: none;
 }
 
+/* Staggered reveal: direct children of a [data-stagger] container (feature
+   cards, steps, FAQ items) fade up one after another once their section is
+   revealed. An animation (not a transition) so it never fights the cards'
+   hover transitions. Delays cap at the 8th child — later items animate
+   together. */
+.reveal [data-stagger]>* {
+    opacity: 0;
+}
+
+.reveal.revealed [data-stagger]>* {
+    animation: stagger-in 0.55s ease both;
+}
+
+@keyframes stagger-in {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(2) {
+    animation-delay: 80ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(3) {
+    animation-delay: 160ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(4) {
+    animation-delay: 240ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(5) {
+    animation-delay: 320ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(6) {
+    animation-delay: 400ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(7) {
+    animation-delay: 480ms;
+}
+
+.reveal.revealed [data-stagger]>*:nth-child(n+8) {
+    animation-delay: 560ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
     html {
         scroll-behavior: auto;
     }
 
-    .reveal {
+    .reveal,
+    .reveal [data-stagger]>*,
+    .reveal.revealed [data-stagger]>* {
         opacity: 1;
         transform: none;
+        transition: none;
+        animation: none;
+    }
+
+    /* FAQ answers snap open/closed instead of animating. */
+    .faq-item::details-content {
         transition: none;
     }
 
@@ -210,6 +298,11 @@ a {
     background: var(--accent-strong);
 }
 
+.button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
 .button small {
     font-weight: 400;
     opacity: 0.85;
@@ -234,6 +327,25 @@ a {
 /* ------------------------------------------------------------------ */
 /* Nav (sticky bar + mobile dropdown — bespoke, kept as classes)       */
 /* ------------------------------------------------------------------ */
+/* Skip link for keyboard users — visually hidden until focused, then a small
+   pill in the top-left corner above the sticky nav. */
+.skip-link {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    transform: translateY(-200%);
+}
+
+.skip-link:focus {
+    transform: none;
+}
+
 .nav {
     position: sticky;
     top: 0;
@@ -241,6 +353,13 @@ a {
     background: color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border);
+    transition: box-shadow 0.25s ease;
+}
+
+/* Once the page scrolls, lift the bar off the content (class set by
+   Header.astro's script). */
+.nav.scrolled {
+    box-shadow: 0 6px 24px rgb(0 0 0 / 0.07);
 }
 
 .nav-inner {
@@ -274,6 +393,11 @@ a {
     color: var(--accent);
 }
 
+/* Scroll-spy: the link of the section currently in view (set by Header.astro). */
+.nav-links a[aria-current="true"]:not(.button) {
+    color: var(--accent);
+}
+
 .nav-toggle {
     display: none;
     background: none;
@@ -302,6 +426,111 @@ a {
     /* Breathing room on short (e.g. landscape) screens; vh-based so it still
        scales — no fixed layout px. */
     padding-block: clamp(1.5rem, 4vh, 4rem);
+}
+
+/* Soft accent glows behind the hero — two offset radial washes give the flat
+   background some depth. Token-driven (color-mix off --accent) so they sit
+   right in both themes; painted before the floating-words layer, so words and
+   copy stay on top. */
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(56rem 34rem at 82% 12%,
+            color-mix(in srgb, var(--accent) 13%, transparent),
+            transparent 70%),
+        radial-gradient(44rem 30rem at 4% 92%,
+            color-mix(in srgb, var(--accent) 8%, transparent),
+            transparent 70%);
+}
+
+/* Gradient headline accent ("vocabulary you keep") — accent blue running into
+   a brighter cyan-leaning tint, clipped to the text. */
+.text-gradient-accent {
+    background: linear-gradient(94deg,
+            var(--accent-strong),
+            var(--accent) 45%,
+            color-mix(in srgb, var(--accent) 55%, #22d3ee));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Links inside the gradient headline ("vocabulary" → #dictionary) need a
+   visible click affordance: a tinted underline plus a soft accent halo that
+   breathes behind the word (on ::before, opacity-only animation).
+   IMPORTANT: the link paints its own gradient. Relying on the parent span's
+   background-clip:text fails once the link is positioned/filtered/layerized —
+   the clipped background stops reaching it and the word renders invisible. */
+.text-gradient-accent a {
+    position: relative;
+    background: linear-gradient(94deg,
+            var(--accent-strong),
+            var(--accent) 45%,
+            color-mix(in srgb, var(--accent) 55%, #22d3ee));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    text-decoration-thickness: 0.06em;
+    text-underline-offset: 0.14em;
+    /* Crossfade gradient → solid fill (and back) instead of snapping. */
+    transition: -webkit-text-fill-color 0.25s ease,
+        text-decoration-color 0.25s ease;
+}
+
+.text-gradient-accent a::before {
+    content: '';
+    position: absolute;
+    inset: -0.25em -0.35em;
+    z-index: -1;
+    border-radius: 999px;
+    background: radial-gradient(closest-side,
+            color-mix(in srgb, var(--accent) 22%, transparent),
+            transparent);
+    pointer-events: none;
+    animation: hero-link-glow 3.4s ease-in-out infinite;
+    /* Hover removes the animation; this eases from the current pulse
+       opacity to the steady hover strength instead of jumping. */
+    transition: opacity 0.3s ease;
+}
+
+@keyframes hero-link-glow {
+
+    0%,
+    100% {
+        opacity: 0.35;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* Hover: a color utility can't show through the transparent clipped text, so
+   restore a solid fill in the site's usual hover color (accent-strong, same
+   as .button:hover); the halo holds steady at full strength. */
+.text-gradient-accent a:hover {
+    -webkit-text-fill-color: var(--accent-strong);
+    text-decoration-color: var(--accent-strong);
+}
+
+.text-gradient-accent a:hover::before {
+    animation: none;
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    /* Static halo — the affordance stays, the motion goes. */
+    .text-gradient-accent a::before {
+        animation: none;
+        opacity: 0.6;
+    }
 }
 
 /* Hero entrance: a one-time fade-up on load. CSS-only (runs without JS, so it
@@ -388,8 +617,9 @@ a {
 }
 
 .stat-value {
+    font-family: var(--font-display);
     font-size: clamp(1.8rem, 4vw, 2.6rem);
-    font-weight: 700;
+    font-weight: 650;
     line-height: 1.1;
 }
 
@@ -440,6 +670,7 @@ a {
 .phone-pill {
     flex: 1;
     text-align: center;
+    font-family: inherit;
     font-size: 0.52rem;
     font-weight: 600;
     color: var(--text-muted);
@@ -448,6 +679,18 @@ a {
     border-radius: 6px;
     padding: 4px 2px;
     white-space: nowrap;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.phone-pill:hover:not(.selected) {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.phone-pill:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
 }
 
 .phone-pill.selected {
@@ -467,6 +710,12 @@ a {
     gap: 9px;
     padding: 9px 12px;
     border-top: 1px solid var(--border);
+}
+
+/* Rows filtered out by the (interactive) status pills. `display: flex` above
+   would otherwise beat the UA's [hidden] rule. */
+.phone-row[hidden] {
+    display: none;
 }
 
 .phone-cover {
@@ -559,6 +808,24 @@ a {
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 16px 20px;
+    /* Lets block-size transition to/from the `auto` keyword below. */
+    interpolate-size: allow-keywords;
+}
+
+/* Smoothly expand/collapse the answer. Progressive enhancement: browsers
+   without ::details-content / interpolate-size simply snap open as before.
+   The content-visibility transition (allow-discrete) keeps the answer
+   visible while the close animation runs. */
+.faq-item::details-content {
+    block-size: 0;
+    overflow-y: clip;
+    transition:
+        block-size 0.28s ease,
+        content-visibility 0.28s allow-discrete;
+}
+
+.faq-item[open]::details-content {
+    block-size: auto;
 }
 
 .faq-item summary {
@@ -582,10 +849,18 @@ a {
     color: var(--accent);
     font-size: 1.2rem;
     font-weight: 700;
+    transition: transform 0.2s ease;
 }
 
+/* The + rotates 45° into a × while open. */
 .faq-item[open] summary::after {
-    content: '–';
+    transform: translateY(-50%) rotate(45deg);
+}
+
+.faq-item summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+    border-radius: 4px;
 }
 
 .faq-item p {
@@ -664,17 +939,20 @@ a {
 /* ------------------------------------------------------------------ */
 @media (max-width: 720px) {
 
-    /* Keep the mobile hero clean — drop the floating words layer. */
-    .floating-words {
-        /* display: none; */
-    }
-
     .nav-toggle {
         display: block;
     }
 
+    /* Kept rendered (it's absolutely positioned, so no layout cost) and shown
+       via visibility/opacity so open/close can animate; visibility also keeps
+       the closed menu out of the tab order, like display:none did. */
     .nav-links {
-        display: none;
+        display: flex;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.25s ease, transform 0.25s ease,
+            visibility 0s linear 0.25s; /* flip hidden only after the fade-out */
         position: absolute;
         top: 64px;
         left: 0;
@@ -688,7 +966,11 @@ a {
     }
 
     .nav-links.open {
-        display: flex;
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+        /* visible immediately on open, so only the fade/slide animates */
+        transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
     .nav-links a {
@@ -699,6 +981,15 @@ a {
         text-align: center;
         margin-top: 8px;
         margin-bottom: 8px;
+    }
+}
+
+/* Reduced motion: the mobile menu snaps open/closed instead of sliding.
+   (Placed after the 720px block so it wins the cascade at equal specificity.) */
+@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+    .nav-links,
+    .nav-links.open {
+        transition: none;
     }
 }
 

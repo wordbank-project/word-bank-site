@@ -12,7 +12,7 @@ const t = getCopy(lang);
 
 <Section id="faq">
     <h2>{t.faq.heading}</h2>
-    <div class="mx-auto flex max-w-170 flex-col gap-3">
+    <div class="mx-auto flex max-w-170 flex-col gap-3" data-stagger>
         {
             t.faq.items.map(({ question, answer }) => (
                 <details class="faq-item">

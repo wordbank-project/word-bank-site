@@ -54,10 +54,11 @@ const ICONS: Record<IconName, string> = {
     </p>
     <div
         class="grid grid-cols-4 gap-5.5 max-[900px]:grid-cols-2 max-[520px]:grid-cols-1"
+        data-stagger
     >
         {
             t.features.items.map(({ icon, title, description }) => (
-                <article class="rounded-[14px] border border-line bg-card p-6.5">
+                <article class="rounded-[14px] border border-line bg-card p-6.5 transition-[translate,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-(--shadow) motion-reduce:hover:translate-y-0">
                     <span
                         class="inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent mb-4"
                         set:html={ICONS[icon]}
