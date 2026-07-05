@@ -383,11 +383,25 @@ const iconClass = "w-[18px] h-[18px]";
         .map((a) => document.querySelector<HTMLElement>(a.hash))
         .filter((el): el is HTMLElement => el !== null);
     if (spyTargets.length && "IntersectionObserver" in window) {
-        const setActive = (id: string | null) =>
+        const setActive = (id: string | null) => {
             spyLinks.forEach((a) => {
                 if (a.hash === `#${id}`) a.setAttribute("aria-current", "true");
                 else a.removeAttribute("aria-current");
             });
+            // Mirror the active section into the URL (replace, not push — no
+            // history spam, no scroll side-effects) so the language switcher
+            // and copied links reflect where the visitor actually is.
+            // replaceState doesn't fire hashchange → re-sync the lang links.
+            const nextHash = id ? `#${id}` : "";
+            if (location.hash !== nextHash) {
+                history.replaceState(
+                    null,
+                    "",
+                    nextHash || location.pathname + location.search,
+                );
+                syncLangHref();
+            }
+        };
         const spy = new IntersectionObserver(
             (entries) => {
                 for (const entry of entries) {
