@@ -15,12 +15,13 @@ export default defineConfig({
   site: process.env.URL || 'http://localhost:4321',
 
   // sitemap-index.xml + per-page entries with hreflang alternates, so search
-  // engines pair / (en) and /nl/ the same way the <head> alternates do.
+  // engines pair / (en), /nl/, and /fr/ the same way the <head> alternates do.
+  // Add new locales here when registering a language in src/i18n/index.ts.
   integrations: [
     sitemap({
       i18n: {
         defaultLocale: 'en',
-        locales: { en: 'en', nl: 'nl' },
+        locales: { en: 'en', nl: 'nl', fr: 'fr' },
       },
     }),
   ],

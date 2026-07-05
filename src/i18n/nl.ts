@@ -19,7 +19,7 @@ export const nl: Copy = {
         openMenu: 'Menu openen',
         closeMenu: 'Menu sluiten',
         theme: { prefix: 'Thema', light: 'licht', dark: 'donker', system: 'systeem' },
-        langSwitch: 'View in English',
+        language: { label: 'Taal wijzigen', search: 'Zoek een taal...', noResults: 'Geen talen gevonden' },
         skipToContent: 'Direct naar inhoud',
     },
     hero: {

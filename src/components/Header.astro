@@ -1,6 +1,6 @@
 ---
 import Logo from "./Logo.astro";
-import { getCopy, otherLang, localeRoot, LANG_META, type Lang } from "../i18n";
+import { getCopy, localeRoot, LANGS, LANG_META, type Lang } from "../i18n";
 
 interface Props {
     lang: Lang;
@@ -9,16 +9,11 @@ interface Props {
 const { lang } = Astro.props;
 const t = getCopy(lang);
 
-// The language toggle always points at the *other* locale.
-const other = otherLang(lang);
-const otherRoot = localeRoot(other);
-const otherMeta = LANG_META[other];
-
 const iconClass = "w-[18px] h-[18px]";
 ---
 
 <header class="nav">
-    <div class="mx-auto max-w-270 px-6 nav-inner">
+    <div class="mx-auto max-w-270 gap-3 px-6 nav-inner">
         <a href="#top" class="nav-logo" data-scroll-top aria-label={t.nav.backToTop}>
             <Logo withWordmark />
         </a>
@@ -27,59 +22,100 @@ const iconClass = "w-[18px] h-[18px]";
             <nav class="nav-links" aria-label="Main" data-nav-links>
                 {t.nav.links.map(({ href, label }) => <a href={href}>{label}</a>)}
                 <a href="#top" class="button button-small" data-scroll-top>{t.nav.cta}</a>
-                <!-- Language switch inside the mobile menu (hidden on desktop, where
-                     the globe button in the top bar is used instead). -->
-                <a
-                    href={otherRoot}
-                    hreflang={other}
-                    data-lang-link
-                    data-base={otherRoot}
-                    class="hidden max-[720px]:inline-flex items-center gap-2"
-                    aria-label={t.nav.langSwitch}
+            </nav>
+
+            <!-- Language dropdown: current language + searchable list of all
+                 locales. Lives in the top bar at every width (replaces the old
+                 two-way toggle + hamburger item). -->
+            <div class="relative" data-lang-dropdown>
+                <button
+                    type="button"
+                    class="inline-flex h-9 cursor-pointer items-center gap-1.5 rounded-full border border-line bg-transparent px-3.5 text-[0.85rem] font-semibold text-ink transition-colors hover:border-accent hover:text-accent"
+                    aria-label={t.nav.language.label}
+                    aria-haspopup="listbox"
+                    aria-expanded="false"
+                    data-lang-trigger
                 >
+                    {/* Full native name on desktop; the compact code on narrow
+                        screens so the bar doesn't crowd the wordmark. */}
+                    <span class="max-[720px]:hidden">{LANG_META[lang].native}</span>
+                    <span class="hidden max-[720px]:inline">{LANG_META[lang].code}</span>
                     <svg
-                        class={iconClass}
+                        class="h-3.5 w-3.5 transition-transform"
+                        data-lang-chevron
                         viewBox="0 0 24 24"
                         fill="none"
                         stroke="currentColor"
-                        stroke-width="1.8"
+                        stroke-width="2.2"
                         stroke-linecap="round"
                         stroke-linejoin="round"
                         aria-hidden="true"
                     >
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"
-                        ></path>
+                        <path d="m6 9 6 6 6-6"></path>
                     </svg>
-                    {otherMeta.name}
-                </a>
-            </nav>
+                </button>
 
-            <!-- Language switch in the top bar (desktop only; subtle). -->
-            <a
-                href={otherRoot}
-                hreflang={other}
-                data-lang-link
-                data-base={otherRoot}
-                class="max-[720px]:hidden inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-line bg-transparent px-2.5 text-[0.8rem] font-semibold text-ink no-underline transition-colors hover:border-accent hover:text-accent"
-                aria-label={t.nav.langSwitch}
-            >
-                <svg
-                    class={iconClass}
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.8"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
+                {/* Desktop: popover anchored to the pill. Mobile (≤720px): a
+                    fixed, centered sheet just below the 64px header bar. */}
+                <div
+                    class="hidden absolute right-0 top-[calc(100%+8px)] z-50 w-64 rounded-xl border border-line bg-surface p-2 shadow-(--shadow) max-[720px]:fixed max-[720px]:inset-x-4 max-[720px]:top-18 max-[720px]:w-auto"
+                    data-lang-panel
                 >
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20 15.3 15.3 0 0 1 0-20z"
-                    ></path>
-                </svg>
-                {otherMeta.code}
-            </a>
+                    <div class="relative mb-1">
+                        <svg
+                            class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <circle cx="11" cy="11" r="7"></circle>
+                            <path d="m21 21-4.3-4.3"></path>
+                        </svg>
+                        <input
+                            type="text"
+                            class="w-full rounded-lg border border-line bg-surface-soft py-2 pl-9 pr-3 text-[0.9rem] text-ink placeholder:text-ink-muted"
+                            placeholder={t.nav.language.search}
+                            aria-label={t.nav.language.search}
+                            data-lang-search
+                        />
+                    </div>
+
+                    <div class="max-h-72 overflow-y-auto" role="listbox" aria-label={t.nav.language.label}>
+                        {LANGS.map((l) => {
+                            const meta = LANG_META[l];
+                            return (
+                                <a
+                                    href={localeRoot(l)}
+                                    hreflang={l}
+                                    role="option"
+                                    aria-selected={l === lang}
+                                    aria-current={l === lang ? "true" : undefined}
+                                    class="flex items-center justify-between gap-2 rounded-lg px-3 py-2 no-underline transition-colors hover:bg-surface-soft"
+                                    data-lang-link
+                                    data-base={localeRoot(l)}
+                                    data-lang={l}
+                                    data-filter={`${meta.native} ${meta.english} ${meta.code}`.toLowerCase()}
+                                >
+                                    <span class="flex flex-col">
+                                        <span class="text-[0.95rem] font-semibold text-ink">{meta.native}</span>
+                                        {meta.english !== meta.native && (
+                                            <span class="text-[0.8rem] text-ink-muted">{meta.english}</span>
+                                        )}
+                                    </span>
+                                    {l === lang && <span class="text-sm font-bold text-accent">✓</span>}
+                                </a>
+                            );
+                        })}
+                        <p class="px-3 py-2 text-[0.9rem] text-ink-muted" data-lang-empty hidden>
+                            {t.nav.language.noResults}
+                        </p>
+                    </div>
+                </div>
+            </div>
 
             <button
                 type="button"
@@ -179,13 +215,13 @@ const iconClass = "w-[18px] h-[18px]";
             .forEach((a) => a.addEventListener("click", closeMenu));
     }
 
-    // --- Language toggle: keep the current #section when switching locale,
-    //     and remember the choice so return visits land in the same language
-    //     (the pre-paint script in Layout.astro reads localStorage "lang"). ----
+    // --- Language links: keep the current #section when switching locale, and
+    //     remember the choice so return visits land in the same language (the
+    //     pre-paint script in Layout.astro reads localStorage "lang"). Each row
+    //     carries its locale in data-lang, so this needs no per-language code. ----
     const langLinks = Array.from(
         document.querySelectorAll<HTMLAnchorElement>("[data-lang-link]"),
     );
-    const langFor = (base: string): "en" | "nl" => (base === "/nl/" ? "nl" : "en");
     const syncLangHref = () =>
         langLinks.forEach((l) => {
             l.href = (l.dataset.base ?? "/") + location.hash;
@@ -196,12 +232,60 @@ const iconClass = "w-[18px] h-[18px]";
         langLinks.forEach((l) =>
             l.addEventListener("click", () => {
                 try {
-                    localStorage.setItem("lang", langFor(l.dataset.base ?? "/"));
+                    if (l.dataset.lang) localStorage.setItem("lang", l.dataset.lang);
                 } catch {
                     /* ignore */
                 }
             }),
         );
+    }
+
+    // --- Language dropdown: open/close, search filter, outside-click/Esc ------
+    const dropdown = document.querySelector<HTMLElement>("[data-lang-dropdown]");
+    if (dropdown) {
+        const trigger = dropdown.querySelector<HTMLButtonElement>("[data-lang-trigger]")!;
+        const panel = dropdown.querySelector<HTMLElement>("[data-lang-panel]")!;
+        const search = dropdown.querySelector<HTMLInputElement>("[data-lang-search]")!;
+        const chevron = dropdown.querySelector<SVGElement>("[data-lang-chevron]");
+        const rows = Array.from(
+            dropdown.querySelectorAll<HTMLAnchorElement>("[data-lang-link]"),
+        );
+        const empty = dropdown.querySelector<HTMLElement>("[data-lang-empty]");
+
+        const applyFilter = () => {
+            const q = search.value.trim().toLowerCase();
+            let anyVisible = false;
+            rows.forEach((row) => {
+                const match = !q || (row.dataset.filter ?? "").includes(q);
+                row.toggleAttribute("hidden", !match);
+                if (match) anyVisible = true;
+            });
+            empty?.toggleAttribute("hidden", anyVisible);
+        };
+
+        const isOpen = () => !panel.classList.contains("hidden");
+        const setOpen = (open: boolean) => {
+            panel.classList.toggle("hidden", !open);
+            trigger.setAttribute("aria-expanded", String(open));
+            chevron?.classList.toggle("rotate-180", open);
+            if (open) {
+                search.value = "";
+                applyFilter();
+                search.focus();
+            }
+        };
+
+        trigger.addEventListener("click", () => setOpen(!isOpen()));
+        search.addEventListener("input", applyFilter);
+        document.addEventListener("click", (e) => {
+            if (isOpen() && !dropdown.contains(e.target as Node)) setOpen(false);
+        });
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && isOpen()) {
+                setOpen(false);
+                trigger.focus();
+            }
+        });
     }
 
     // --- Theme toggle: light → dark → system, persisted in localStorage ------

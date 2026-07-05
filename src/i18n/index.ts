@@ -1,23 +1,39 @@
 // Internationalisation layer for the site.
 //
-// The site is built as static per-locale routes: `/` (English) and `/nl/`
-// (Dutch). Each `.astro` component takes a `lang` prop and resolves its copy
-// via `getCopy(lang)` — so the HTML is fully translated at build time (no
+// The site is built as static per-locale routes: `/` (English), `/nl/` (Dutch),
+// `/fr/` (French). Each `.astro` component takes a `lang` prop and resolves its
+// copy via `getCopy(lang)` — so the HTML is fully translated at build time (no
 // runtime text-swapping, no flash, SEO-friendly). The `Copy` interface is the
 // single shape every locale must satisfy, so `npm run check` fails if a
 // translation key is missing.
+//
+// ── Adding a language ────────────────────────────────────────────────────────
+// Everything (the header dropdown, hreflang alternates, og:locale, the
+// remembered-choice redirect) derives from the registry below, so a new
+// language needs exactly four touches:
+//   1. Create `src/i18n/xx.ts` exporting a `Copy` object (copy en.ts and
+//      translate — the type guarantees you can't miss a key).
+//   2. Register it here: add to the `Lang` union, `LANGS`, `LANG_META`, `COPY`.
+//   3. Create `src/pages/xx/index.astro` containing `<Page lang="xx" />`.
+//   4. Add the locale to the sitemap config in `astro.config.mjs`.
 import type { IconName } from '../content';
 import { en } from './en';
 import { nl } from './nl';
+import { fr } from './fr';
 
-export type Lang = 'en' | 'nl';
-export const LANGS: Lang[] = ['en', 'nl'];
+export type Lang = 'en' | 'nl' | 'fr';
+export const LANGS: Lang[] = ['en', 'nl', 'fr'];
 export const DEFAULT_LANG: Lang = 'en';
 
-// Display label for each locale — the language toggle shows the *other* one.
-export const LANG_META: Record<Lang, { code: string; name: string }> = {
-    en: { code: 'EN', name: 'English' },
-    nl: { code: 'NL', name: 'Nederlands' },
+// Display metadata per locale — drives the language dropdown (native name bold,
+// English name muted below), plus the `og:locale` meta tag.
+export const LANG_META: Record<
+    Lang,
+    { code: string; native: string; english: string; ogLocale: string }
+> = {
+    en: { code: 'EN', native: 'English', english: 'English', ogLocale: 'en_US' },
+    nl: { code: 'NL', native: 'Nederlands', english: 'Dutch', ogLocale: 'nl_NL' },
+    fr: { code: 'FR', native: 'Français', english: 'French', ogLocale: 'fr_FR' },
 };
 
 export interface Copy {
@@ -29,7 +45,7 @@ export interface Copy {
         openMenu: string; // aria
         closeMenu: string; // aria
         theme: { prefix: string; light: string; dark: string; system: string }; // aria pieces
-        langSwitch: string; // aria-label on the language toggle (phrased in the other language)
+        language: { label: string; search: string; noResults: string }; // dropdown: trigger aria, search placeholder, empty state
         skipToContent: string; // keyboard-only skip link
     };
     hero: {
@@ -87,17 +103,13 @@ export interface Copy {
     statusLabels: { want: string; reading: string; read: string };
 }
 
-const COPY: Record<Lang, Copy> = { en, nl };
+const COPY: Record<Lang, Copy> = { en, nl, fr };
 
 export function getCopy(lang: Lang): Copy {
     return COPY[lang];
 }
 
-export function otherLang(lang: Lang): Lang {
-    return lang === 'en' ? 'nl' : 'en';
-}
-
-/** Root path for a locale: `/` for English, `/nl/` for Dutch. */
+/** Root path for a locale: `/` for the default language, `/xx/` otherwise. */
 export function localeRoot(lang: Lang): string {
-    return lang === 'en' ? '/' : '/nl/';
+    return lang === DEFAULT_LANG ? '/' : `/${lang}/`;
 }

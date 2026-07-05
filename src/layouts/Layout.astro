@@ -4,7 +4,7 @@ import "../styles/global.css";
 // with unicode-range, font-display: swap). Mapped to --font-display in
 // global.css; body text stays on the system sans stack.
 import "@fontsource-variable/fraunces";
-import { getCopy, type Lang } from "../i18n";
+import { DEFAULT_LANG, LANGS, LANG_META, getCopy, localeRoot, type Lang } from "../i18n";
 
 interface Props {
     lang?: Lang;
@@ -23,8 +23,14 @@ const pageDescription = description ?? t.meta.description;
 // a stale cached preview.
 const ogImage = new URL("/og-image.png?v=2", Astro.site ?? Astro.url).href;
 const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
-const enUrl = new URL("/", Astro.site ?? Astro.url).href;
-const nlUrl = new URL("/nl/", Astro.site ?? Astro.url).href;
+// One alternate per locale (from the i18n registry) — used for hreflang links
+// and, as path-only roots, by the remembered-language redirect script below.
+const alternates = LANGS.map((l) => ({
+    lang: l,
+    href: new URL(localeRoot(l), Astro.site ?? Astro.url).href,
+}));
+const defaultUrl = new URL(localeRoot(DEFAULT_LANG), Astro.site ?? Astro.url).href;
+const localeRoots = Object.fromEntries(LANGS.map((l) => [l, localeRoot(l)]));
 
 // Structured data (JSON-LD) so search engines show rich results: the app
 // itself plus the FAQ (Google can render FAQ items directly in the listing).
@@ -61,10 +67,9 @@ const faqSchema = {
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="canonical" href={canonical} />
         <link rel="sitemap" href="/sitemap-index.xml" />
-        <!-- Locale alternates so search engines pair the English and Dutch pages. -->
-        <link rel="alternate" hreflang="en" href={enUrl} />
-        <link rel="alternate" hreflang="nl" href={nlUrl} />
-        <link rel="alternate" hreflang="x-default" href={enUrl} />
+        <!-- Locale alternates so search engines pair every language version. -->
+        {alternates.map((a) => <link rel="alternate" hreflang={a.lang} href={a.href} />)}
+        <link rel="alternate" hreflang="x-default" href={defaultUrl} />
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
 
@@ -72,7 +77,7 @@ const faqSchema = {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
-        <meta property="og:locale" content={lang === "nl" ? "nl_NL" : "en_US"} />
+        <meta property="og:locale" content={LANG_META[lang].ogLocale} />
         <meta property="og:url" content={canonical} />
         <meta property="og:image" content={ogImage} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -96,16 +101,14 @@ const faqSchema = {
              no history entry). Only fires on an explicit mismatch, so shared
              links and crawlers are unaffected; the choice is written by the
              toggle in Header.astro. -->
-        <script is:inline define:vars={{ pageLang: lang }}>
+        <script is:inline define:vars={{ pageLang: lang, localeRoots }}>
             (() => {
                 try {
                     const saved = localStorage.getItem("lang");
-                    if (
-                        (saved === "en" || saved === "nl") &&
-                        saved !== pageLang
-                    ) {
-                        const target = saved === "nl" ? "/nl/" : "/";
-                        window.location.replace(target + window.location.hash);
+                    if (saved && localeRoots[saved] && saved !== pageLang) {
+                        window.location.replace(
+                            localeRoots[saved] + window.location.hash,
+                        );
                     }
                 } catch {
                     /* localStorage blocked — stay on the current page. */
