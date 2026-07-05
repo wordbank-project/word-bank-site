@@ -943,8 +943,16 @@ a {
         display: block;
     }
 
+    /* Kept rendered (it's absolutely positioned, so no layout cost) and shown
+       via visibility/opacity so open/close can animate; visibility also keeps
+       the closed menu out of the tab order, like display:none did. */
     .nav-links {
-        display: none;
+        display: flex;
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(-8px);
+        transition: opacity 0.25s ease, transform 0.25s ease,
+            visibility 0s linear 0.25s; /* flip hidden only after the fade-out */
         position: absolute;
         top: 64px;
         left: 0;
@@ -958,7 +966,11 @@ a {
     }
 
     .nav-links.open {
-        display: flex;
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(0);
+        /* visible immediately on open, so only the fade/slide animates */
+        transition: opacity 0.25s ease, transform 0.25s ease;
     }
 
     .nav-links a {
@@ -969,6 +981,15 @@ a {
         text-align: center;
         margin-top: 8px;
         margin-bottom: 8px;
+    }
+}
+
+/* Reduced motion: the mobile menu snaps open/closed instead of sliding.
+   (Placed after the 720px block so it wins the cascade at equal specificity.) */
+@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+    .nav-links,
+    .nav-links.open {
+        transition: none;
     }
 }
 

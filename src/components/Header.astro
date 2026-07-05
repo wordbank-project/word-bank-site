@@ -213,6 +213,18 @@ const iconClass = "w-[18px] h-[18px]";
         links
             .querySelectorAll("a")
             .forEach((a) => a.addEventListener("click", closeMenu));
+        // Clicking anywhere outside the open menu (and not on the toggle,
+        // which handles its own click) closes it — the CSS transition makes
+        // it fade/slide out smoothly.
+        document.addEventListener("click", (e) => {
+            if (
+                links.classList.contains("open") &&
+                !links.contains(e.target as Node) &&
+                !navToggle.contains(e.target as Node)
+            ) {
+                closeMenu();
+            }
+        });
     }
 
     // --- Language links: keep the current #section when switching locale, and
@@ -231,6 +243,9 @@ const iconClass = "w-[18px] h-[18px]";
         window.addEventListener("hashchange", syncLangHref);
         langLinks.forEach((l) =>
             l.addEventListener("click", () => {
+                // Refresh the href with the live hash right before navigation,
+                // in case a sync was ever missed (belt-and-suspenders).
+                l.href = (l.dataset.base ?? "/") + location.hash;
                 try {
                     if (l.dataset.lang) localStorage.setItem("lang", l.dataset.lang);
                 } catch {
@@ -383,6 +398,18 @@ const iconClass = "w-[18px] h-[18px]";
         .map((a) => document.querySelector<HTMLElement>(a.hash))
         .filter((el): el is HTMLElement => el !== null);
     if (spyTargets.length && "IntersectionObserver" in window) {
+        // On a fresh load with a #fragment (e.g. arriving from a language
+        // switch), jump there instantly BEFORE registering the observers.
+        // Module scripts run before the browser's own fragment scroll, so the
+        // hero observer would otherwise fire with the still-at-top viewport
+        // and strip the hash via replaceState — losing the target. "instant"
+        // also sidesteps the css smooth-scroll race. scrollIntoView honours
+        // the sections' scroll-margin-top, so they land below the sticky bar.
+        const initialTarget = location.hash
+            ? document.querySelector<HTMLElement>(location.hash)
+            : null;
+        initialTarget?.scrollIntoView({ behavior: "instant", block: "start" });
+
         const setActive = (id: string | null) => {
             spyLinks.forEach((a) => {
                 if (a.hash === `#${id}`) a.setAttribute("aria-current", "true");
