@@ -1,6 +1,6 @@
 ---
 import Section from "./Section.astro";
-import { getCopy, type Lang } from "../i18n";
+import { getCopy, LANGS, type Lang } from "../i18n";
 
 interface Props {
     lang: Lang;
@@ -133,14 +133,16 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 class="mt-8 flex flex-wrap gap-2.5 gap-y-2"
                 aria-label={t.dictionary.chipsAria}
             >
-                <span
-                    class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent"
-                    >{t.dictionary.chips.english}</span
-                >
-                <span
-                    class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent"
-                    >{t.dictionary.chips.dutch}</span
-                >
+                {/* One chip per registered site locale (LANGS order) — names come
+                    from the copy so they're translated per page, and the Record
+                    type keeps every locale file in sync with the registry. */}
+                {
+                    LANGS.map((l) => (
+                        <span class="whitespace-nowrap rounded-full border border-accent bg-accent-soft px-3.5 py-1.25 text-[0.85rem] font-semibold text-accent">
+                            {t.dictionary.chips.names[l]}
+                        </span>
+                    ))
+                }
                 <span
                     class="whitespace-nowrap rounded-full border border-line px-3.5 py-1.25 text-[0.85rem] font-semibold text-ink-muted"
                     >{t.dictionary.chips.more}</span

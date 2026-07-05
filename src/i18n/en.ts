@@ -88,10 +88,10 @@ export const en: Copy = {
         heading: 'A dictionary that speaks your language',
         paragraphs: [
             'Words rarely mean just one thing. Word Bank fetches every meaning and lets you pick the right one — with part of speech, IPA pronunciation, and colour-coding.',
-            'Powered by Wiktionary data with support for 100+ languages. English and Dutch are live today; more on the way.',
+            'Powered by Wiktionary data with support for 100+ languages. English, Dutch, and French are live today; more on the way.',
         ],
         chipsAria: 'Available languages',
-        chips: { english: 'English', dutch: 'Nederlands', more: 'more soon' },
+        chips: { names: { en: 'English', nl: 'Dutch', fr: 'French' }, more: 'more soon' },
         tryLabel: 'Try it — look up any English word',
         tryPlaceholder: 'e.g. petrichor',
         tryButton: 'Look up',
@@ -130,7 +130,7 @@ export const en: Copy = {
             {
                 question: 'Which languages are supported?',
                 answer:
-                    'English and Dutch dictionaries are live today. The dictionary engine is built on Wiktionary data covering 100+ languages, so more are on the way.',
+                    'English, Dutch, and French dictionaries are live today. The dictionary engine is built on Wiktionary data covering 100+ languages, so more are on the way.',
             },
             {
                 question: 'Where is my data stored?',

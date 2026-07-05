@@ -16,6 +16,9 @@
 //   2. Register it here: add to the `Lang` union, `LANGS`, `LANG_META`, `COPY`.
 //   3. Create `src/pages/xx/index.astro` containing `<Page lang="xx" />`.
 //   4. Add the locale to the sitemap config in `astro.config.mjs`.
+// Fields typed `Record<Lang, string>` (e.g. `dictionary.chips.names`) will
+// type-error in every existing locale file until the new language's translated
+// name is added there — that's the sync guarantee, not a chore to skip.
 import type { IconName } from '../content';
 import { en } from './en';
 import { nl } from './nl';
@@ -65,7 +68,9 @@ export interface Copy {
         heading: string;
         paragraphs: string[];
         chipsAria: string;
-        chips: { english: string; dutch: string; more: string };
+        // One translated name per registered locale (rendered as the "available
+        // languages" chips, in LANGS order) + the muted "more soon" chip.
+        chips: { names: Record<Lang, string>; more: string };
         tryLabel: string; // label above the live-lookup input in the demo card
         tryPlaceholder: string;
         tryButton: string;

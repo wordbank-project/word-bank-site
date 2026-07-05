@@ -88,10 +88,10 @@ export const nl: Copy = {
         heading: 'Een woordenboek dat jouw taal spreekt',
         paragraphs: [
             'Woorden betekenen zelden maar één ding. Word Bank haalt elke betekenis op en laat je de juiste kiezen — met woordsoort, IPA-uitspraak en kleurcodering.',
-            'Mogelijk gemaakt door Wiktionary-data, met ondersteuning voor 100+ talen. Engels en Nederlands zijn nu beschikbaar; meer volgt.',
+            'Mogelijk gemaakt door Wiktionary-data, met ondersteuning voor 100+ talen. Engels, Nederlands en Frans zijn nu beschikbaar; meer volgt.',
         ],
         chipsAria: 'Beschikbare talen',
-        chips: { english: 'Engels', dutch: 'Nederlands', more: 'meer binnenkort' },
+        chips: { names: { en: 'Engels', nl: 'Nederlands', fr: 'Frans' }, more: 'meer binnenkort' },
         tryLabel: 'Probeer het — zoek een Engels woord op',
         tryPlaceholder: 'bv. petrichor',
         tryButton: 'Zoek op',
@@ -130,7 +130,7 @@ export const nl: Copy = {
             {
                 question: 'Welke talen worden ondersteund?',
                 answer:
-                    'De Engelse en Nederlandse woordenboeken zijn vandaag beschikbaar. De woordenboekmotor draait op Wiktionary-data met 100+ talen, dus er volgen er meer.',
+                    'De Engelse, Nederlandse en Franse woordenboeken zijn vandaag beschikbaar. De woordenboekmotor draait op Wiktionary-data met 100+ talen, dus er volgen er meer.',
             },
             {
                 question: 'Waar worden mijn gegevens bewaard?',

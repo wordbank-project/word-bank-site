@@ -88,10 +88,10 @@ export const fr: Copy = {
         heading: 'Un dictionnaire qui parle votre langue',
         paragraphs: [
             'Les mots ont rarement un seul sens. Word Bank récupère chaque signification et vous laisse choisir la bonne — avec la nature du mot, la prononciation API et un code couleur.',
-            'Propulsé par les données de Wiktionary, avec plus de 100 langues. L’anglais et le néerlandais sont disponibles aujourd’hui ; d’autres arrivent.',
+            'Propulsé par les données de Wiktionary, avec plus de 100 langues. L’anglais, le néerlandais et le français sont disponibles aujourd’hui ; d’autres arrivent.',
         ],
         chipsAria: 'Langues disponibles',
-        chips: { english: 'Anglais', dutch: 'Néerlandais', more: 'bientôt plus' },
+        chips: { names: { en: 'Anglais', nl: 'Néerlandais', fr: 'Français' }, more: 'bientôt plus' },
         tryLabel: 'Essayez — cherchez n’importe quel mot anglais',
         tryPlaceholder: 'p. ex. petrichor',
         tryButton: 'Chercher',
@@ -130,7 +130,7 @@ export const fr: Copy = {
             {
                 question: 'Quelles langues sont prises en charge ?',
                 answer:
-                    'Les dictionnaires anglais et néerlandais sont disponibles aujourd’hui. Le moteur repose sur les données de Wiktionary, qui couvrent plus de 100 langues — d’autres arrivent donc.',
+                    'Les dictionnaires anglais, néerlandais et français sont disponibles aujourd’hui. Le moteur repose sur les données de Wiktionary, qui couvrent plus de 100 langues — d’autres arrivent donc.',
             },
             {
                 question: 'Où sont stockées mes données ?',
