@@ -387,6 +387,7 @@ a {
 .nav-links a:not(.button) {
     color: var(--text-secondary);
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .nav-links a:not(.button):hover {
@@ -937,7 +938,10 @@ a {
 /* ------------------------------------------------------------------ */
 /* Responsive (only the bits not handled by utility variants)          */
 /* ------------------------------------------------------------------ */
-@media (max-width: 720px) {
+/* Collapse the inline nav to the hamburger at ≤900px so iPad-portrait widths
+   (768–834) get the clean menu instead of a cramped/wrapping inline nav.
+   Laptops/desktops (≥901) and iPad landscape keep the inline nav. */
+@media (max-width: 900px) {
 
     .nav-toggle {
         display: block;
@@ -952,7 +956,8 @@ a {
         opacity: 0;
         transform: translateY(-8px);
         transition: opacity 0.25s ease, transform 0.25s ease,
-            visibility 0s linear 0.25s; /* flip hidden only after the fade-out */
+            visibility 0s linear 0.25s;
+        /* flip hidden only after the fade-out */
         position: absolute;
         top: 64px;
         left: 0;
@@ -985,8 +990,9 @@ a {
 }
 
 /* Reduced motion: the mobile menu snaps open/closed instead of sliding.
-   (Placed after the 720px block so it wins the cascade at equal specificity.) */
-@media (max-width: 720px) and (prefers-reduced-motion: reduce) {
+   (Placed after the 900px block so it wins the cascade at equal specificity.) */
+@media (max-width: 900px) and (prefers-reduced-motion: reduce) {
+
     .nav-links,
     .nav-links.open {
         transition: none;
