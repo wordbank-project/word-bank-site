@@ -102,6 +102,22 @@ export interface Copy {
         tabs: { search: string; readList: string; wordList: string };
         wordSingular: string;
         wordPlural: string;
+        // Copy for the animated mockup story (search → add word → sentence/note
+        // → Words List). Proper nouns (titles, the word, IPA) live in
+        // content.ts PHONE_DEMO.
+        demo: {
+            searchPlaceholder: string;
+            addPlaceholder: string;
+            addButton: string;
+            pos: string; // "noun", localized
+            definition: string;
+            sentenceLabel: string;
+            sentence: string;
+            noteLabel: string;
+            note: string;
+            plusOne: string; // the "✓ +1" celebration pill
+            replay: string; // replay button label + aria
+        };
     };
     wordWall: { trigger: string; title: string; panelAria: string; close: string };
     stats: { aria: string; collected: string; topWord: string; perDay: string };

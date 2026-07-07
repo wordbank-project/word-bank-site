@@ -1,5 +1,5 @@
 ---
-import { MOCK_BOOKS } from "../content";
+import { MOCK_BOOKS, PHONE_DEMO } from "../content";
 import type { ReadStatus } from "../content";
 import { getCopy, type Lang } from "../i18n";
 
@@ -9,6 +9,8 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = getCopy(lang);
+const demo = t.phone.demo;
+const book = MOCK_BOOKS[0]; // 1984 — the book the animated story searches and opens
 
 const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
     { value: "all", label: t.phone.filters.all },
@@ -18,70 +20,170 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
 ];
 ---
 
-<div class="phone" role="group" aria-label={t.phone.aria}>
-    <div class="phone-screen">
-        <div class="phone-header">{t.phone.readList}</div>
+{/* Animated story: search 1984 → open it → type "doublethink" → definition
+    card (+1 pop) → sentence + note → Words List → back on the Read List with
+    the badge bumping 12 → 13. Plays once on first view; ↻ replays. The
+    Read List view is the server-rendered default, so no-JS and
+    prefers-reduced-motion users see exactly the old static mockup. */}
+<div class="phone-wrap">
+    <div class="phone" role="group" aria-label={t.phone.aria}>
+        <div class="phone-screen">
+            <div class="phone-stage" data-stage>
+                {/* ---- View 1: Search ---- */}
+                <section class="phone-view" data-view="search">
+                    <div class="phone-header">{t.phone.tabs.search}</div>
+                    <div class="phone-field mx-[10px]" data-field="query">
+                        <span data-type="query" data-text={PHONE_DEMO.query}></span>
+                        <span class="phone-field-ph">{demo.searchPlaceholder}</span>
+                    </div>
+                    <div class="phone-list">
+                        {
+                            PHONE_DEMO.results.map((r, i) => (
+                                <div class="phone-row phone-anim" data-result={i === 0 ? "target" : ""}>
+                                    <span class="phone-cover" style={`background-color:${r.coverColor}`} />
+                                    <span class="phone-row-info">
+                                        <span class="phone-row-title">{r.title}</span>
+                                        <span class="phone-row-author">{r.author}</span>
+                                    </span>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </section>
 
-        <div class="phone-filters" data-phone-filters>
-            {
-                FILTERS.map(({ value, label }) => (
-                    <button
-                        type="button"
-                        data-phone-filter={value}
-                        aria-pressed={value === "all"}
-                        class:list={[
-                            "phone-pill",
-                            { selected: value === "all" },
-                        ]}
-                    >
-                        {label}
-                    </button>
-                ))
-            }
-        </div>
-
-        <div class="phone-list">
-            {
-                MOCK_BOOKS.map((book) => (
-                    <div class="phone-row" data-status={book.status}>
-                        <span
-                            class="phone-cover"
-                            style={`background-color:${book.coverColor}`}
-                        />
+                {/* ---- View 2: Book (1984) ---- */}
+                <section class="phone-view" data-view="book">
+                    <div class="phone-row phone-book-head">
+                        <span class="phone-cover" style={`background-color:${book.coverColor}`}></span>
                         <span class="phone-row-info">
                             <span class="phone-row-title">{book.title}</span>
                             <span class="phone-row-author">{book.author}</span>
-                            <span
-                                class={`phone-status phone-status-${book.status}`}
-                            >
-                                {t.statusLabels[book.status]}
-                            </span>
+                            <span class="phone-status phone-status-reading">{t.statusLabels.reading}</span>
                         </span>
                         <span class="phone-badge">
-                            <span class="phone-badge-count">
-                                {book.wordCount}
-                            </span>
-                            <span class="phone-badge-label">
-                                {book.wordCount === 1
-                                    ? t.phone.wordSingular
-                                    : t.phone.wordPlural}
-                            </span>
+                            <span class="phone-badge-count">{book.wordCount}</span>
+                            <span class="phone-badge-label">{t.phone.wordPlural}</span>
                         </span>
                     </div>
-                ))
-            }
-        </div>
+                    <div class="phone-addrow">
+                        <div class="phone-field" data-field="word">
+                            <span data-type="word" data-text={PHONE_DEMO.word}></span>
+                            <span class="phone-field-ph">{demo.addPlaceholder}</span>
+                        </div>
+                        <button type="button" class="phone-add-btn" data-add-btn tabindex="-1">{demo.addButton}</button>
+                        <span class="phone-plus-one" data-plus-one aria-hidden="true">{demo.plusOne}</span>
+                    </div>
+                    <div class="phone-word-card phone-anim" data-word-card>
+                        <span class="phone-word-head">
+                            <span class="phone-word-title">{PHONE_DEMO.word}</span>
+                            <span class="phone-word-ipa">{PHONE_DEMO.ipa}</span>
+                        </span>
+                        <span class="phone-word-pos text-pos-noun">{demo.pos}</span>
+                        <span class="phone-word-def">{demo.definition}</span>
+                        <span class="phone-word-label">{demo.sentenceLabel}</span>
+                        <span class="phone-field phone-field-inline" data-field="sentence">
+                            <span data-type="sentence" data-text={demo.sentence}></span>
+                        </span>
+                        <span class="phone-word-label">{demo.noteLabel}</span>
+                        <span class="phone-field phone-field-inline" data-field="note">
+                            <span data-type="note" data-text={demo.note}></span>
+                        </span>
+                    </div>
+                </section>
 
-        <div class="phone-tabbar">
-            <span>{t.phone.tabs.search}</span>
-            <span class="active">{t.phone.tabs.readList}</span>
-            <span>{t.phone.tabs.wordList}</span>
+                {/* ---- View 3: Words List ---- */}
+                <section class="phone-view" data-view="words">
+                    <div class="phone-header">{t.phone.tabs.wordList}</div>
+                    <div class="phone-list">
+                        <div class="phone-word-row phone-anim" data-new-word>
+                            <span class="phone-word-title">{PHONE_DEMO.word}</span>
+                            <span class="phone-word-ipa">{PHONE_DEMO.ipa}</span>
+                            <span class="phone-word-from">{book.title}</span>
+                        </div>
+                        {
+                            PHONE_DEMO.existingWords.map((w) => (
+                                <div class="phone-word-row">
+                                    <span class="phone-word-title">{w.word}</span>
+                                    <span class="phone-word-ipa">{w.ipa}</span>
+                                    <span class="phone-word-from">{book.title}</span>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </section>
+
+                {/* ---- View 4: Read List (the original static mockup; default) ---- */}
+                <section class="phone-view is-active" data-view="readlist">
+                    <div class="phone-header">{t.phone.readList}</div>
+
+                    <div class="phone-filters" data-phone-filters>
+                        {
+                            FILTERS.map(({ value, label }) => (
+                                <button
+                                    type="button"
+                                    data-phone-filter={value}
+                                    aria-pressed={value === "all"}
+                                    class:list={[
+                                        "phone-pill",
+                                        { selected: value === "all" },
+                                    ]}
+                                >
+                                    {label}
+                                </button>
+                            ))
+                        }
+                    </div>
+
+                    <div class="phone-list">
+                        {
+                            MOCK_BOOKS.map((b, i) => (
+                                <div class="phone-row" data-status={b.status}>
+                                    <span
+                                        class="phone-cover"
+                                        style={`background-color:${b.coverColor}`}
+                                    />
+                                    <span class="phone-row-info">
+                                        <span class="phone-row-title">{b.title}</span>
+                                        <span class="phone-row-author">{b.author}</span>
+                                        <span class={`phone-status phone-status-${b.status}`}>
+                                            {t.statusLabels[b.status]}
+                                        </span>
+                                    </span>
+                                    <span class="phone-badge">
+                                        <span class="phone-badge-count" data-demo-badge={i === 0 ? "" : undefined}>
+                                            {b.wordCount}
+                                        </span>
+                                        <span class="phone-badge-label">
+                                            {b.wordCount === 1
+                                                ? t.phone.wordSingular
+                                                : t.phone.wordPlural}
+                                        </span>
+                                    </span>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </section>
+            </div>
+
+            {/* Shared tab bar — the story moves the active tab as it navigates. */}
+            <div class="phone-tabbar" data-tabbar>
+                <span data-tab="search">{t.phone.tabs.search}</span>
+                <span class="active" data-tab="readlist">{t.phone.tabs.readList}</span>
+                <span data-tab="words">{t.phone.tabs.wordList}</span>
+            </div>
         </div>
     </div>
+
+    <button type="button" class="phone-replay" data-replay hidden>
+        ↻ {demo.replay}
+    </button>
 </div>
 
 <script>
     // The status pills work like in the app: tap one to filter the book list.
+    // (The stage's fixed height keeps the phone from shrinking when a filter
+    // shows fewer books.)
     const filters = document.querySelector<HTMLElement>("[data-phone-filters]");
     if (filters) {
         const pills = Array.from(
@@ -90,12 +192,6 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         const rows = Array.from(
             document.querySelectorAll<HTMLElement>(".phone-row[data-status]"),
         );
-        // Freeze the list at its full (unfiltered) height so picking a filter
-        // with fewer books doesn't shrink the phone.
-        const list = document.querySelector<HTMLElement>(".phone-list");
-        if (list) {
-            list.style.minHeight = `${list.offsetHeight}px`;
-        }
         pills.forEach((pill) =>
             pill.addEventListener("click", () => {
                 const value = pill.dataset.phoneFilter;
@@ -112,5 +208,201 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                 );
             }),
         );
+    }
+</script>
+
+<script>
+    // ---------------------------------------------------------------------
+    // The mockup story: a pausable step-queue timeline. Plays once when the
+    // phone first scrolls into view; pauses off-screen / on hidden tab;
+    // ↻ resets and replays. Under prefers-reduced-motion nothing runs — the
+    // server-rendered Read List (default active view) stays as-is.
+    // ---------------------------------------------------------------------
+    const wrap = document.querySelector<HTMLElement>(".phone-wrap");
+    const stage = wrap?.querySelector<HTMLElement>("[data-stage]");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (wrap && stage && !reduceMotion) {
+        const ORDER = ["search", "book", "words", "readlist"] as const;
+        // Which bottom tab is "active" while a view is showing.
+        const TAB_FOR: Record<string, string> = {
+            search: "search",
+            book: "search",
+            words: "words",
+            readlist: "readlist",
+        };
+        const views = ORDER.map(
+            (name) => stage.querySelector<HTMLElement>(`[data-view="${name}"]`)!,
+        );
+        const tabs = Array.from(
+            document.querySelectorAll<HTMLElement>("[data-tabbar] [data-tab]"),
+        );
+        const replay = wrap.querySelector<HTMLButtonElement>("[data-replay]")!;
+        const badge = wrap.querySelector<HTMLElement>("[data-demo-badge]");
+        const baseCount = badge?.textContent?.trim() ?? "12";
+
+        function setView(name: (typeof ORDER)[number]): void {
+            const target = ORDER.indexOf(name);
+            views.forEach((v, idx) => {
+                v.classList.toggle("is-active", idx === target);
+                v.classList.toggle("is-left", idx < target);
+            });
+            tabs.forEach((tab) =>
+                tab.classList.toggle("active", tab.dataset.tab === TAB_FOR[name]),
+            );
+        }
+
+        // --- Step queue ----------------------------------------------------
+        type Step = { delay: number; run?: () => void };
+        const steps: Step[] = [];
+        const add = (delay: number, run?: () => void) => steps.push({ delay, run });
+
+        // Types `data-text` into a [data-type] span, one char per step, with a
+        // caret while typing (`.is-typing` on the surrounding .phone-field also
+        // hides its placeholder).
+        function addTyping(field: HTMLElement, speed = 70, lead = 300): void {
+            const span = field.querySelector<HTMLElement>("[data-type]")!;
+            const text = span.dataset.text ?? "";
+            add(lead, () => field.classList.add("is-typing"));
+            for (const ch of text) {
+                add(speed, () => {
+                    span.textContent = (span.textContent ?? "") + ch;
+                });
+            }
+            add(250, () => field.classList.remove("is-typing"));
+        }
+
+        const q = <T extends HTMLElement>(sel: string) => wrap.querySelector<T>(sel)!;
+        const queryField = q('[data-field="query"]');
+        const wordField = q('[data-field="word"]');
+        const sentenceField = q('[data-field="sentence"]');
+        const noteField = q('[data-field="note"]');
+        const results = Array.from(wrap.querySelectorAll<HTMLElement>("[data-result]"));
+        const addBtn = q("[data-add-btn]");
+        const plusOne = q("[data-plus-one]");
+        const wordCard = q("[data-word-card]");
+        const newWordRow = q("[data-new-word]");
+
+        // --- The story -------------------------------------------------------
+        add(600, () => setView("search"));
+        addTyping(queryField, 90, 700);
+        results.forEach((row) => add(160, () => row.classList.add("is-shown")));
+        add(650, () => results[0].classList.add("is-pressed"));
+        add(350, () => setView("book"));
+        addTyping(wordField, 70, 800);
+        add(250, () => addBtn.classList.add("is-pressed"));
+        add(300, () => {
+            addBtn.classList.remove("is-pressed");
+            wordCard.classList.add("is-shown");
+            plusOne.classList.remove("is-popped");
+            void plusOne.offsetWidth; // restart the pop animation on replay
+            plusOne.classList.add("is-popped");
+        });
+        addTyping(sentenceField, 45, 800);
+        addTyping(noteField, 45, 500);
+        add(400, () => wordCard.classList.add("is-saved"));
+        add(800, () => setView("words"));
+        add(500, () => newWordRow.classList.add("is-shown"));
+        add(1400, () => setView("readlist"));
+        add(550, () => {
+            if (badge) {
+                badge.textContent = String(Number(baseCount) + 1);
+                badge.classList.add("is-bumped");
+            }
+        });
+        add(600); // settle
+
+        // --- Runner (play / pause / resume / reset) --------------------------
+        let index = 0;
+        let timer: number | null = null;
+        let scheduledAt = 0;
+        let remaining: number | null = null;
+        let playing = false;
+        let started = false;
+        let finished = false;
+        let inView = false;
+
+        function scheduleNext(delay: number): void {
+            scheduledAt = Date.now();
+            timer = window.setTimeout(() => {
+                timer = null;
+                steps[index].run?.();
+                index += 1;
+                if (index < steps.length) {
+                    scheduleNext(steps[index].delay);
+                } else {
+                    playing = false;
+                    finished = true;
+                    replay.hidden = false;
+                }
+            }, delay);
+        }
+
+        function play(): void {
+            if (playing || finished || index >= steps.length) return;
+            playing = true;
+            scheduleNext(remaining ?? steps[index].delay);
+            remaining = null;
+        }
+
+        function pause(): void {
+            if (!playing) return;
+            playing = false;
+            if (timer !== null) {
+                clearTimeout(timer);
+                timer = null;
+                remaining = Math.max(0, steps[index].delay - (Date.now() - scheduledAt));
+            }
+        }
+
+        function reset(): void {
+            pause();
+            index = 0;
+            remaining = null;
+            finished = false;
+            replay.hidden = true;
+            wrap!.querySelectorAll<HTMLElement>("[data-type]").forEach((s) => (s.textContent = ""));
+            [queryField, wordField, sentenceField, noteField].forEach((f) => f.classList.remove("is-typing"));
+            results.forEach((r) => r.classList.remove("is-shown", "is-pressed"));
+            wordCard.classList.remove("is-shown", "is-saved");
+            plusOne.classList.remove("is-popped");
+            newWordRow.classList.remove("is-shown");
+            if (badge) {
+                badge.textContent = baseCount;
+                badge.classList.remove("is-bumped");
+            }
+            // Jump (not slide) back to the start view.
+            stage!.classList.add("no-anim");
+            setView("search");
+            void stage!.offsetWidth;
+            stage!.classList.remove("no-anim");
+        }
+
+        replay.addEventListener("click", () => {
+            reset();
+            play();
+        });
+
+        // Start on first 50% visibility; pause while off-screen, resume on return.
+        const io = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    inView = entry.isIntersecting;
+                    if (entry.isIntersecting) {
+                        started = true;
+                        play();
+                    } else {
+                        pause();
+                    }
+                }
+            },
+            { threshold: 0.5 },
+        );
+        io.observe(wrap);
+
+        document.addEventListener("visibilitychange", () => {
+            if (document.hidden) pause();
+            else if (inView && started) play();
+        });
     }
 </script>
