@@ -54,7 +54,13 @@ const badges = t.hero.badges.split("·").map((b) => b.trim());
                 }
             </ul>
             <div id="download" class="my-7 flex flex-wrap gap-3.5">
-                <a class="button" href="#">
+                <a
+                    class="button"
+                    href="#"
+                    data-ph-event="download_click"
+                    data-ph-platform="android"
+                    data-ph-location="hero"
+                >
                     {t.hero.downloadAndroid} <small>{t.hero.androidBeta}</small>
                 </a>
                 <span class="button button-ghost" aria-disabled="true"

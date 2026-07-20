@@ -141,6 +141,16 @@ const faqSchema = {
     <body>
         <slot />
 
+        <!-- Analytics: cookieless PostHog. No-ops when PUBLIC_POSTHOG_KEY is
+             unset. Reads the locale from <html lang> so this stays a bundled
+             module script (define:vars would force it inline and break the
+             posthog-js import). -->
+        <script>
+            import { initAnalytics } from "../lib/analytics";
+            import type { Lang } from "../i18n";
+            initAnalytics(document.documentElement.lang as Lang);
+        </script>
+
         <!-- Scroll-reveal: fade sections up the first time they enter view
              (replaces the former useReveal React hook). -->
         <script>

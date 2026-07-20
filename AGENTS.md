@@ -104,6 +104,16 @@ The live floating words + stats read from the **word-bank-server** feed. Set the
 root `.env` (see `.env.example`); leave it unset to disable both features gracefully — the page
 still builds and renders (floating words use `HERO_WORDS`, stats stays hidden).
 
+## Analytics
+
+The site uses **PostHog** (cookieless — no cookie/consent banner) to measure the marketing funnel,
+above all the Android **download-click conversion**. It's fully off unless `PUBLIC_POSTHOG_KEY` is
+set (same graceful no-op as `PUBLIC_WORDS_API_URL`). The whole integration is
+[src/lib/analytics.ts](src/lib/analytics.ts) (`initAnalytics` + `track`), mounted in `Layout.astro`;
+events are wired in `Hero.astro` (download), `Header.astro` (CTA / section / language / theme), and
+`Faq.astro`. **Full setup, event list, and how to add events: [analytics.md](analytics.md).** Do
+**not** add analytics to the app — it's "no tracking" by design.
+
 ## Keeping it in sync with the app
 
 This site should reflect what the app actually does (see `../word-bank/AGENTS.md`). When the app

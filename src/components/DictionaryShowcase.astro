@@ -366,6 +366,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 
 <script>
     import { backDismiss } from "../lib/back-dismiss";
+    import { track } from "../lib/analytics";
 
     type Item = { pos: string; definition: string };
 
@@ -689,8 +690,8 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 e.preventDefault();
                 // An empty submit looks up the placeholder example word —
                 // shown in the field so it's clear what was searched.
-                const q =
-                    input.value.trim() || (form.dataset.exampleWord ?? "");
+                const typed = input.value.trim();
+                const q = typed || (form.dataset.exampleWord ?? "");
                 if (!q || busy) return;
                 input.value = q;
                 busy = true;
@@ -699,6 +700,8 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 );
                 if (submit) submit.disabled = true;
                 setStatus(form.dataset.msgLoading ?? "…");
+                // Outcome for analytics — set through the branches, reported once below.
+                let result: "found" | "not_found" | "error" = "error";
                 try {
                     const res = await fetch(
                         `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(q)}`,
@@ -707,10 +710,12 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                         setStatus(
                             `${form.dataset.msgNotfoundPre ?? ""}${q}${form.dataset.msgNotfoundPost ?? ""}`,
                         );
+                        result = "not_found";
                         return;
                     }
                     if (!res.ok) {
                         setStatus(form.dataset.msgError ?? "");
+                        result = "error";
                         return;
                     }
                     const parsed = parseEntries(await res.json());
@@ -718,15 +723,26 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                         setStatus(
                             `${form.dataset.msgNotfoundPre ?? ""}${q}${form.dataset.msgNotfoundPost ?? ""}`,
                         );
+                        result = "not_found";
                         return;
                     }
                     showWord(parsed.word || q, parsed.phonetic, parsed.items);
                     setStatus("");
+                    result = "found";
                 } catch {
                     setStatus(form.dataset.msgError ?? "");
+                    result = "error";
                 } finally {
                     busy = false;
                     if (submit) submit.disabled = false;
+                    // Which words visitors look up, and whether we had them.
+                    // is_example flags the empty-submit demo lookup. locale
+                    // rides along as a registered super-property.
+                    track("dictionary_lookup", {
+                        query: q.toLowerCase(),
+                        result,
+                        is_example: !typed,
+                    });
                 }
             });
         }

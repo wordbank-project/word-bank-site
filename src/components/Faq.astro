@@ -23,3 +23,20 @@ const t = getCopy(lang);
         }
     </div>
 </Section>
+
+<script>
+    import { track } from "../lib/analytics";
+
+    // Track which questions readers open (only on open — the toggle event also
+    // fires on close, which we ignore).
+    document
+        .querySelectorAll<HTMLDetailsElement>("details.faq-item")
+        .forEach((details) => {
+            details.addEventListener("toggle", () => {
+                if (!details.open) return;
+                track("faq_open", {
+                    question: details.querySelector("summary")?.textContent?.trim(),
+                });
+            });
+        });
+</script>

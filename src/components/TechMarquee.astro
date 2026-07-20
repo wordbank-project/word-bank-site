@@ -21,7 +21,13 @@ const t = getCopy(lang);
             the parser splits the outer one apart. */
         }
         <a class="mx-auto max-w-135 text-ink-soft">
-            <a href={REPO_URL} target="_blank" rel="noopener noreferrer">
+            <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-ph-event="repo_click"
+                data-ph-location="tech_blurb"
+            >
                 {t.tech.blurbLink}</a
             ><br />
             {t.tech.blurbRest}

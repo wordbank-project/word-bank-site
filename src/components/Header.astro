@@ -21,7 +21,7 @@ const iconClass = "w-[18px] h-[18px]";
         <div class="flex items-center gap-4">
             <nav class="nav-links" aria-label="Main" data-nav-links>
                 {t.nav.links.map(({ href, label }) => <a href={href}>{label}</a>)}
-                <a href="#top" class="button button-small" data-scroll-top>{t.nav.cta}</a>
+                <a href="#top" class="button button-small" data-scroll-top data-ph-event="cta_get_app_click">{t.nav.cta}</a>
             </nav>
 
             <!-- Language dropdown: current language + searchable list of all
@@ -187,6 +187,8 @@ const iconClass = "w-[18px] h-[18px]";
 </header>
 
 <script>
+    import { track } from "../lib/analytics";
+
     // --- Mobile menu ---------------------------------------------------------
     const navToggle =
         document.querySelector<HTMLButtonElement>("[data-nav-toggle]");
@@ -246,6 +248,10 @@ const iconClass = "w-[18px] h-[18px]";
                 // Refresh the href with the live hash right before navigation,
                 // in case a sync was ever missed (belt-and-suspenders).
                 l.href = (l.dataset.base ?? "/") + location.hash;
+                track("language_change", {
+                    from: document.documentElement.lang,
+                    to: l.dataset.lang,
+                });
                 try {
                     if (l.dataset.lang) localStorage.setItem("lang", l.dataset.lang);
                 } catch {
@@ -341,6 +347,7 @@ const iconClass = "w-[18px] h-[18px]";
         apply(getPref());
         themeBtn.addEventListener("click", () => {
             const next = ORDER[(ORDER.indexOf(getPref()) + 1) % ORDER.length];
+            track("theme_change", { theme: next });
             try {
                 localStorage.setItem("theme", next);
             } catch {
@@ -421,6 +428,8 @@ const iconClass = "w-[18px] h-[18px]";
             // replaceState doesn't fire hashchange → re-sync the lang links.
             const nextHash = id ? `#${id}` : "";
             if (location.hash !== nextHash) {
+                // Fire once per real section change (not for the hero/null case).
+                if (id) track("section_view", { section: id });
                 history.replaceState(
                     null,
                     "",
