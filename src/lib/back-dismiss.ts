@@ -17,6 +17,7 @@
  * @param {() => boolean} opts.isOpen - A function that returns true if the modal is open.
  * @param {() => void} opts.close - A function that closes the modal.
  * @returns {object} An object containing `pushOnOpen` and `requestClose` methods.
+ * 
  */
 export function backDismiss(opts: {
     key: string;
