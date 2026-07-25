@@ -12,9 +12,19 @@ import posthog from "posthog-js";
 import type { Lang } from "../i18n";
 
 const KEY = import.meta.env.PUBLIC_POSTHOG_KEY as string | undefined;
+
+// Where events are sent.
+//   unset (production) → "/ingest", the reverse proxy in netlify.toml, so ad
+//                        blockers don't drop events
+//   set   (local .env) → used as-is; points straight at PostHog, because
+//                        `npm run dev` doesn't apply netlify.toml rewrites
+// `||` rather than `??` so an empty value counts as unset.
 const HOST =
-    (import.meta.env.PUBLIC_POSTHOG_HOST as string | undefined) ??
-    "https://eu.i.posthog.com";
+    (import.meta.env.PUBLIC_POSTHOG_HOST as string | undefined) || "/ingest";
+
+// PostHog's real app URL, so its links and toolbar don't point at our domain.
+// Keep the region in step with netlify.toml.
+const UI_HOST = "https://eu.posthog.com";
 
 // Shared across every component <script> that imports this module (Astro/Vite
 // dedupe the import), so `track()` sees the flag set by initAnalytics().
@@ -23,6 +33,9 @@ let ready = false;
 /**
  * Initialise PostHog once, cookielessly, and wire declarative click events.
  * No-ops when no key is configured. Called from Layout.astro with the page locale.
+ * 
+ * @param {Lang} locale The current page locale, for segmenting every event.
+ * @returns {void} Returns nothing; sets `ready` so `track()` can fire events.
  */
 export function initAnalytics(locale: Lang): void {
     if (ready || !KEY) {
@@ -31,6 +44,7 @@ export function initAnalytics(locale: Lang): void {
 
     posthog.init(KEY, {
         api_host: HOST,
+        ui_host: UI_HOST,
         // In-memory only: no cookies, no localStorage, no sessionStorage — so
         // no GDPR consent banner is needed. We use memory persistence rather
         // than PostHog's `cookieless_mode`, which dropped our events in practice
@@ -70,7 +84,13 @@ export function initAnalytics(locale: Lang): void {
     });
 }
 
-/** Capture a named event. No-op until initAnalytics() has run with a key. */
+/** Capture a named event. No-op until initAnalytics() has run with a key. 
+ * 
+ * @param {string} event The name of the event to capture.
+ * @param {Record<string, unknown>} [props] Optional properties to attach to the event.
+ * @returns {void} Returns nothing; sends the event to PostHog if ready.
+ * 
+*/
 export function track(event: string, props?: Record<string, unknown>): void {
     if (!ready) {
         return;
@@ -78,8 +98,13 @@ export function track(event: string, props?: Record<string, unknown>): void {
     posthog.capture(event, props);
 }
 
-// Turn an element's data-ph-* attributes into event properties, dropping the
-// event name itself: data-ph-platform="android" → { platform: "android" }.
+/** Turn an element's data-ph-* attributes into event properties, dropping the
+ * event name itself: data-ph-platform="android" → { platform: "android" }.
+ * 
+ * @param {DOMStringMap} dataset The dataset of the element containing data-ph-* attributes.
+ * @returns {Record<string, string>} An object containing the event properties.
+ * 
+ */
 function phProps(dataset: DOMStringMap): Record<string, string> {
     const props: Record<string, string> = {};
     for (const [key, value] of Object.entries(dataset)) {

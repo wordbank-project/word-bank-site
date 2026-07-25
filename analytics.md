@@ -15,7 +15,8 @@ banner** and nothing is stored in the browser.
 - Leave `PUBLIC_POSTHOG_KEY` unset → **completely disabled**, the site builds and behaves exactly
   the same (same graceful-degradation pattern as `PUBLIC_WORDS_API_URL`).
 - Cookieless (`persistence: "memory"`): no cookies, no `localStorage`, no `sessionStorage`.
-- EU-hosted by default (`https://eu.i.posthog.com`).
+- EU-hosted (`eu.i.posthog.com`), reached in production through a **same-origin reverse proxy**
+  at `/ingest` so ad blockers don't drop events — see [Reverse proxy](#reverse-proxy).
 
 ## Setup
 
@@ -28,16 +29,113 @@ Add the key to a root `.env` (gitignored; see `.env.example`):
 
 ```bash
 PUBLIC_POSTHOG_KEY=phc_your_real_key
-PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com   # optional, this is the default
+PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com   # required locally — see below
 ```
 
 Astro only exposes client env prefixed **`PUBLIC_`**. Restart `npm run dev` after changing it.
 Leave `PUBLIC_POSTHOG_KEY` empty to keep dev quiet (no events sent).
 
+`PUBLIC_POSTHOG_HOST` **must** be set locally. It defaults to `/ingest`, and `npm run dev` is the
+Astro dev server, which does not apply `netlify.toml` rewrites — so the default would 404. Point it
+at the direct EU host, or run `npx netlify dev` to exercise the real proxy.
+
 ### 3. Production (Netlify)
-Set the env vars in the **Netlify dashboard** → Site settings → Environment variables:
-`PUBLIC_POSTHOG_KEY` (required) and `PUBLIC_POSTHOG_HOST` (optional). They're read at build time
-and inlined into the client bundle, so **trigger a redeploy** after adding them.
+Set **`PUBLIC_POSTHOG_KEY`** in the **Netlify dashboard** → Site configuration → Environment
+variables. Read at build time and inlined into the client bundle, so **trigger a redeploy** after
+adding it.
+
+**Leave `PUBLIC_POSTHOG_HOST` unset in the dashboard** so production falls back to the `/ingest`
+proxy. If it's set to `https://eu.i.posthog.com`, events go direct and blockers can drop them.
+
+## Reverse proxy
+
+### What is a reverse proxy?
+
+A middleman that sits in front of a server and forwards requests to it, so the visitor only ever
+talks to **one** address — yours.
+
+Without one, the browser talks to PostHog directly. The request has PostHog's name on it, so an ad
+blocker recognises it and cancels it before it is ever sent:
+
+```
+  browser ──► eu.i.posthog.com     ✗ blocked: that name is on a tracker list
+```
+
+With one, the browser asks *our own site* for `/ingest/...`. Netlify's CDN fetches the answer from
+PostHog behind the scenes and hands it back. Nothing the browser sends mentions PostHog, so there
+is no third-party name left to match against:
+
+```
+  browser ──► our-domain/ingest/... ──► eu.i.posthog.com
+              ^^^^^^^^^^^^^^^^^^^^^     ^^^^^^^^^^^^^^^^
+              all the browser sees      Netlify calls this
+              — and it's first-party    server-side; the
+                                        browser never knows
+```
+
+Think of it like a mail-forwarding address: people write to your PO box, and the post office
+quietly relays it to where you actually live. Senders never learn the real address.
+
+**Why "reverse"?** A normal (forward) proxy sits in front of the *client* and hides **who is
+asking** — that's what a VPN does. A reverse proxy sits in front of the *server* and hides **who is
+answering**. Same relaying trick, opposite end of the conversation.
+
+**What it does not do:** it is not a privacy trick against the visitor. The same events still reach
+PostHog, and the site stays cookieless either way (see *Why no cookies* below). It only stops
+blocklists from silently deleting analytics for the sizeable share of visitors running a blocker —
+which otherwise makes the download-conversion numbers quietly wrong in a way you cannot see.
+
+**The cost:** the requests now flow through Netlify, so they count toward your bandwidth, and if
+Netlify is down analytics is down with it. Both are negligible at this traffic level.
+
+### Why we have one
+
+PostHog's Installation Health flags a missing reverse proxy: blocker lists match `*.i.posthog.com`,
+so a direct integration loses events from anyone running uBlock Origin et al. Routing through our
+own origin makes the requests first-party.
+
+**Server half — [netlify.toml](netlify.toml).** Three `status = 200` rewrites (proxied by Netlify's
+CDN, so the browser only ever sees our domain):
+
+| Path | Upstream |
+|---|---|
+| `/ingest/static/*` | `eu-assets.i.posthog.com/static/:splat` |
+| `/ingest/array/*` | `eu-assets.i.posthog.com/array/:splat` |
+| `/ingest/*` | `eu.i.posthog.com/:splat` |
+
+Order matters — both asset rules must precede the catch-all. The two asset rules are not optional
+even though posthog-js is bundled from npm: remote config comes from `/array/<token>/config`, and
+`capture_exceptions` lazy-loads its chunk from `/static/`.
+
+PostHog's own Netlify recipe adds `host = "eu-assets.i.posthog.com"` to each rule. That key is not
+in Netlify's redirect schema (`netlify-redirect-parser` destructures only
+`from`/`to`/`status`/`force`/`query`/`conditions`/`signed`/`headers`/`rate_limit`) so it is silently
+dropped — omitted here, since a proxy rewrites the `Host` header to the destination anyway.
+
+**Client half — [src/lib/analytics.ts](src/lib/analytics.ts).** `api_host` defaults to `/ingest`,
+and `ui_host` is pinned to `https://eu.posthog.com` so the toolbar and every "view in PostHog" link
+resolve to the real app rather than our domain.
+
+**Moving region** (EU → US) means changing the three upstreams in `netlify.toml` *and* `UI_HOST`
+in `analytics.ts` together.
+
+### Verifying the proxy
+
+Locally, with `npx netlify dev` (plain `npm run dev` will not apply the rewrites):
+
+```bash
+curl -o /dev/null -w '%{http_code} %{content_type}\n' localhost:8888/ingest/static/array.js
+# 200 application/javascript  (~230 KB)
+
+curl -o /dev/null -w '%{http_code} %{size_download}\n' "localhost:8888/ingest/array/$PUBLIC_POSTHOG_KEY/config"
+# 200, same byte size as the direct https://eu-assets.i.posthog.com/... call
+```
+
+A `404` with `content_type: text/html` is Netlify's own miss (rule not matching); a `400` from
+`POST /ingest/e/` is PostHog rejecting a bogus payload, which means the proxy *did* reach it.
+
+In production, load the site and confirm the Network tab shows requests to `<your-domain>/ingest/…`
+and none to `*.i.posthog.com`, then check PostHog → Web analytics → Installation Health.
 
 ## What gets tracked
 
@@ -114,7 +212,8 @@ Init options set in [src/lib/analytics.ts](src/lib/analytics.ts):
 
 ```ts
 posthog.init(KEY, {
-  api_host: HOST,                      // PUBLIC_POSTHOG_HOST ?? https://eu.i.posthog.com
+  api_host: HOST,                      // PUBLIC_POSTHOG_HOST || "/ingest" (the reverse proxy)
+  ui_host: UI_HOST,                    // https://eu.posthog.com — so PostHog links/toolbar work
   persistence: "memory",               // in-memory only → no cookies/storage, no consent banner
   capture_pageview: true,
   capture_pageleave: true,             // bounce / time-on-page

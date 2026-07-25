@@ -1,3 +1,42 @@
 [build]
   command = "npm run build"
   publish = "dist"
+
+# ---------------------------------------------------------------------------
+# PostHog reverse proxy — EU cloud.
+#
+# Serves analytics from our own origin so host-based ad/tracker blockers (which
+# match *.i.posthog.com) don't silently drop events. `status = 200` makes these
+# rewrites, proxied by Netlify's CDN — the browser only ever sees our domain.
+#
+# Order matters: both asset rules must precede the catch-all, and all three must
+# stay above any other redirect. netlify.toml rules are evaluated before the
+# adapter's `_redirects` (currently empty — every page prerenders).
+#
+# PostHog's Netlify recipe also puts `host = "eu-assets.i.posthog.com"` on each
+# rule. That key is not part of Netlify's redirect schema — netlify-redirect-parser
+# destructures only from/to/status/force/query/conditions/signed/headers/rate_limit
+# and drops the rest — so it is omitted here. A proxy rewrites the Host header to
+# the destination anyway.
+#
+# Client half: src/lib/analytics.ts (`api_host` → /ingest, plus `ui_host` so links
+# back into PostHog still resolve to the real app). Moving to US cloud means
+# changing the hosts below *and* UI_HOST there together.
+# ---------------------------------------------------------------------------
+[[redirects]]
+  from = "/ingest/static/*"
+  to = "https://eu-assets.i.posthog.com/static/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/ingest/array/*"
+  to = "https://eu-assets.i.posthog.com/array/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/ingest/*"
+  to = "https://eu.i.posthog.com/:splat"
+  status = 200
+  force = true
