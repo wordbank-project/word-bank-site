@@ -58,8 +58,6 @@ export function initAnalytics(locale: Lang): void {
         capture_pageleave: true,
         // Autocapture uncaught JS errors so real-world breakage surfaces.
         capture_exceptions: true,
-        // Keep it lightweight and privacy-first — this is a marketing site.
-        disable_session_recording: true,
         cross_subdomain_cookie: false,
         person_profiles: "identified_only",
     });
