@@ -12,10 +12,10 @@
  * leaving the page. A manual close routes through `requestClose()`, which pops
  * that same entry (→ popstate → close), so history stays balanced.
  * 
- * @param {object} opts - Options for configuring the back dismiss behavior.
- * @param {string} opts.key - A unique key to identify the modal in history state.
- * @param {() => boolean} opts.isOpen - A function that returns true if the modal is open.
- * @param {() => void} opts.close - A function that closes the modal.
+ * @param {object} opts Options for configuring the back dismiss behavior.
+ * @param {string} opts.key A unique key to identify the modal in history state.
+ * @param {() => boolean} opts.isOpen A function that returns true if the modal is open.
+ * @param {() => void} opts.close A function that closes the modal.
  * @returns {object} An object containing `pushOnOpen` and `requestClose` methods.
  * 
  */
