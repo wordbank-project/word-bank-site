@@ -156,6 +156,51 @@ export const nl: Copy = {
     },
     footer: {
         tagline: 'Jouw persoonlijke woordenkluis',
+        support: 'Steun ons',
+    },
+    supportPage: {
+        meta: {
+            title: 'Steun Word Bank',
+            description:
+                'Manieren om Word Bank te steunen — doneer via GitHub Sponsors, Liberapay, Ko-fi of Buy Me a Coffee, of help met een ster, een bugmelding of een aanbeveling.',
+        },
+        heading: 'Steun Word Bank',
+        intro: 'Word Bank is gratis, open source en zonder advertenties — en dat blijft zo. Er zit geen bedrijf achter, alleen één ontwikkelaar en een paar servers. Donaties dekken de woordenboek-API achter elke opzoeking en houden nieuwe functies op komst.',
+        donateHeading: 'Doneren',
+        donateSub: 'Kies het platform dat jij prettig vindt — elk beetje helpt.',
+        platforms: {
+            github: 'Eenmalige of terugkerende steun via je GitHub-account — zonder kosten.',
+            liberapay: 'Terugkerende donaties op een open-sourceplatform — zonder kosten.',
+            kofi: 'Een snelle eenmalige fooi — geen account nodig.',
+            bmac: 'Trakteer op een kopje koffie in een paar tikken.',
+        },
+        otherHeading: 'Andere manieren om te helpen',
+        otherSub: 'Geen budget? Dit helpt net zo goed.',
+        other: {
+            star: {
+                title: 'Geef het project een ster op GitHub',
+                description:
+                    'Een ster maakt Word Bank beter vindbaar en laat zien dat het ertoe doet.',
+            },
+            issues: {
+                title: 'Meld bugs & deel ideeën',
+                description:
+                    'Iets kapot of iets gemist? Een issue op GitHub is een echte bijdrage.',
+            },
+            share: {
+                title: 'Vertel het een medelezer',
+                description:
+                    'Word Bank groeit via mond-tot-mond — deel het met iemand die graag leest.',
+            },
+        },
+        shareLinks: {
+            aria: 'Deel Word Bank',
+            message:
+                'Word Bank — maak van de boeken die je leest woordenschat die blijft. Gratis, open source, offline.',
+            copy: 'Kopieer link',
+            copied: 'Gekopieerd!',
+        },
+        thanks: 'Elke bijdrage — geld, code of een goed woord — houdt Word Bank gratis voor iedereen. Dank je wel. ❤️',
     },
     phone: {
         aria: 'Word Bank-app met een leeslijst met statussen en woordtellingen',

@@ -4,24 +4,38 @@ import { getCopy, localeRoot, LANGS, LANG_META, type Lang } from "../i18n";
 
 interface Props {
     lang: Lang;
+    /** Set on subpages (e.g. "support"): section links point back to the
+        homepage, and the language switcher stays on this page. */
+    subpath?: string;
 }
 
-const { lang } = Astro.props;
+const { lang, subpath = "" } = Astro.props;
 const t = getCopy(lang);
+const home = localeRoot(lang);
 
 const iconClass = "w-[18px] h-[18px]";
 ---
 
 <header class="nav">
     <div class="mx-auto max-w-270 gap-3 px-6 nav-inner">
-        <a href="#top" class="nav-logo" data-scroll-top aria-label={t.nav.backToTop}>
+        <a
+            href={subpath ? home : "#top"}
+            class="nav-logo"
+            data-scroll-top={subpath ? undefined : true}
+            aria-label={t.nav.backToTop}
+        >
             <Logo withWordmark />
         </a>
 
         <div class="flex items-center gap-4">
             <nav class="nav-links" aria-label="Main" data-nav-links>
-                {t.nav.links.map(({ href, label }) => <a href={href}>{label}</a>)}
-                <a href="#top" class="button button-small" data-scroll-top data-ph-event="cta_get_app_click">{t.nav.cta}</a>
+                {t.nav.links.map(({ href, label }) => <a href={subpath ? `${home}${href}` : href}>{label}</a>)}
+                <a
+                    href={subpath ? home : "#top"}
+                    class="button button-small"
+                    data-scroll-top={subpath ? undefined : true}
+                    data-ph-event="cta_get_app_click">{t.nav.cta}</a
+                >
             </nav>
 
             <!-- Language dropdown: current language + searchable list of all
@@ -89,14 +103,14 @@ const iconClass = "w-[18px] h-[18px]";
                             const meta = LANG_META[l];
                             return (
                                 <a
-                                    href={localeRoot(l)}
+                                    href={localeRoot(l) + subpath}
                                     hreflang={l}
                                     role="option"
                                     aria-selected={l === lang}
                                     aria-current={l === lang ? "true" : undefined}
                                     class="flex items-center justify-between gap-2 rounded-lg px-3 py-2 no-underline transition-colors hover:bg-surface-soft"
                                     data-lang-link
-                                    data-base={localeRoot(l)}
+                                    data-base={localeRoot(l) + subpath}
                                     data-lang={l}
                                     data-filter={`${meta.native} ${meta.english} ${meta.code}`.toLowerCase()}
                                 >

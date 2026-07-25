@@ -10,9 +10,13 @@ interface Props {
     lang?: Lang;
     title?: string;
     description?: string;
+    /** Path under the locale root (e.g. "support") for subpages, so hreflang
+        alternates and the remembered-language redirect stay on this page
+        instead of falling back to the locale's homepage. */
+    subpath?: string;
 }
 
-const { lang = "en", title, description } = Astro.props;
+const { lang = "en", title, description, subpath = "" } = Astro.props;
 const t = getCopy(lang);
 const pageTitle = title ?? t.meta.title;
 const pageDescription = description ?? t.meta.description;
@@ -27,10 +31,10 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).href;
 // and, as path-only roots, by the remembered-language redirect script below.
 const alternates = LANGS.map((l) => ({
     lang: l,
-    href: new URL(localeRoot(l), Astro.site ?? Astro.url).href,
+    href: new URL(localeRoot(l) + subpath, Astro.site ?? Astro.url).href,
 }));
-const defaultUrl = new URL(localeRoot(DEFAULT_LANG), Astro.site ?? Astro.url).href;
-const localeRoots = Object.fromEntries(LANGS.map((l) => [l, localeRoot(l)]));
+const defaultUrl = new URL(localeRoot(DEFAULT_LANG) + subpath, Astro.site ?? Astro.url).href;
+const localeRoots = Object.fromEntries(LANGS.map((l) => [l, localeRoot(l) + subpath]));
 
 // Structured data (JSON-LD) so search engines show rich results: the app
 // itself plus the FAQ (Google can render FAQ items directly in the listing).
@@ -45,15 +49,19 @@ const appSchema = {
     url: canonical,
     offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
 };
-const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: t.faq.items.map(({ question, answer }) => ({
-        "@type": "Question",
-        name: question,
-        acceptedAnswer: { "@type": "Answer", text: answer },
-    })),
-};
+// Only the homepage renders the FAQ, so subpages skip its schema (duplicate
+// FAQ markup across URLs would be misleading structured data).
+const faqSchema = subpath
+    ? null
+    : {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: t.faq.items.map(({ question, answer }) => ({
+              "@type": "Question",
+              name: question,
+              acceptedAnswer: { "@type": "Answer", text: answer },
+          })),
+      };
 ---
 
 <!doctype html>
@@ -90,11 +98,15 @@ const faqSchema = {
             type="application/ld+json"
             set:html={JSON.stringify(appSchema)}
         />
-        <script
-            is:inline
-            type="application/ld+json"
-            set:html={JSON.stringify(faqSchema)}
-        />
+        {
+            faqSchema && (
+                <script
+                    is:inline
+                    type="application/ld+json"
+                    set:html={JSON.stringify(faqSchema)}
+                />
+            )
+        }
 
         <!-- Honour a remembered language choice before paint: if the visitor
              previously switched locale, send them to the matching page (no flash,

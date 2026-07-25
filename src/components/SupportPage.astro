@@ -1,0 +1,227 @@
+---
+// The support/donate page body, parameterised by locale (mirrors Page.astro).
+// Rendered by src/pages/support.astro (en), src/pages/nl/support.astro and
+// src/pages/fr/support.astro.
+import { getCopy, localeRoot, type Lang } from "../i18n";
+import { REPO_URL, SUPPORT_PLATFORMS } from "../content";
+
+import Layout from "../layouts/Layout.astro";
+import Header from "./Header.astro";
+import Section from "./Section.astro";
+import Footer from "./Footer.astro";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
+const s = t.supportPage;
+
+const svg = (inner: string) =>
+    `<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${inner}</svg>`;
+
+// Non-monetary ways to help; copy lives in `supportPage.other` per locale.
+// The third card ("share") is rendered separately below with the social row.
+const OTHER_WAYS: { key: keyof typeof s.other; href: string; icon: string }[] =
+    [
+        {
+            key: "star",
+            href: REPO_URL,
+            icon: svg(
+                '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9L12 3.5z" />',
+            ),
+        },
+        {
+            key: "issues",
+            href: `${REPO_URL}/issues`,
+            icon: svg(
+                '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />',
+            ),
+        },
+    ];
+
+const shareIcon = svg(
+    '<circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" /><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4" />',
+);
+
+// Prefilled share intents: the localized homepage URL + a translated one-liner.
+const shareUrl = new URL(localeRoot(lang), Astro.site ?? Astro.url).href;
+const msg = encodeURIComponent(s.shareLinks.message);
+const url = encodeURIComponent(shareUrl);
+const SHARE_TARGETS: { name: string; href: string }[] = [
+    { name: "X", href: `https://x.com/intent/post?text=${msg}&url=${url}` },
+    {
+        name: "Bluesky",
+        href: `https://bsky.app/intent/compose?text=${msg}%20${url}`,
+    },
+    {
+        name: "Facebook",
+        href: `https://www.facebook.com/sharer/sharer.php?u=${url}`,
+    },
+    { name: "WhatsApp", href: `https://wa.me/?text=${msg}%20${url}` },
+    {
+        name: "Reddit",
+        href: `https://www.reddit.com/submit?url=${url}&title=${msg}`,
+    },
+    { name: "Telegram", href: `https://t.me/share/url?url=${url}&text=${msg}` },
+];
+
+const pillClass =
+    "inline-flex items-center rounded-full border border-line px-3 py-1.5 text-[0.85rem] font-semibold text-ink-soft no-underline transition-colors hover:border-accent hover:text-accent";
+
+const cardClass =
+    "rounded-[14px] border border-line bg-card p-6.5 transition-[translate,box-shadow,border-color] duration-200 hover:-translate-y-1 hover:border-accent/40 hover:shadow-(--shadow) motion-reduce:hover:translate-y-0";
+---
+
+<Layout
+    lang={lang}
+    subpath="support"
+    title={s.meta.title}
+    description={s.meta.description}
+>
+    <a href="#main" class="skip-link">{t.nav.skipToContent}</a>
+    <Header lang={lang} subpath="support" />
+    <main id="main">
+        <Section>
+            <h2 class="flex items-center justify-center">{s.heading}</h2>
+            <p class="section-sub max-w-[62ch]">{s.intro}</p>
+
+            <h2>{s.donateHeading}</h2>
+            <p class="section-sub">{s.donateSub}</p>
+            <div class="grid grid-cols-2 gap-5.5 max-[720px]:grid-cols-1 mb-13">
+                {
+                    SUPPORT_PLATFORMS.map((p) => (
+                        <a
+                            href={p.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-ph-event="donate_click"
+                            data-ph-location={p.id}
+                            class:list={["group block no-underline", cardClass]}
+                        >
+                            <span class="flex items-center justify-between gap-2">
+                                <span class="text-[1.05rem] font-semibold text-ink">
+                                    {p.name}
+                                </span>
+                                <span
+                                    class="text-accent transition-transform group-hover:translate-x-0.5"
+                                    aria-hidden="true"
+                                >
+                                    ↗
+                                </span>
+                            </span>
+                            <p class="m-0 mt-2 text-[0.93rem] text-ink-muted">
+                                {s.platforms[p.id]}
+                            </p>
+                        </a>
+                    ))
+                }
+            </div>
+
+            <h2 class="mt-0">{s.otherHeading}</h2>
+            <p class="section-sub">{s.otherSub}</p>
+            <div class="grid grid-cols-3 gap-5.5 max-[900px]:grid-cols-1 mb-13">
+                {
+                    OTHER_WAYS.map(({ key, href, icon }) => (
+                        <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-ph-event="support_help_click"
+                            data-ph-location={key}
+                            class:list={["block no-underline", cardClass]}
+                        >
+                            <span
+                                class="mb-4 inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent"
+                                set:html={icon}
+                            />
+                            <h3 class="mt-3.5 mb-2 text-[1.05rem]">
+                                {s.other[key].title}
+                            </h3>
+                            <p class="m-0 text-[0.93rem] text-ink-muted">
+                                {s.other[key].description}
+                            </p>
+                        </a>
+                    ))
+                }
+                <article class={cardClass}>
+                    <span
+                        class="mb-4 inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent"
+                        set:html={shareIcon}
+                    />
+                    <h3 class="mt-3.5 mb-2 text-[1.05rem]">
+                        {s.other.share.title}
+                    </h3>
+                    <p class="m-0 text-[0.93rem] text-ink-muted">
+                        {s.other.share.description}
+                    </p>
+                    <nav
+                        class="mt-4 flex flex-wrap gap-2"
+                        aria-label={s.shareLinks.aria}
+                    >
+                        {
+                            SHARE_TARGETS.map(({ name, href }) => (
+                                <a
+                                    href={href}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    data-ph-event="share_click"
+                                    data-ph-location={name.toLowerCase()}
+                                    class={pillClass}
+                                >
+                                    {name}
+                                </a>
+                            ))
+                        }
+                        <button
+                            type="button"
+                            class:list={[
+                                pillClass,
+                                "cursor-pointer bg-transparent",
+                            ]}
+                            data-copy-link={shareUrl}
+                            data-copied-label={s.shareLinks.copied}
+                            data-ph-event="share_click"
+                            data-ph-location="copy_link"
+                        >
+                            {s.shareLinks.copy}
+                        </button>
+                    </nav>
+                </article>
+            </div>
+
+            <div class="flex justify-center">
+                <p
+                    class="max-w-[62ch] text-[0.95rem] text-ink-muted text-center"
+                >
+                    {s.thanks}
+                </p>
+            </div>
+        </Section>
+    </main>
+    <Footer lang={lang} />
+</Layout>
+
+<script>
+    // "Copy link" pill: copy the homepage URL, flash the localized "Copied!"
+    // label for a moment. Silently no-ops when the clipboard is blocked.
+    const btn = document.querySelector<HTMLButtonElement>("[data-copy-link]");
+    if (btn) {
+        let timer: ReturnType<typeof setTimeout> | undefined;
+        btn.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(btn.dataset.copyLink ?? "");
+            } catch {
+                return;
+            }
+            const original = btn.dataset.copyLabel ?? btn.textContent ?? "";
+            btn.dataset.copyLabel = original;
+            btn.textContent = btn.dataset.copiedLabel ?? original;
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                btn.textContent = original;
+            }, 2000);
+        });
+    }
+</script>

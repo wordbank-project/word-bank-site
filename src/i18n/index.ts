@@ -19,7 +19,7 @@
 // Fields typed `Record<Lang, string>` (e.g. `dictionary.chips.names`) will
 // type-error in every existing locale file until the new language's translated
 // name is added there — that's the sync guarantee, not a chore to skip.
-import type { IconName } from '../content';
+import type { IconName, SupportPlatformId } from '../content';
 import { en } from './en';
 import { nl } from './nl';
 import { fr } from './fr';
@@ -94,7 +94,22 @@ export interface Copy {
     };
     faq: { heading: string; items: { question: string; answer: string }[] };
     tech: { heading: string; blurbLink: string; blurbRest: string };
-    footer: { tagline: string };
+    footer: { tagline: string; support: string };
+    supportPage: {
+        meta: { title: string; description: string };
+        heading: string;
+        intro: string;
+        donateHeading: string;
+        donateSub: string;
+        platforms: Record<SupportPlatformId, string>; // one blurb per donation platform
+        otherHeading: string;
+        otherSub: string;
+        other: Record<'star' | 'issues' | 'share', { title: string; description: string }>;
+        // The social share row inside the "share" card: nav aria label, the
+        // prefilled share message, and the copy-link button's two states.
+        shareLinks: { aria: string; message: string; copy: string; copied: string };
+        thanks: string;
+    };
     phone: {
         aria: string;
         readList: string;

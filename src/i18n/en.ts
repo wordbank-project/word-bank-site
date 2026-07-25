@@ -156,6 +156,51 @@ export const en: Copy = {
     },
     footer: {
         tagline: 'Your personal words vault',
+        support: 'Support',
+    },
+    supportPage: {
+        meta: {
+            title: 'Support Word Bank',
+            description:
+                'Ways to support Word Bank — donate via GitHub Sponsors, Liberapay, Ko-fi or Buy Me a Coffee, or help out with a star, a bug report, or a recommendation.',
+        },
+        heading: 'Support Word Bank',
+        intro: 'Word Bank is free, open source, and ad-free — and it’s staying that way. There is no company behind it, just one developer and a few servers. Donations cover the dictionary API that powers every lookup and keep new features coming.',
+        donateHeading: 'Donate',
+        donateSub: 'Pick whichever platform you prefer — every bit helps.',
+        platforms: {
+            github: 'Recurring or one-time support through your GitHub account — no fees.',
+            liberapay: 'Recurring donations on an open-source platform — no fees.',
+            kofi: 'A quick one-off tip — no account needed.',
+            bmac: 'Buy a coffee’s worth of support in a couple of taps.',
+        },
+        otherHeading: 'Other ways to help',
+        otherSub: 'No budget? These help just as much.',
+        other: {
+            star: {
+                title: 'Star the project on GitHub',
+                description:
+                    'A star makes Word Bank easier to discover and tells us it matters to you.',
+            },
+            issues: {
+                title: 'Report bugs & share ideas',
+                description:
+                    'Found something broken or missing? An issue on GitHub is a real contribution.',
+            },
+            share: {
+                title: 'Tell a fellow reader',
+                description:
+                    'Word Bank grows by word of mouth — share it with someone who reads.',
+            },
+        },
+        shareLinks: {
+            aria: 'Share Word Bank',
+            message:
+                'Word Bank — turn the books you read into vocabulary you keep. Free, open source, offline.',
+            copy: 'Copy link',
+            copied: 'Copied!',
+        },
+        thanks: 'Every contribution — money, code, or a kind word — keeps Word Bank free for everyone. Thank you. ❤️',
     },
     phone: {
         aria: 'Word Bank app showing a read list with statuses and word counts',

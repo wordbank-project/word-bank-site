@@ -156,6 +156,51 @@ export const fr: Copy = {
     },
     footer: {
         tagline: 'Votre coffre à mots personnel',
+        support: 'Nous soutenir',
+    },
+    supportPage: {
+        meta: {
+            title: 'Soutenir Word Bank',
+            description:
+                'Comment soutenir Word Bank — faites un don via GitHub Sponsors, Liberapay, Ko-fi ou Buy Me a Coffee, ou aidez avec une étoile, un signalement de bug ou une recommandation.',
+        },
+        heading: 'Soutenir Word Bank',
+        intro: 'Word Bank est gratuit, open source et sans publicité — et cela ne changera pas. Il n’y a pas d’entreprise derrière, juste un développeur et quelques serveurs. Les dons couvrent l’API de dictionnaire derrière chaque recherche et font avancer les nouvelles fonctionnalités.',
+        donateHeading: 'Faire un don',
+        donateSub: 'Choisissez la plateforme que vous préférez — chaque geste compte.',
+        platforms: {
+            github: 'Un soutien ponctuel ou récurrent via votre compte GitHub — sans frais.',
+            liberapay: 'Des dons récurrents sur une plateforme open source — sans frais.',
+            kofi: 'Un petit pourboire ponctuel — sans compte.',
+            bmac: 'Offrez l’équivalent d’un café en quelques clics.',
+        },
+        otherHeading: 'D’autres façons d’aider',
+        otherSub: 'Pas de budget ? Cela aide tout autant.',
+        other: {
+            star: {
+                title: 'Mettez une étoile au projet sur GitHub',
+                description:
+                    'Une étoile rend Word Bank plus visible et nous montre qu’il compte pour vous.',
+            },
+            issues: {
+                title: 'Signalez des bugs & partagez vos idées',
+                description:
+                    'Quelque chose ne va pas ou vous manque ? Une issue sur GitHub est une vraie contribution.',
+            },
+            share: {
+                title: 'Parlez-en à un autre lecteur',
+                description:
+                    'Word Bank grandit par le bouche-à-oreille — partagez-le avec quelqu’un qui aime lire.',
+            },
+        },
+        shareLinks: {
+            aria: 'Partager Word Bank',
+            message:
+                'Word Bank — transformez les livres que vous lisez en vocabulaire qui reste. Gratuit, open source, hors ligne.',
+            copy: 'Copier le lien',
+            copied: 'Copié !',
+        },
+        thanks: 'Chaque contribution — argent, code ou bon mot — garde Word Bank gratuit pour tout le monde. Merci. ❤️',
     },
     phone: {
         aria: 'Application Word Bank montrant une liste de lecture avec statuts et nombres de mots',
