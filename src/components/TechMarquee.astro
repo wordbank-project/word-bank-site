@@ -14,7 +14,9 @@ const t = getCopy(lang);
 ---
 
 <section class="section reveal" aria-label={t.tech.heading}>
-    <div class="mx-auto mb-9 max-w-270 px-6 text-center">
+    {/* mb-12 = the 48px `.section-sub` gap; this blurb can't use the class
+        itself because it's an <a> (see the nested-anchor note below). */}
+    <div class="mx-auto mb-12 max-w-270 px-6 text-center">
         <h2>{t.tech.heading}</h2>
         {
             /* Keep this a <p>: an <a> nested inside an <a> is invalid HTML and

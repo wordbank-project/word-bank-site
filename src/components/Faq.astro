@@ -12,7 +12,9 @@ const t = getCopy(lang);
 
 <Section id="faq">
     <h2>{t.faq.heading}</h2>
-    <div class="mx-auto flex max-w-170 flex-col gap-3" data-stagger>
+    {/* mt-12 mirrors `.section-sub`'s 48px — this section has no sub-line, so
+        without it the heading sits far tighter than in every other section. */}
+    <div class="mx-auto mt-12 flex max-w-170 flex-col gap-3" data-stagger>
         {
             t.faq.items.map(({ question, answer }) => (
                 <details class="faq-item">

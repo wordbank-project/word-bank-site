@@ -84,6 +84,44 @@ hand-written — edit them directly.
   stats classes (built by JS). All token-driven, so they theme too. Reach for utilities first; add
   to `global.css` only for animations, pseudo-elements, or genuinely-reused primitives.
 
+### ⚠️ Element defaults belong in `@layer base`
+
+Bare-element rules in `global.css` (`p`, `h1`–`h3`, …) **must** stay inside the `@layer base { … }`
+block. **Unlayered CSS beats every layered rule regardless of specificity**, and Tailwind emits
+utilities into `@layer utilities` — so an unlayered `p { margin: 0 0 1em }` silently overrides
+`mb-0`/`m-0` written on a `<p>` in the markup. The class is in the HTML, DevTools shows it
+matching, and it does nothing.
+
+That is exactly what happened: every card's `<p class="m-0">` computed to `margin-bottom: 14.88px`,
+giving each card ~15px more space below its text than above it. Moving the element block into
+`@layer base` fixed all of them at once.
+
+The same trap bit `a { color: var(--accent) }`: the footer's `text-ink-soft hover:text-accent`
+links rendered permanently accent-blue, so their hover did nothing. `a` now lives in
+`@layer base` too.
+
+`.section-sub` is in **`@layer components`** for the same reason — its `max-width: 540px` was
+overriding `max-w-[62ch]` on the support page intro. Put a primitive there whenever a utility on
+the same element should be able to win.
+
+The remaining class primitives (`.section`, `.button*`, `.nav*`, `.phone*`, `.faq-item`,
+`.marquee*`, `.stat*`, `.hero`) are still **unlayered**, so they beat utilities. That is load-
+bearing in places — e.g. `.tech-chip`'s own `color` intentionally wins over the inherited link
+color. If you add a class there and a utility on the same element mysteriously does nothing,
+this is why: move the rule into `@layer components`.
+
+### Vertical rhythm
+
+One value per relationship — reuse these rather than inventing a new number:
+
+| Relationship | Value |
+|---|---|
+| Section top/bottom padding | `.section` → `clamp(64px, 8vw, 88px)` |
+| Heading block → its content | **48px** (`.section-sub`'s margin, or `mt-12`/`mb-12` where there's no sub-line) |
+| Group → next heading (support page) | **80px** (`mb-20`) |
+| Card padding | `p-6.5` (26px), with `m-0` on the last `<p>` so top == bottom |
+| Card icon → title | `mb-3.5` on the icon, **no `mt-*` on the `<h3>`** (both sides would stack — they don't collapse across the icon's anonymous block) |
+
 ## Interactivity (vanilla `<script>`, no framework)
 
 - **Mobile nav** — `Header.astro` toggles `.open` on the menu.

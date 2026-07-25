@@ -84,12 +84,14 @@ const cardClass =
     <Header lang={lang} subpath="support" />
     <main id="main">
         <Section>
-            <h2 class="flex items-center justify-center">{s.heading}</h2>
+            <h2>{s.heading}</h2>
             <p class="section-sub max-w-[62ch]">{s.intro}</p>
 
             <h2>{s.donateHeading}</h2>
             <p class="section-sub">{s.donateSub}</p>
-            <div class="grid grid-cols-2 gap-5.5 max-[720px]:grid-cols-1 mb-13">
+            {/* mb-20 (80px) between groups — clearly wider than the 48px
+                `.section-sub` gap inside a group, so the grouping reads. */}
+            <div class="mb-20 grid grid-cols-2 gap-5.5 max-[720px]:grid-cols-1">
                 {
                     SUPPORT_PLATFORMS.map((p) => (
                         <a
@@ -119,9 +121,9 @@ const cardClass =
                 }
             </div>
 
-            <h2 class="mt-0">{s.otherHeading}</h2>
+            <h2>{s.otherHeading}</h2>
             <p class="section-sub">{s.otherSub}</p>
-            <div class="grid grid-cols-3 gap-5.5 max-[900px]:grid-cols-1 mb-13">
+            <div class="mb-20 grid grid-cols-3 gap-5.5 max-[900px]:grid-cols-1">
                 {
                     OTHER_WAYS.map(({ key, href, icon }) => (
                         <a
@@ -133,10 +135,10 @@ const cardClass =
                             class:list={["block no-underline", cardClass]}
                         >
                             <span
-                                class="mb-4 inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent"
+                                class="mb-3.5 inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent"
                                 set:html={icon}
                             />
-                            <h3 class="mt-3.5 mb-2 text-[1.05rem]">
+                            <h3 class="mb-2 text-[1.05rem]">
                                 {s.other[key].title}
                             </h3>
                             <p class="m-0 text-[0.93rem] text-ink-muted">
@@ -147,10 +149,10 @@ const cardClass =
                 }
                 <article class={cardClass}>
                     <span
-                        class="mb-4 inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent"
+                        class="mb-3.5 inline-flex h-11.5 w-11.5 items-center justify-center rounded-xl bg-accent-soft text-accent"
                         set:html={shareIcon}
                     />
-                    <h3 class="mt-3.5 mb-2 text-[1.05rem]">
+                    <h3 class="mb-2 text-[1.05rem]">
                         {s.other.share.title}
                     </h3>
                     <p class="m-0 text-[0.93rem] text-ink-muted">
@@ -193,7 +195,7 @@ const cardClass =
 
             <div class="flex justify-center">
                 <p
-                    class="max-w-[62ch] text-[0.95rem] text-ink-muted text-center"
+                    class="mb-0 max-w-[62ch] text-center text-[0.95rem] text-ink-muted"
                 >
                     {s.thanks}
                 </p>

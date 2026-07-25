@@ -87,7 +87,7 @@ function posClass(pos: string): string {
                                 {w.partOfSpeech}
                             </span>
                         </div>
-                        <p class="mt-0.5 text-[0.9rem] text-ink-soft">
+                        <p class="mt-0.5 mb-0 text-[0.9rem] text-ink-soft">
                             {w.definition}
                         </p>
                     </div>
@@ -159,7 +159,7 @@ function posClass(pos: string): string {
                     head.appendChild(pos);
                 }
                 const def = document.createElement("p");
-                def.className = "mt-0.5 text-[0.9rem] text-ink-soft";
+                def.className = "mt-0.5 mb-0 text-[0.9rem] text-ink-soft";
                 def.textContent = w.definition ?? "";
                 row.appendChild(head);
                 row.appendChild(def);

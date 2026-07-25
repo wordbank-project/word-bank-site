@@ -134,38 +134,46 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-h1,
-h2,
-h3 {
-    font-family: var(--font-display);
-    line-height: 1.2;
-    margin: 0 0 0.5em;
-}
+/* Element defaults go in `@layer base` so utilities can override them.
+   Unlayered CSS wins over EVERY layered rule regardless of specificity, and
+   Tailwind emits utilities into `@layer utilities` — so leaving these
+   unlayered silently killed every `m-0` / `mb-*` written on a <p> or heading
+   in the markup. Keep new element-level defaults inside this layer. */
+@layer base {
 
-h1 {
-    font-weight: 650;
-    letter-spacing: -0.015em;
-    line-height: 1.12;
-}
+    h1,
+    h2,
+    h3 {
+        font-family: var(--font-display);
+        line-height: 1.2;
+        margin: 0 0 0.5em;
+    }
 
-h2 {
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-    font-weight: 620;
-    letter-spacing: -0.01em;
-    text-align: center;
-}
+    h1 {
+        font-weight: 650;
+        letter-spacing: -0.015em;
+        line-height: 1.12;
+    }
 
-h3 {
-    font-weight: 600;
-}
+    h2 {
+        font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+        font-weight: 620;
+        letter-spacing: -0.01em;
+        text-align: center;
+    }
 
-p {
-    margin: 0 0 1em;
-}
+    h3 {
+        font-weight: 600;
+    }
 
-a {
-    color: var(--accent);
-    text-decoration: none;
+    p {
+        margin: 0 0 1em;
+    }
+
+    a {
+        color: var(--accent);
+        text-decoration: none;
+    }
 }
 
 .error-message {
@@ -175,19 +183,27 @@ a {
 /* Reused layout primitives (kept as classes — referenced from many components).
    NOTE: do not add a `.container` class — `container` is a reserved Tailwind
    utility and the two collide. The page wrapper is `mx-auto max-w-270 px-6`. */
+
+/* One fluid value instead of a step at 520px, so tablet widths scale with the
+   page instead of keeping the full desktop padding then snapping. */
 .section {
-    padding: 88px 0;
+    padding-block: clamp(64px, 8vw, 88px);
 }
 
 .section:nth-of-type(even) {
     background: var(--bg-soft);
 }
 
-.section-sub {
-    text-align: center;
-    color: var(--text-muted);
-    max-width: 540px;
-    margin: 0 auto 48px;
+/* In `@layer components` (not unlayered) so a utility on the same element can
+   override it — e.g. the support page's `class="section-sub max-w-[62ch]"`,
+   where an unlayered `max-width: 540px` would silently win. */
+@layer components {
+    .section-sub {
+        text-align: center;
+        color: var(--text-muted);
+        max-width: 540px;
+        margin: 0 auto 48px;
+    }
 }
 
 /* Reveal-on-scroll (JS toggles `.revealed` from Layout.astro). */
@@ -872,8 +888,14 @@ a {
 /* ------------------------------------------------------------------ */
 /* Tech marquee — scrolling strip (animation/mask, kept as classes)    */
 /* ------------------------------------------------------------------ */
+/* Clip only the axis that needs it: the track is wider than the viewport, but
+   the chips' hover lift + shadow must be able to spill vertically. `overflow:
+   hidden` can't express that (hidden on one axis forces auto on the other) —
+   clip/visible can, and it keeps the section's padding symmetric instead of
+   needing padding on .marquee-track to make room. */
 .marquee {
-    overflow: hidden;
+    overflow-x: clip;
+    overflow-y: visible;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
@@ -882,7 +904,7 @@ a {
     display: flex;
     width: max-content;
     margin: 0;
-    padding: 10px 0;
+    padding: 0;
     list-style: none;
     /* The list is duplicated, so translating exactly -50% loops seamlessly. */
     animation: marquee-scroll 34s linear infinite;
@@ -1000,10 +1022,6 @@ a {
 }
 
 @media (max-width: 520px) {
-    .section {
-        padding: 64px 0;
-    }
-
     .marquee {
         -webkit-mask-image: none;
         mask-image: none;
