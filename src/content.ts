@@ -78,6 +78,27 @@ export const MOCK_BOOKS: MockBook[] = [
     { title: 'Pride and Prejudice', author: 'Jane Austen', status: 'reading', wordCount: 8, coverColor: '#8d5fb0' },
 ];
 
+// Data for the animated phone-mockup story (search 1984 → add "doublethink" →
+// sentence + note → Words List). Proper nouns / untranslatable bits live here;
+// the translatable strings (definition, sentence, note, labels) are in the
+// per-locale Copy under `phone.demo`. The searched book is MOCK_BOOKS[0], so
+// the story ends on the Read List with its badge bumping 12 → 13.
+export const PHONE_DEMO = {
+    query: '1984',
+    results: [
+        { title: '1984', author: 'George Orwell', coverColor: '#c0533e' },
+        { title: 'Animal Farm', author: 'George Orwell', coverColor: '#3e8f6b' },
+        { title: 'Homage to Catalonia', author: 'George Orwell', coverColor: '#b0863e' },
+    ],
+    word: 'doublethink',
+    ipa: '/ˈdʌbəlˌθɪŋk/',
+    // Words already in the Words List view before "doublethink" is added.
+    existingWords: [
+        { word: 'thoughtcrime', ipa: '/ˈθɔːtkraɪm/' },
+        { word: 'memory hole', ipa: '/ˈmɛməri hoʊl/' },
+    ],
+} as const;
+
 // The single knob for how many words float in the Hero. Change this number.
 export const MAX_FLOATING_WORDS = 36;
 

@@ -818,6 +818,351 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
+/* Phone mockup story animation (PhoneMockup.astro)                    */
+/* Four views slide inside a fixed-height stage; the script drives     */
+/* classes only — all motion lives here so reduced-motion can kill it. */
+/* ------------------------------------------------------------------ */
+.phone-wrap {
+    margin-inline: auto;
+    width: fit-content;
+}
+
+.phone-stage {
+    position: relative;
+    height: 320px;
+    overflow: hidden;
+}
+
+.phone-view {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    transform: translateX(105%);
+    transition: transform 0.45s cubic-bezier(0.22, 0.9, 0.3, 1), opacity 0.45s ease;
+}
+
+.phone-view.is-active {
+    transform: translateX(0);
+}
+
+/* Views the story has moved past sit slightly left (parallax) and dimmed. */
+.phone-view.is-left {
+    transform: translateX(-30%);
+    opacity: 0.4;
+}
+
+/* Replay resets jump instantly instead of sliding backwards. */
+.phone-stage.no-anim .phone-view {
+    transition: none;
+}
+
+/* Fake inputs the story types into. */
+.phone-field {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 26px;
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--bg-soft);
+    font-size: 0.58rem;
+    color: var(--text);
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.phone-view [data-field="query"] {
+    margin-bottom: 10px;
+}
+
+.phone-field-ph {
+    color: var(--text-muted);
+}
+
+/* Placeholder hides while typing and stays hidden once text exists. */
+.phone-field.is-typing .phone-field-ph,
+.phone-field [data-type]:not(:empty) ~ .phone-field-ph {
+    display: none;
+}
+
+/* Blinking caret: while typing, and on the idle empty search field. */
+.phone-field.is-typing [data-type]::after,
+.phone-field [data-type]:empty::after {
+    content: "";
+    display: inline-block;
+    width: 1px;
+    height: 0.95em;
+    margin-left: 1px;
+    vertical-align: -0.12em;
+    background: var(--accent);
+    animation: phone-caret 0.9s steps(1) infinite;
+}
+
+@keyframes phone-caret {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Elements the story reveals (result rows, word card, new word row). */
+.phone-anim {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.phone-anim.is-shown {
+    opacity: 1;
+    transform: none;
+}
+
+.phone-row.is-pressed {
+    background: var(--accent-soft);
+}
+
+/* Book view */
+.phone-book-head {
+    border-top: none;
+    padding-top: 14px;
+}
+
+.phone-addrow {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    padding: 0 10px 10px;
+}
+
+.phone-addrow .phone-field {
+    flex: 1;
+}
+
+.phone-add-btn {
+    font-family: inherit;
+    font-size: 0.55rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 6px;
+    padding: 0 10px;
+    cursor: default;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.phone-add-btn.is-pressed {
+    background: var(--accent-strong);
+    transform: scale(0.94);
+}
+
+/* The app's "✓ +1" celebration pop, miniaturised. */
+.phone-plus-one {
+    position: absolute;
+    top: -15px;
+    right: 12px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.52rem;
+    font-weight: 700;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.phone-plus-one.is-popped {
+    animation: phone-plus-pop 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes phone-plus-pop {
+    0% {
+        opacity: 0;
+        transform: translateY(6px) scale(0.6);
+    }
+
+    18% {
+        opacity: 1;
+        transform: translateY(0) scale(1.05);
+    }
+
+    30% {
+        transform: translateY(0) scale(1);
+    }
+
+    75% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-6px) scale(0.95);
+    }
+}
+
+/* Word card (mirrors the app's word card, tiny). */
+.phone-word-card {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin: 0 10px;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease,
+        opacity 0.35s ease, transform 0.35s ease;
+}
+
+.phone-word-card.is-saved {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft);
+}
+
+.phone-word-head {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.phone-word-title {
+    font-size: 0.66rem;
+    font-weight: 700;
+}
+
+.phone-word-ipa {
+    font-family: var(--font-mono);
+    font-size: 0.5rem;
+    color: var(--text-muted);
+}
+
+.phone-word-pos {
+    font-size: 0.5rem;
+    font-style: italic;
+}
+
+.phone-word-def {
+    font-size: 0.56rem;
+    line-height: 1.45;
+    color: var(--text-secondary);
+}
+
+.phone-word-label {
+    margin-top: 4px;
+    font-size: 0.46rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.phone-field-inline {
+    min-height: 20px;
+    padding: 3px 6px;
+    font-size: 0.54rem;
+    white-space: normal;
+}
+
+/* Words List view rows */
+.phone-word-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--border);
+}
+
+.phone-word-row .phone-word-title {
+    font-size: 0.62rem;
+}
+
+.phone-word-from {
+    font-size: 0.48rem;
+    color: var(--text-muted);
+}
+
+/* The freshly added word flashes as it lands in the list. */
+[data-new-word].is-shown {
+    animation: phone-highlight 1.6s ease 0.1s both;
+}
+
+@keyframes phone-highlight {
+    0% {
+        background: var(--accent-soft);
+    }
+
+    100% {
+        background: transparent;
+    }
+}
+
+/* Read List badge bump (12 → 13). */
+.phone-badge-count.is-bumped {
+    animation: phone-bump 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes phone-bump {
+    0% {
+        transform: scale(1);
+    }
+
+    45% {
+        transform: scale(1.45);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Replay control under the phone. */
+.phone-replay {
+    display: block;
+    margin: 12px auto 0;
+    padding: 6px 14px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    cursor: pointer;
+    animation: phone-replay-in 0.3s ease both;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.phone-replay:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.phone-replay[hidden] {
+    display: none;
+}
+
+@keyframes phone-replay-in {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+}
+
+/* Reduced motion: the script never starts the story, but kill transitions
+   defensively too. */
+@media (prefers-reduced-motion: reduce) {
+
+    .phone-view,
+    .phone-anim,
+    .phone-word-card {
+        transition: none;
+    }
+}
+
+/* ------------------------------------------------------------------ */
 /* FAQ — box + the +/– summary marker (pseudo-element, kept as class)  */
 /* ------------------------------------------------------------------ */
 .faq-item {
