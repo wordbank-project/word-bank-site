@@ -23,8 +23,9 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
 {/* Animated story: search 1984 → open it → type "doublethink" → definition
     card → sentence + note → the word is saved on the book page → over to the
     Read List, where the count updates 12 → 13. Plays once on first view; ↻
-    replays. The Read List view is the server-rendered default, so no-JS and
-    prefers-reduced-motion users see exactly the old static mockup. */}
+    replays. The Read List view is the server-rendered default: no-JS users see
+    that static mockup, while prefers-reduced-motion users still get the whole
+    walkthrough, just with instant, motion-free transitions. */}
 <div class="phone-wrap">
     <div class="phone" role="group" aria-label={t.phone.aria}>
         <div class="phone-screen">
@@ -230,14 +231,16 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
     // ---------------------------------------------------------------------
     // The mockup story: a pausable step-queue timeline. Plays once when the
     // phone first scrolls into view; pauses off-screen / on hidden tab;
-    // ↻ resets and replays. Under prefers-reduced-motion nothing runs — the
-    // server-rendered Read List (default active view) stays as-is.
+    // ↻ resets and replays. Under prefers-reduced-motion the SAME walkthrough
+    // still runs, but motion-free: view changes are instant cuts (CSS kills the
+    // slide transitions) and text is filled in one beat instead of typed. Only
+    // no-JS users see the plain server-rendered Read List.
     // ---------------------------------------------------------------------
     const wrap = document.querySelector<HTMLElement>(".phone-wrap");
     const stage = wrap?.querySelector<HTMLElement>("[data-stage]");
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    if (wrap && stage && !reduceMotion) {
+    if (wrap && stage) {
         const ORDER = ["search", "book", "words", "readlist"] as const;
         // Which bottom tab is "active" while a view is showing.
         const TAB_FOR: Record<string, string> = {
@@ -278,6 +281,11 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         function addTyping(field: HTMLElement, speed = 70, lead = 300): void {
             const span = field.querySelector<HTMLElement>("[data-type]")!;
             const text = span.dataset.text ?? "";
+            if (reduceMotion) {
+                // Motion-free: fill the field in a single beat, no caret/typing.
+                add(lead, () => { span.textContent = text; });
+                return;
+            }
             add(lead, () => field.classList.add("is-typing"));
             for (const ch of text) {
                 add(speed, () => {

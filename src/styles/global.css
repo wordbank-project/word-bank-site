@@ -1102,14 +1102,20 @@ body {
     }
 }
 
-/* Reduced motion: the script never starts the story, but kill transitions
-   defensively too. */
+/* Reduced motion: the story still plays, but motion-free — kill every phone
+   transition so view changes and the filter collapse are instant cuts. */
 @media (prefers-reduced-motion: reduce) {
 
     .phone-view,
     .phone-anim,
-    .phone-word-card {
+    .phone-word-card,
+    .phone-word-row {
         transition: none;
+    }
+
+    /* The new word lands without the highlight flash. */
+    [data-new-word].is-shown {
+        animation: none;
     }
 }
 
