@@ -21,9 +21,9 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
 ---
 
 {/* Animated story: search 1984 → open it → type "doublethink" → definition
-    card (+1 pop) → sentence + note → Words List → back on the Read List with
-    the badge bumping 12 → 13. Plays once on first view; ↻ replays. The
-    Read List view is the server-rendered default, so no-JS and
+    card → sentence + note → the word is saved on the book page → over to the
+    Read List, where the count updates 12 → 13. Plays once on first view; ↻
+    replays. The Read List view is the server-rendered default, so no-JS and
     prefers-reduced-motion users see exactly the old static mockup. */}
 <div class="phone-wrap">
     <div class="phone" role="group" aria-label={t.phone.aria}>
@@ -71,7 +71,6 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                             <span class="phone-field-ph">{demo.addPlaceholder}</span>
                         </div>
                         <button type="button" class="phone-add-btn" data-add-btn tabindex="-1">{demo.addButton}</button>
-                        <span class="phone-plus-one" data-plus-one aria-hidden="true">{demo.plusOne}</span>
                     </div>
                     <div class="phone-word-card phone-anim" data-word-card>
                         <span class="phone-word-head">
@@ -91,20 +90,36 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                     </div>
                 </section>
 
-                {/* ---- View 3: Words List ---- */}
+                {/* ---- View 3: Words List — the added word + existing words, with
+                     colour-coded part-of-speech filter chips the story taps. ---- */}
                 <section class="phone-view" data-view="words">
                     <div class="phone-header">{t.phone.tabs.wordList}</div>
+
+                    {/* Decorative search bar — the app's Words List has one above the filters. */}
+                    <div class="phone-field mx-2.5 mt-1 mb-2">
+                        <span class="phone-field-ph">{t.phone.wordSearch}</span>
+                    </div>
+
+                    <div class="phone-filters" data-word-filters>
+                        <button type="button" data-word-filter="all" aria-pressed="true" class="phone-pill selected">{t.phone.filters.all}</button>
+                        <button type="button" data-word-filter="noun" aria-pressed="false" class="phone-pill text-pos-noun">{t.phone.wordPos.noun}</button>
+                        <button type="button" data-word-filter="verb" aria-pressed="false" class="phone-pill text-pos-verb">{t.phone.wordPos.verb}</button>
+                        <button type="button" data-word-filter="adjective" aria-pressed="false" class="phone-pill text-pos-adjective">{t.phone.wordPos.adjective}</button>
+                    </div>
+
                     <div class="phone-list">
-                        <div class="phone-word-row phone-anim" data-new-word>
+                        <div class="phone-word-row phone-anim" data-new-word data-word-row data-word-pos={PHONE_DEMO.pos}>
                             <span class="phone-word-title">{PHONE_DEMO.word}</span>
                             <span class="phone-word-ipa">{PHONE_DEMO.ipa}</span>
+                            <span class={`phone-word-pos text-pos-${PHONE_DEMO.pos}`}>{t.phone.wordPos[PHONE_DEMO.pos]}</span>
                             <span class="phone-word-from">{book.title}</span>
                         </div>
                         {
                             PHONE_DEMO.existingWords.map((w) => (
-                                <div class="phone-word-row">
+                                <div class="phone-word-row" data-word-row data-word-pos={w.pos}>
                                     <span class="phone-word-title">{w.word}</span>
                                     <span class="phone-word-ipa">{w.ipa}</span>
+                                    <span class={`phone-word-pos text-pos-${w.pos}`}>{t.phone.wordPos[w.pos]}</span>
                                     <span class="phone-word-from">{book.title}</span>
                                 </div>
                             ))
@@ -279,9 +294,24 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         const noteField = q('[data-field="note"]');
         const results = Array.from(wrap.querySelectorAll<HTMLElement>("[data-result]"));
         const addBtn = q("[data-add-btn]");
-        const plusOne = q("[data-plus-one]");
         const wordCard = q("[data-word-card]");
         const newWordRow = q("[data-new-word]");
+        const wordFilters = Array.from(wrap.querySelectorAll<HTMLElement>("[data-word-filter]"));
+        const wordRows = Array.from(wrap.querySelectorAll<HTMLElement>("[data-word-row]"));
+
+        // Tap a part-of-speech chip: mark it selected and collapse the rows that
+        // don't match ("all" clears the filter). Drives the Words List filter demo.
+        function selectWordFilter(pos: string): void {
+            wordFilters.forEach((btn) => {
+                const on = btn.dataset.wordFilter === pos;
+                btn.classList.toggle("selected", on);
+                btn.setAttribute("aria-pressed", String(on));
+            });
+            wordRows.forEach((row) => {
+                const match = pos === "all" || row.dataset.wordPos === pos;
+                row.classList.toggle("is-filtered-out", !match);
+            });
+        }
 
         // --- The story -------------------------------------------------------
         add(600, () => setView("search"));
@@ -294,20 +324,18 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         add(300, () => {
             addBtn.classList.remove("is-pressed");
             wordCard.classList.add("is-shown");
-            plusOne.classList.remove("is-popped");
-            void plusOne.offsetWidth; // restart the pop animation on replay
-            plusOne.classList.add("is-popped");
         });
         addTyping(sentenceField, 45, 800);
         addTyping(noteField, 45, 500);
         add(400, () => wordCard.classList.add("is-saved"));
-        add(800, () => setView("words"));
-        add(500, () => newWordRow.classList.add("is-shown"));
-        add(1400, () => setView("readlist"));
+        add(900, () => setView("words"));
+        add(450, () => newWordRow.classList.add("is-shown"));
+        add(1100, () => selectWordFilter("noun")); // tap "Noun" — the verb/adj rows collapse
+        add(1500, () => selectWordFilter("all")); // clear the filter before leaving
+        add(500, () => setView("readlist"));
         add(550, () => {
             if (badge) {
                 badge.textContent = String(Number(baseCount) + 1);
-                badge.classList.add("is-bumped");
             }
         });
         add(600); // settle
@@ -365,11 +393,10 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
             [queryField, wordField, sentenceField, noteField].forEach((f) => f.classList.remove("is-typing"));
             results.forEach((r) => r.classList.remove("is-shown", "is-pressed"));
             wordCard.classList.remove("is-shown", "is-saved");
-            plusOne.classList.remove("is-popped");
             newWordRow.classList.remove("is-shown");
+            selectWordFilter("all");
             if (badge) {
                 badge.textContent = baseCount;
-                badge.classList.remove("is-bumped");
             }
             // Jump (not slide) back to the start view.
             stage!.classList.add("no-anim");

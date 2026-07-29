@@ -207,6 +207,8 @@ export const en: Copy = {
         readList: 'Read List',
         filters: { all: 'All', want: 'Want to read', reading: 'Currently Reading', read: 'Have read' },
         tabs: { search: 'Search', readList: 'Read List', wordList: 'Word list' },
+        wordPos: { noun: 'Noun', verb: 'Verb', adjective: 'Adj.' },
+        wordSearch: 'Search your word bank...',
         wordSingular: 'word',
         wordPlural: 'words',
         demo: {

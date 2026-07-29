@@ -959,49 +959,6 @@ body {
     transform: scale(0.94);
 }
 
-/* The app's "✓ +1" celebration pop, miniaturised. */
-.phone-plus-one {
-    position: absolute;
-    top: -15px;
-    right: 12px;
-    padding: 2px 7px;
-    border-radius: 999px;
-    background: var(--accent);
-    color: #fff;
-    font-size: 0.52rem;
-    font-weight: 700;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.phone-plus-one.is-popped {
-    animation: phone-plus-pop 1.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
-
-@keyframes phone-plus-pop {
-    0% {
-        opacity: 0;
-        transform: translateY(6px) scale(0.6);
-    }
-
-    18% {
-        opacity: 1;
-        transform: translateY(0) scale(1.05);
-    }
-
-    30% {
-        transform: translateY(0) scale(1);
-    }
-
-    75% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0;
-        transform: translateY(-6px) scale(0.95);
-    }
-}
 
 /* Word card (mirrors the app's word card, tiny). */
 .phone-word-card {
@@ -1073,6 +1030,19 @@ body {
     gap: 1px;
     padding: 8px 12px;
     border-top: 1px solid var(--border);
+    /* Collapse smoothly when a part-of-speech filter hides a row. max-height is a
+       safe over-estimate of a row's height so the transition still animates. */
+    max-height: 80px;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease, padding 0.3s ease;
+}
+
+.phone-word-row.is-filtered-out {
+    opacity: 0;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-top-color: transparent;
 }
 
 .phone-word-row .phone-word-title {
@@ -1096,25 +1066,6 @@ body {
 
     100% {
         background: transparent;
-    }
-}
-
-/* Read List badge bump (12 → 13). */
-.phone-badge-count.is-bumped {
-    animation: phone-bump 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes phone-bump {
-    0% {
-        transform: scale(1);
-    }
-
-    45% {
-        transform: scale(1.45);
-    }
-
-    100% {
-        transform: scale(1);
     }
 }
 

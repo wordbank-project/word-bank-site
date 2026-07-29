@@ -207,6 +207,8 @@ export const nl: Copy = {
         readList: 'Leeslijst',
         filters: { all: 'Alle', want: 'Wil ik lezen', reading: 'Aan het lezen', read: 'Gelezen' },
         tabs: { search: 'Zoeken', readList: 'Leeslijst', wordList: 'Woordenlijst' },
+        wordPos: { noun: 'Zelfst.', verb: 'Werkw.', adjective: 'Bijv.' },
+        wordSearch: 'Doorzoek je woordenbank...',
         wordSingular: 'woord',
         wordPlural: 'woorden',
         demo: {

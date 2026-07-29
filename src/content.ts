@@ -92,10 +92,13 @@ export const PHONE_DEMO = {
     ],
     word: 'doublethink',
     ipa: '/ˈdʌbəlˌθɪŋk/',
+    pos: 'noun',
     // Words already in the Words List view before "doublethink" is added.
+    // Varied parts of speech so the Words List filter demo can narrow the list.
     existingWords: [
-        { word: 'thoughtcrime', ipa: '/ˈθɔːtkraɪm/' },
-        { word: 'memory hole', ipa: '/ˈmɛməri hoʊl/' },
+        { word: 'thoughtcrime', ipa: '/ˈθɔːtkraɪm/', pos: 'noun' },
+        { word: 'vaporize', ipa: '/ˈveɪpəˌraɪz/', pos: 'verb' },
+        { word: 'ungood', ipa: '/ʌnˈɡʊd/', pos: 'adjective' },
     ],
 } as const;
 

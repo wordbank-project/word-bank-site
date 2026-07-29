@@ -115,6 +115,10 @@ export interface Copy {
         readList: string;
         filters: { all: string; want: string; reading: string; read: string };
         tabs: { search: string; readList: string; wordList: string };
+        // Part-of-speech chips on the Words List view (the "All" chip reuses filters.all).
+        wordPos: { noun: string; verb: string; adjective: string };
+        // Placeholder in the Words List search bar (decorative in the demo).
+        wordSearch: string;
         wordSingular: string;
         wordPlural: string;
         // Copy for the animated mockup story (search → add word → sentence/note
