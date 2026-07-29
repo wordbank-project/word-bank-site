@@ -1229,20 +1229,35 @@ body {
    ======================================================= */
 @media (prefers-reduced-motion: reduce) {
     .marquee {
-        overflow-x: auto;
-        /* Enable native horizontal scroll */
-        scroll-behavior: smooth;
-        -webkit-overflow-scrolling: touch;
-        /* Smooth inertia on iOS */
+        /* Force horizontal scrolling */
+        overflow-x: auto !important;
+        overflow-y: hidden;
+        width: 100%;
+        max-width: 100vw;
 
-        /* Remove gradient mask so text isn't faded out while scrolling */
+        /* Disable non-scroll properties */
         -webkit-mask-image: none;
         mask-image: none;
+
+        /* Touch & smooth scroll enhancements */
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
     }
 
     .marquee-track {
-        animation: none;
-        /* Turn off the CSS translation */
+        animation: none !important;
+
+        /* Prevent items from wrapping onto multiple lines */
+        flex-wrap: nowrap !important;
+        width: max-content !important;
+
+        /* Optional: add padding so end items aren't stuck right against the screen edge */
+        padding: 0 1rem;
+    }
+
+    /* Ensure direct children (the tag buttons) don't shrink */
+    .marquee-track>* {
+        flex-shrink: 0 !important;
     }
 }
 
