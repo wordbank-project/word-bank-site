@@ -1196,8 +1196,7 @@ body {
    clip/visible can, and it keeps the section's padding symmetric instead of
    needing padding on .marquee-track to make room. */
 .marquee {
-    overflow-x: clip;
-    overflow-y: visible;
+    overflow: hidden;
     display: flex;
     align-items: center;
     height: 10vh;
@@ -1222,6 +1221,28 @@ body {
 @keyframes marquee-scroll {
     to {
         transform: translateX(-50%);
+    }
+}
+
+/* =======================================================
+   Fallback for Disabled Animations / Reduced Motion
+   ======================================================= */
+@media (prefers-reduced-motion: reduce) {
+    .marquee {
+        overflow-x: auto;
+        /* Enable native horizontal scroll */
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        /* Smooth inertia on iOS */
+
+        /* Remove gradient mask so text isn't faded out while scrolling */
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+
+    .marquee-track {
+        animation: none;
+        /* Turn off the CSS translation */
     }
 }
 
