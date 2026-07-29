@@ -150,9 +150,14 @@ a `locale` super-property so you can segment by language.
 | _(`$exception`)_ | An uncaught JS error occurs | (posthog error props) | autocapture |
 | `download_click` | Hero "Download Android" button clicked | `platform: "android"`, `location: "hero"` | **1 – conversion** |
 | `cta_get_app_click` | Nav "Get the app" button clicked | — | **1 – conversion** |
+| `donate_click` | A donation platform link is clicked on the support page | `location` (the platform id) | **1 – conversion** |
 | `dictionary_lookup` | A word is submitted in the `#dictionary` "try it" box | `query`, `result` (`found`/`not_found`/`error`), `is_example` | 2 – engagement |
 | `section_view` | A section scrolls into view (features / how-it-works / dictionary / faq) | `section` | 2 – engagement |
 | `faq_open` | An FAQ `<details>` is opened | `question` | 2 – engagement |
+| `demo_complete` | The phone-mockup story plays through to the end | `location`, `replay_count`, `interrupted`, `reduced_motion` | 2 – engagement |
+| `demo_replay_click` | The phone mockup's ↻ replay button is clicked | `location`, `replay_count`, `seconds_since_complete`, `interrupted`, `reduced_motion` | 2 – engagement |
+| `share_click` | A share link/copy-link button is clicked on the support page | `location` (network name / `copy_link`) | 3 – nice-to-have |
+| `support_help_click` | A "how to help" item is clicked on the support page | `location` (the item key) | 3 – nice-to-have |
 | `repo_click` | A GitHub/repo link is clicked | `location` (`footer`/`tech_blurb`) | 3 – nice-to-have |
 | `language_change` | A locale is picked in the language dropdown | `from`, `to` | 3 – nice-to-have |
 | `theme_change` | The light/dark/system toggle is cycled | `theme` | 3 – nice-to-have |
@@ -175,6 +180,8 @@ to a real APK/store link.
 | [src/components/Hero.astro](src/components/Hero.astro) | `download_click` via declarative `data-ph-*` attributes. |
 | [src/components/Header.astro](src/components/Header.astro) | `cta_get_app_click` (declarative) + `section_view` / `language_change` / `theme_change` (imperative `track()` calls in the existing script). |
 | [src/components/Faq.astro](src/components/Faq.astro) | `faq_open` on the `<details>` toggle (open only). |
+| [src/components/SupportPage.astro](src/components/SupportPage.astro) | `donate_click` / `support_help_click` / `share_click` (declarative). |
+| [src/components/PhoneMockup.astro](src/components/PhoneMockup.astro) | `demo_complete` / `demo_replay_click` (imperative — see below). |
 
 ### Two ways to fire an event
 
@@ -193,6 +200,31 @@ to a real APK/store link.
    ```
 
 `track()` is a no-op until `initAnalytics()` has run with a key, so early calls are safe.
+
+**Don't mix the two on one element.** The delegated listener fires for any ancestor carrying
+`data-ph-event`, so an element that both has the attribute *and* calls `track()` in its own handler
+sends the event twice. When a click needs dynamic properties, drop the attribute — that's why
+`PhoneMockup.astro`'s ↻ button is imperative.
+
+### The phone-mockup demo
+
+The hero mockup plays a walkthrough that pauses when scrolled off-screen or the tab is hidden, and
+reveals a ↻ replay button only once it has played through. Two events come out of it:
+
+- **`demo_complete`** — the story reached the end. This is the **denominator**: filter to
+  `replay_count = 0` for first, unprompted completions, and `demo_replay_click` becomes a
+  meaningful rate instead of a bare count.
+- **`demo_replay_click`** — ↻ was clicked. `replay_count` is which pass this is (a *second*
+  replay is the strongest pre-download interest signal on the page) and `seconds_since_complete`
+  separates an immediate re-click from a deliberate scroll-back.
+
+`interrupted` (playback was paused at least once) is the property that keeps the metric honest: a
+replay after an interrupted run means *"I missed it"*, not *"I liked it"* — opposite conclusions
+that are otherwise indistinguishable. `reduced_motion` flags the motion-free variant, which fills
+text in one beat instead of typing; if it replays far more, that version is too fast to follow.
+
+All counters are per-pageview, which is all `persistence: "memory"` supports — fine here, since the
+demo and the `download_click` it feeds both live on the landing page.
 
 ### Why no cookies / why it reads `<html lang>`
 - `persistence: "memory"` keeps everything **in memory only — no cookies, no `localStorage`, no
@@ -217,7 +249,7 @@ posthog.init(KEY, {
   persistence: "memory",               // in-memory only → no cookies/storage, no consent banner
   capture_pageview: true,
   capture_pageleave: true,             // bounce / time-on-page
-  disable_session_recording: true,     // lightweight + privacy-first
+  capture_exceptions: true,            // uncaught JS errors real visitors hit
   cross_subdomain_cookie: false,
   person_profiles: "identified_only",
 });

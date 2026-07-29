@@ -306,7 +306,6 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
     <button
         type="button"
         class="phone-replay"
-        data-ph-event="download_replay_click"
         data-replay
         hidden
     >
@@ -353,7 +352,13 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
     // still runs, but motion-free: view changes are instant cuts (CSS kills the
     // slide transitions) and text is filled in one beat instead of typed. Only
     // no-JS users see the plain server-rendered Read List.
+    //
+    // The replay button reports to PostHog imperatively (not via data-ph-event)
+    // because its useful properties — which pass this is, whether playback was
+    // interrupted — are only known at click time. See analytics.md.
     // ---------------------------------------------------------------------
+    import { track } from "../lib/analytics";
+
     const wrap = document.querySelector<HTMLElement>(".phone-wrap");
     const stage = wrap?.querySelector<HTMLElement>("[data-stage]");
     const reduceMotion = window.matchMedia(
@@ -491,6 +496,13 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         let finished = false;
         let inView = false;
 
+        // Analytics counters, all per-pageview. `pauses` is cumulative: any
+        // pause means the visitor was scrolled away or on another tab for part
+        // of the story, so a replay is "I missed it" rather than "I liked it".
+        let replays = 0;
+        let pauses = 0;
+        let completedAt = 0;
+
         function scheduleNext(delay: number): void {
             scheduledAt = Date.now();
             timer = window.setTimeout(() => {
@@ -503,6 +515,15 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                     playing = false;
                     finished = true;
                     replay.hidden = false;
+                    completedAt = Date.now();
+                    // The denominator for demo_replay_click: filter to
+                    // replay_count = 0 for first, unprompted completions.
+                    track("demo_complete", {
+                        location: "hero",
+                        replay_count: replays,
+                        interrupted: pauses > 0,
+                        reduced_motion: reduceMotion,
+                    });
                 }
             }, delay);
         }
@@ -517,6 +538,7 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         function pause(): void {
             if (!playing) return;
             playing = false;
+            pauses += 1;
             if (timer !== null) {
                 clearTimeout(timer);
                 timer = null;
@@ -556,6 +578,16 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         }
 
         replay.addEventListener("click", () => {
+            replays += 1;
+            track("demo_replay_click", {
+                location: "hero",
+                replay_count: replays,
+                seconds_since_complete: Math.round(
+                    (Date.now() - completedAt) / 1000,
+                ),
+                interrupted: pauses > 0,
+                reduced_motion: reduceMotion,
+            });
             reset();
             play();
         });

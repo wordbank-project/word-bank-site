@@ -1,6 +1,6 @@
 # Word Bank — site
 
-**The marketing site for Word Bank — bilingual, static, fast.**
+**The marketing site for Word Bank — multilingual, static, fast.**
 
 The landing page that showcases the Word Bank app, with a live "word wall" and stats fed by [word-bank-server](https://github.com/wordbank-project/word-bank-server). Live at **[word-bank-vault.netlify.app](https://word-bank-vault.netlify.app)**.
 
@@ -30,7 +30,7 @@ echo 'PUBLIC_WORDS_API_URL=http://localhost:4000' > .env
 
 ## Languages
 
-The site is **bilingual** (English + Dutch) via build-time locale routes: `/` (English) and `/nl/` (Dutch), each fully translated into static HTML. All copy lives in `src/i18n/en.ts` and `src/i18n/nl.ts` (a shared `Copy` type keeps them in sync); a subtle language toggle in the nav swaps between them.
+The site supports **English, Dutch, and French** via build-time locale routes: `/` (English), `/nl/` (Dutch), and `/fr/` (French), each fully translated into static HTML. All copy lives in `src/i18n/en.ts`, `src/i18n/nl.ts`, and `src/i18n/fr.ts` (a shared `Copy` type keeps them in sync); a language dropdown in the nav switches between them.
 
 ## Deploy
 
