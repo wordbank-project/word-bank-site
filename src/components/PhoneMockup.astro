@@ -303,7 +303,13 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
         </div>
     </div>
 
-    <button type="button" class="phone-replay" data-replay hidden>
+    <button
+        type="button"
+        class="phone-replay"
+        data-ph-event="download_replay_click"
+        data-replay
+        hidden
+    >
         ↻ {demo.replay}
     </button>
 </div>
