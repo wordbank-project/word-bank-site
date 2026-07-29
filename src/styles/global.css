@@ -884,7 +884,7 @@ body {
 
 /* Placeholder hides while typing and stays hidden once text exists. */
 .phone-field.is-typing .phone-field-ph,
-.phone-field [data-type]:not(:empty) ~ .phone-field-ph {
+.phone-field [data-type]:not(:empty)~.phone-field-ph {
     display: none;
 }
 
@@ -1200,7 +1200,7 @@ body {
     overflow-y: visible;
     display: flex;
     align-items: center;
-    height: 6rem;
+    height: 10vh;
     -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
     mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
