@@ -26,7 +26,7 @@ Deploy = build and host the static `dist/` on any static host.
 ```
 astro.config.mjs           # Astro config; registers the Tailwind Vite plugin
 src/
-  pages/index.astro        # the page: Nav → Hero → Stats → Features → HowItWorks
+  pages/index.astro        # the page: Nav → Hero → Features → HowItWorks
                            #           → DictionaryShowcase → Faq → TechMarquee → Footer
   layouts/Layout.astro     # <html>/<head>, imports global.css, holds the scroll-reveal script
   content.ts               # ALL copy/data (single source of truth) — edit this first
@@ -36,7 +36,6 @@ src/
     Hero.astro             # headline + FloatingWords + PhoneMockup
     FloatingWords.astro    # decorative drifting words; build-time fallback + live fetch <script>
     PhoneMockup.astro      # fake phone rendering MOCK_BOOKS with STATUS_LABELS
-    Stats.astro            # live total / word-of-week / sparkline from /stats (hidden until data)
     Features.astro         # FEATURES grid; ICONS = inline SVG strings via set:html
     HowItWorks.astro       # STEPS
     DictionaryShowcase.astro # hand-written sample word card (not data-driven)
@@ -80,9 +79,9 @@ hand-written — edit them directly.
 - `global.css` also keeps the irreducible bits that aren't expressible as utilities (and the few
   reused primitives): the `.container`/`.section`/`.section-sub` wrappers, `.button*`, the nav bar +
   mobile dropdown, the phone mockup (`.phone*`), floating-words + `@keyframes float-drift`, the
-  marquee + `@keyframes marquee-scroll`, the FAQ `summary` +/– marker, the `.reveal` fade, and the
-  stats classes (built by JS). All token-driven, so they theme too. Reach for utilities first; add
-  to `global.css` only for animations, pseudo-elements, or genuinely-reused primitives.
+  marquee + `@keyframes marquee-scroll`, the FAQ `summary` +/– marker, and the `.reveal` fade. All
+  token-driven, so they theme too. Reach for utilities first; add to `global.css` only for
+  animations, pseudo-elements, or genuinely-reused primitives.
 
 ### ⚠️ Element defaults belong in `@layer base`
 
@@ -132,15 +131,13 @@ One value per relationship — reuse these rather than inventing a new number:
 - **Floating words** — `FloatingWords.astro` renders the `HERO_WORDS` fallback at build, then a
   script fetches `${PUBLIC_WORDS_API_URL}/words?order=top` and polls every ~30s, re-rendering with
   live words (stable per-word layout via a string hash). Falls back silently.
-- **Stats** — `Stats.astro` renders hidden; a script fetches `${PUBLIC_WORDS_API_URL}/stats` and
-  unhides only when `total > 0`.
 
 ## Backend / env
 
-The live floating words + stats read from the **word-bank-server** feed. Set the base URL via the
+The live floating words read from the **word-bank-server** feed. Set the base URL via the
 **`PUBLIC_WORDS_API_URL`** env var (Astro only exposes client env prefixed `PUBLIC_`). Put it in a
-root `.env` (see `.env.example`); leave it unset to disable both features gracefully — the page
-still builds and renders (floating words use `HERO_WORDS`, stats stays hidden).
+root `.env` (see `.env.example`); leave it unset to disable the feature gracefully — the page still
+builds and renders (floating words use `HERO_WORDS`).
 
 ## Analytics
 
@@ -223,8 +220,8 @@ automatically, no explicit config needed). Full context: [analytics.md](analytic
 ### `.env.example`
 Documents the two optional environment variables the site reads (both must be prefixed `PUBLIC_`
 because Astro only inlines `PUBLIC_`-prefixed vars into client-side code):
-- `PUBLIC_WORDS_API_URL` — base URL of the word-bank-server feed; powers live floating words +
-  stats. Unset → both features degrade gracefully (fallback word list / hidden stats section).
+- `PUBLIC_WORDS_API_URL` — base URL of the word-bank-server feed; powers live floating words.
+  Unset → degrades gracefully (fallback word list).
 - `PUBLIC_POSTHOG_KEY` / `PUBLIC_POSTHOG_HOST` — analytics; unset → analytics is fully disabled.
 
 Copy this to a real `.env` (gitignored) for local development.
@@ -291,7 +288,7 @@ file must satisfy. Key exports:
   `Header.astro`.
 - **`Copy`** — a large interface describing every translatable string on the site, organised by
   section (`nav`, `hero`, `features`, `howItWorks`, `dictionary`, `faq`, `tech`, `footer`,
-  `supportPage`, `phone`, `wordWall`, `stats`, `statusLabels`). Because `en.ts`/`nl.ts`/`fr.ts`
+  `supportPage`, `phone`, `wordWall`, `statusLabels`). Because `en.ts`/`nl.ts`/`fr.ts`
   each assert `: Copy`, TypeScript (and `npm run check`) fails the build if any locale file is
   missing a key, has a typo in a nested key, or a wrong type — this is what keeps translations in
   sync without a runtime i18n framework.
@@ -431,7 +428,7 @@ regular *module* scripts, not `is:inline`, so they can `import`):
 
 ### `Page.astro`
 The full homepage body for one locale — composes `Layout` + `Header` + the section components in
-the fixed order: Hero → Stats → Features → HowItWorks → DictionaryShowcase → Faq → TechMarquee,
+the fixed order: Hero → Features → HowItWorks → DictionaryShowcase → Faq → TechMarquee,
 then `Footer` outside `<main>`. Also renders the keyboard-only "skip to content" link
 (`t.nav.skipToContent`) as the very first focusable element, pointing at `<main id="main">`.
 `src/pages/index.astro`, `src/pages/nl/index.astro`, and `src/pages/fr/index.astro` are each a
@@ -576,21 +573,6 @@ Two `<script>` blocks:
    `data-ph-event` because the properties are only known at click time — and an element with both
    would fire twice, once via the delegated listener. See [analytics.md](analytics.md).
 
-### `Stats.astro`
-Renders a `<section hidden data-stats>` with the section's translated labels stashed as
-`data-label-*` attributes (the client script can't see Astro frontmatter/props, so this is how
-translated strings cross the server/client boundary here — the same pattern the dictionary form
-and phone mockup use). If `PUBLIC_WORDS_API_URL` is unset, the script returns immediately and the
-section just stays hidden forever — zero footprint when there's no backend. Otherwise it fetches
-`${base}/stats?limit=1`, and only unhides the section if `data.total > 0`: builds a total-words
-stat, a "word of the week" stat (the top saved word, HTML-escaped since it's untrusted API data —
-unlike the developer-authored `set:html` copy elsewhere), and an inline SVG sparkline (a
-`<polyline>` whose points are computed by `sparklinePoints`, normalizing each day's count against
-the period's max into a 240×48 viewBox) showing the per-day word-adding trend. All of this markup
-is built with a template-literal `stat()` helper and injected via `inner.innerHTML = parts.join
-("")` — the one place on the site that builds HTML from a string template rather than JSX-like
-Astro syntax, since this all happens client-side after a fetch.
-
 ### `Features.astro`
 Renders the "Everything a reading habit needs" grid. The `ICONS` record maps each `IconName` (from
 `content.ts`) to an inline SVG string built by a small `svg(inner)` helper (fixed 24×24 viewBox,
@@ -714,7 +696,7 @@ the recipe in `src/i18n/index.ts`), not touching any of these existing files.
 
 ### `src/styles/global.css`
 The single stylesheet, structured top-to-bottom as: Tailwind import → design tokens → base element
-resets → reused layout/animation primitives → buttons → nav → hero → stats → phone mockup → FAQ →
+resets → reused layout/animation primitives → buttons → nav → hero → phone mockup → FAQ →
 tech marquee → responsive overrides. Key ideas (see also the "Styling" and "⚠️ Element defaults
 belong in `@layer base`" sections above, which cover the CSS-layering gotchas in depth and aren't
 repeated here):

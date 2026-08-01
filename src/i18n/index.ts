@@ -139,7 +139,6 @@ export interface Copy {
         };
     };
     wordWall: { trigger: string; title: string; panelAria: string; close: string };
-    stats: { aria: string; collected: string; topWord: string; perDay: string };
     statusLabels: { want: string; reading: string; read: string };
 }
 

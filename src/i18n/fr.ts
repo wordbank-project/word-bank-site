@@ -231,11 +231,5 @@ export const fr: Copy = {
         panelAria: 'Mots que les utilisateurs enregistrent',
         close: 'Fermer',
     },
-    stats: {
-        aria: 'Statistiques de mots en direct',
-        collected: 'mots collectés par les lecteurs',
-        topWord: 'mot le plus enregistré',
-        perDay: 'mots ajoutés par jour',
-    },
     statusLabels: { want: 'À lire', reading: 'En cours de lecture', read: 'Lu' },
 };

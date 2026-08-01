@@ -6,7 +6,6 @@ import { getCopy, type Lang } from "../i18n";
 import Layout from "../layouts/Layout.astro";
 import Header from "./Header.astro";
 import Hero from "./Hero.astro";
-import Stats from "./Stats.astro";
 import Features from "./Features.astro";
 import HowItWorks from "./HowItWorks.astro";
 import DictionaryShowcase from "./DictionaryShowcase.astro";
@@ -27,7 +26,6 @@ const t = getCopy(lang);
     <Header lang={lang} />
     <main id="main">
         <Hero lang={lang} />
-        <Stats lang={lang} />
         <Features lang={lang} />
         <HowItWorks lang={lang} />
         <DictionaryShowcase lang={lang} />

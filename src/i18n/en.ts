@@ -231,11 +231,5 @@ export const en: Copy = {
         panelAria: 'Words users are saving',
         close: 'Close',
     },
-    stats: {
-        aria: 'Live word stats',
-        collected: 'words readers have collected',
-        topWord: 'most-saved word',
-        perDay: 'words added per day',
-    },
     statusLabels: { want: 'Want to read', reading: 'Currently reading', read: 'Have read' },
 };

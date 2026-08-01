@@ -231,11 +231,5 @@ export const nl: Copy = {
         panelAria: 'Woorden die gebruikers bewaren',
         close: 'Sluiten',
     },
-    stats: {
-        aria: 'Live woordstatistieken',
-        collected: 'woorden die lezers hebben verzameld',
-        topWord: 'meest bewaarde woord',
-        perDay: 'woorden per dag toegevoegd',
-    },
     statusLabels: { want: 'Wil ik lezen', reading: 'Aan het lezen', read: 'Gelezen' },
 };
