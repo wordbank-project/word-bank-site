@@ -91,7 +91,7 @@ const fallback = HERO_WORDS.slice(0, MAX_FLOATING_WORDS);
     async function load(): Promise<void> {
         if (!base) return; // No server configured — keep the build-time fallback.
         try {
-            const res = await fetch(`${base}/words?order=top&limit=80`);
+            const res = await fetch(`${base}/v1/words?order=top&limit=80`);
             if (!res.ok) return;
             const data = (await res.json()) as {
                 word: string;
