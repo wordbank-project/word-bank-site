@@ -36,6 +36,7 @@ let ready = false;
  * 
  * @param {Lang} locale The current page locale, for segmenting every event.
  * @returns {void} Returns nothing; sets `ready` so `track()` can fire events.
+ * 
  */
 export function initAnalytics(locale: Lang): void {
     if (ready || !KEY) {
