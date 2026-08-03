@@ -210,7 +210,7 @@ function posClass(pos: string): string {
 
         // Pull live saved words once (they replace the curated fallback).
         if (base) {
-            fetch(`${base}/v1/words?order=top&limit=120`)
+            fetch(`${base}/words?order=top&limit=120`)
                 .then((r) => (r.ok ? r.json() : null))
                 .then((data) => {
                     if (Array.isArray(data)) renderRows(data as FeedWord[]);

@@ -25,7 +25,7 @@ npm run check     # astro check (type-checks .astro + TS)
 Set `PUBLIC_WORDS_API_URL` in a `.env` to power the live floating words + stats from the word-bank-server feed. Leave it unset and the page still builds and renders — the floating words fall back to a curated list and the stats section stays hidden.
 
 ```bash
-echo 'PUBLIC_WORDS_API_URL=http://localhost:4000' > .env
+echo 'PUBLIC_WORDS_API_URL=http://localhost:4000/v1' > .env
 ```
 
 ## Languages
