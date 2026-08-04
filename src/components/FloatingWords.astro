@@ -108,8 +108,12 @@ const fallback = HERO_WORDS.slice(0, MAX_FLOATING_WORDS);
 
     // HERO_WORDS is imported so the script and the build-time render share one source.
     void HERO_WORDS;
+
+    // We do a polling of the live words every 30 seconds, so the floating layer updates without a page reload.
+    // When a change is made to the words, the next poll will pick it up and update the layer.
+    // Servering a 304 (Not Modified) response will avoid sending the same data again if nothing has changed.
     if (base) {
-        load();
-        setInterval(load, POLL_MS);
+        load(); // load immediately on page load
+        setInterval(load, POLL_MS); // Poll for new words every 30 seconds.
     }
 </script>
