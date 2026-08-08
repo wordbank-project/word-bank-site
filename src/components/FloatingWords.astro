@@ -4,18 +4,55 @@ import { HERO_WORDS, MAX_FLOATING_WORDS } from "../content";
 // Deterministic pseudo-random number in [0, 1) seeded by an integer — keeps each
 // word's layout stable. Same helpers run in the client script below so live words
 // drop into stable spots without reshuffling the existing ones.
+
+/**
+ * Deterministic string hash (djb2-like), used to seed each word's layout.
+ *
+ * @param {string} str The word to hash.
+ * @returns {number} A non-negative integer hash of `str`.
+ *
+ */
 function hashString(str: string): number {
     let h = 0;
-    for (let i = 0; i < str.length; i++) h = (h * 31 + str.charCodeAt(i)) | 0;
+    for (let i = 0; i < str.length; i++) {
+        h = (h * 31 + str.charCodeAt(i)) | 0;
+    }
     return Math.abs(h);
 }
+
+/**
+ * Deterministic pseudo-random number in [0, 1), seeded by an integer.
+ *
+ * @param {number} n The seed.
+ * @returns {number} A pseudo-random value in [0, 1).
+ *
+ */
 function seeded(n: number): number {
     const x = Math.sin(n * 127.1 + 311.7) * 43758.5453;
     return x - Math.floor(x);
 }
+
+/**
+ * Maps a value in [0, 1) onto [min, max).
+ *
+ * @param {number} value The input value, in [0, 1).
+ * @param {number} min The lower bound of the output range.
+ * @param {number} max The upper bound of the output range.
+ * @returns {number} `value` scaled into [min, max).
+ *
+ */
 function range(value: number, min: number, max: number): number {
     return min + value * (max - min);
 }
+
+/**
+ * Builds the inline `style` for one floating word: position, size, and
+ * animation timing, all deterministically derived from the word itself.
+ *
+ * @param {string} word The word to position.
+ * @returns {string} A CSS inline-style string.
+ *
+ */
 function styleFor(word: string): string {
     const h = hashString(word);
     const left = `${range(seeded(h * 4 + 1), 2, 94).toFixed(2)}%`;

@@ -33,10 +33,10 @@ let ready = false;
 /**
  * Initialise PostHog once, cookielessly, and wire declarative click events.
  * No-ops when no key is configured. Called from Layout.astro with the page locale.
- * 
+ *
  * @param {Lang} locale The current page locale, for segmenting every event.
  * @returns {void} Returns nothing; sets `ready` so `track()` can fire events.
- * 
+ *
  */
 export function initAnalytics(locale: Lang): void {
     if (ready || !KEY) {
@@ -83,13 +83,14 @@ export function initAnalytics(locale: Lang): void {
     });
 }
 
-/** Capture a named event. No-op until initAnalytics() has run with a key. 
- * 
+/**
+ * Capture a named event. No-op until initAnalytics() has run with a key.
+ *
  * @param {string} event The name of the event to capture.
  * @param {Record<string, unknown>} [props] Optional properties to attach to the event.
  * @returns {void} Returns nothing; sends the event to PostHog if ready.
- * 
-*/
+ *
+ */
 export function track(event: string, props?: Record<string, unknown>): void {
     if (!ready) {
         return;
@@ -97,12 +98,13 @@ export function track(event: string, props?: Record<string, unknown>): void {
     posthog.capture(event, props);
 }
 
-/** Turn an element's data-ph-* attributes into event properties, dropping the
+/**
+ * Turn an element's data-ph-* attributes into event properties, dropping the
  * event name itself: data-ph-platform="android" → { platform: "android" }.
- * 
+ *
  * @param {DOMStringMap} dataset The dataset of the element containing data-ph-* attributes.
  * @returns {Record<string, string>} An object containing the event properties.
- * 
+ *
  */
 function phProps(dataset: DOMStringMap): Record<string, string> {
     const props: Record<string, string> = {};

@@ -149,11 +149,24 @@ export interface Copy {
 
 const COPY: Record<Lang, Copy> = { en, nl, fr };
 
+/**
+ * Resolves the translated copy for a locale.
+ *
+ * @param {Lang} lang The locale to resolve.
+ * @returns {Copy} The full `Copy` object for that locale.
+ *
+ */
 export function getCopy(lang: Lang): Copy {
     return COPY[lang];
 }
 
-/** Root path for a locale: `/` for the default language, `/xx/` otherwise. */
+/**
+ * Root path for a locale.
+ *
+ * @param {Lang} lang The locale to resolve.
+ * @returns {string} `/` for the default language, `/xx/` otherwise.
+ *
+ */
 export function localeRoot(lang: Lang): string {
     return lang === DEFAULT_LANG ? '/' : `/${lang}/`;
 }

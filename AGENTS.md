@@ -160,6 +160,27 @@ gains/renames a feature, update `content.ts` (and `DictionaryShowcase`/`PhoneMoc
 - Run `npm run build` (or `npm run check`) before considering a change done — it type-checks the
   whole project.
 
+### Code style
+
+Shared with the sibling `word-bank-app` / `word-bank-server` repos, scoped here to `.ts` files
+and `.astro` frontmatter (component `<script>` blocks are dense, already-narrated vanilla-JS glue
+— their small local closures like `closeMenu`/`applyFilter` stay as plain `//`-commented code,
+not individually JSDoc'd):
+
+- **Guard clauses, not nested conditionals.** Validate/reject early and return, rather than
+  nesting the "happy path" inside `if`/`else`. See `posClass` in
+  [`src/components/WordWall.astro`](src/components/WordWall.astro) for the canonical shape: one
+  `if (...) { return ...; }` per rule, all at the same indentation level.
+- **Every `if`/`for`/`while` body is braced**, even single-statement ones — no one-liners like
+  `if (x) return y;`. Not ESLint-enforced here (no ESLint in this project), just the convention;
+  keep it manually.
+- **JSDoc on every named function in `.ts` files and `.astro` frontmatter** — `/**` alone on its
+  opening line, description on the next line, a blank `*` line, then `@param {Type} name
+  Description.` per parameter (type in braces even though TS already has it — mirrors
+  `word-bank-server`) and `@returns {Type} Description.` (plural, type in braces), then another
+  blank `*` line before the closing `*/`. See
+  [`src/lib/analytics.ts`](src/lib/analytics.ts)'s `track`/`initAnalytics` for the canonical shape.
+
 ---
 
 # File-by-file code walkthrough

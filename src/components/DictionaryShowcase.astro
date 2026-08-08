@@ -47,12 +47,28 @@ const FALLBACK = {
 
 // Map a part of speech to the colour-coded utility (mirrors the app's POS_COLORS;
 // duplicated in the client script for the live recolour on select).
+
+/**
+ * Maps a part of speech to its colour-coded Tailwind utility class.
+ *
+ * @param {string} pos The part of speech (e.g. "noun", "adj").
+ * @returns {string} The matching `text-pos-*` class, or `text-accent` as a fallback.
+ *
+ */
 function posClass(pos: string): string {
     const p = pos.toLowerCase();
-    if (p.startsWith("noun")) return "text-pos-noun";
-    if (p.startsWith("verb")) return "text-pos-verb";
-    if (p.startsWith("adject") || p === "adj") return "text-pos-adjective";
-    if (p.startsWith("adverb") || p === "adv") return "text-pos-adverb";
+    if (p.startsWith("noun")) {
+        return "text-pos-noun";
+    }
+    if (p.startsWith("verb")) {
+        return "text-pos-verb";
+    }
+    if (p.startsWith("adject") || p === "adj") {
+        return "text-pos-adjective";
+    }
+    if (p.startsWith("adverb") || p === "adv") {
+        return "text-pos-adverb";
+    }
     return "text-accent";
 }
 
@@ -85,7 +101,9 @@ try {
         const unique = flat
             .filter((it) => {
                 const id = `${it.partOfSpeech}|${it.definition}`;
-                if (seen.has(id)) return false;
+                if (seen.has(id)) {
+                    return false;
+                }
                 seen.add(id);
                 return true;
             })

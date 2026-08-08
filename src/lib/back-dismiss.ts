@@ -11,13 +11,13 @@
  * A Back press pops the entry we pushed → `popstate` → `close()`, instead of
  * leaving the page. A manual close routes through `requestClose()`, which pops
  * that same entry (→ popstate → close), so history stays balanced.
- * 
+ *
  * @param {object} opts Options for configuring the back dismiss behavior.
  * @param {string} opts.key A unique key to identify the modal in history state.
  * @param {() => boolean} opts.isOpen A function that returns true if the modal is open.
  * @param {() => void} opts.close A function that closes the modal.
  * @returns {object} An object containing `pushOnOpen` and `requestClose` methods.
- * 
+ *
  */
 export function backDismiss(opts: {
     key: string;
@@ -25,7 +25,9 @@ export function backDismiss(opts: {
     close: () => void;
 }) {
     window.addEventListener("popstate", () => {
-        if (opts.isOpen()) opts.close();
+        if (opts.isOpen()) {
+            opts.close();
+        }
     });
 
     return {
@@ -34,8 +36,11 @@ export function backDismiss(opts: {
         },
         requestClose(): void {
             // If our entry is on top, go back so it's removed; popstate runs close().
-            if (history.state && history.state[opts.key]) history.back();
-            else opts.close();
+            if (history.state && history.state[opts.key]) {
+                history.back();
+            } else {
+                opts.close();
+            }
         },
     };
 }

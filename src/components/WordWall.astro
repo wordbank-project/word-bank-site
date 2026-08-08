@@ -11,12 +11,28 @@ const t = getCopy(lang);
 
 // Map a part of speech to the colour-coded utility (mirrors the app's POS_COLORS;
 // the same logic is duplicated in the client script for live feed rows).
+
+/**
+ * Maps a part of speech to its colour-coded Tailwind utility class.
+ *
+ * @param {string} pos The part of speech (e.g. "noun", "adj").
+ * @returns {string} The matching `text-pos-*` class, or `text-accent` as a fallback.
+ *
+ */
 function posClass(pos: string): string {
     const p = pos.toLowerCase();
-    if (p.startsWith("noun")) return "text-pos-noun";
-    if (p.startsWith("verb")) return "text-pos-verb";
-    if (p.startsWith("adject") || p === "adj") return "text-pos-adjective";
-    if (p.startsWith("adverb") || p === "adv") return "text-pos-adverb";
+    if (p.startsWith("noun")) {
+        return "text-pos-noun";
+    }
+    if (p.startsWith("verb")) {
+        return "text-pos-verb";
+    }
+    if (p.startsWith("adject") || p === "adj") {
+        return "text-pos-adjective";
+    }
+    if (p.startsWith("adverb") || p === "adv") {
+        return "text-pos-adverb";
+    }
     return "text-accent";
 }
 ---
