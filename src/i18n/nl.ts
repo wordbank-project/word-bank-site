@@ -206,7 +206,12 @@ export const nl: Copy = {
         aria: 'Word Bank-app met een leeslijst met statussen en woordtellingen',
         readList: 'Leeslijst',
         filters: { all: 'Alle', want: 'Wil ik lezen', reading: 'Aan het lezen', read: 'Gelezen' },
-        tabs: { search: 'Zoeken', readList: 'Leeslijst', wordList: 'Woordenlijst' },
+        tabs: {
+            search: 'Zoeken',
+            readList: 'Leeslijst',
+            wordList: 'Woordenlijst',
+            more: 'Meer',
+        },
         wordPos: { noun: 'Zelfst.', verb: 'Werkw.', adjective: 'Bijv.' },
         wordSearch: 'Doorzoek je woordenbank...',
         wordSingular: 'woord',

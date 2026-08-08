@@ -206,7 +206,12 @@ export const fr: Copy = {
         aria: 'Application Word Bank montrant une liste de lecture avec statuts et nombres de mots',
         readList: 'Liste de lecture',
         filters: { all: 'Tous', want: 'À lire', reading: 'En cours', read: 'Lu' },
-        tabs: { search: 'Recherche', readList: 'Liste de lecture', wordList: 'Liste de mots' },
+        tabs: {
+            search: 'Recherche',
+            readList: 'Liste de lecture',
+            wordList: 'Liste de mots',
+            more: 'Plus',
+        },
         wordPos: { noun: 'Nom', verb: 'Verbe', adjective: 'Adj.' },
         wordSearch: 'Cherchez dans votre banque de mots...',
         wordSingular: 'mot',
