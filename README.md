@@ -2,7 +2,7 @@
 
 **The marketing site for Word Bank — multilingual, static, fast.**
 
-The landing page that showcases the Word Bank app, with a live "word wall" and stats fed by [word-bank-server](https://github.com/wordbank-project/word-bank-server). Live at **[word-bank-vault.netlify.app](https://word-bank-vault.netlify.app)**.
+The landing page that showcases the Word Bank app, with a live "word wall" and "words the users have currently saved" fed by [word-bank-server](https://github.com/wordbank-project/word-bank-server). Live at **[word-bank-vault.netlify.app](https://word-bank-vault.netlify.app)**.
 
 _Part of the [Word Bank](https://github.com/wordbank-project/word-bank) project._
 
