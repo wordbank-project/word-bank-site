@@ -156,7 +156,12 @@ a `locale` super-property so you can segment by language.
 | `faq_open` | An FAQ `<details>` is opened | `question` | 2 – engagement |
 | `demo_complete` | The phone-mockup story plays through to the end | `location`, `replay_count`, `interrupted`, `reduced_motion` | 2 – engagement |
 | `demo_replay_click` | The phone mockup's ↻ replay button is clicked | `location`, `replay_count`, `seconds_since_complete`, `interrupted`, `reduced_motion` | 2 – engagement |
+| `analyze_select` | An example sentence chip is chosen in the "Analyze a sentence" demo | `example` (index of the chosen sentence) | 2 – engagement |
+| `memory_flip` | A card in the "Memory" demo is flipped to reveal its back | `index` (position in the demo deck) | 2 – engagement |
+| `memory_rate` | "Still learning" / "Knew it ✓" is tapped after flipping a Memory card | `rating` (`knew`/`still_learning`), `index` | 2 – engagement |
+| `memory_round_complete` | A Memory demo round finishes | `knew`, `total` | 2 – engagement |
 | `share_click` | A share link/copy-link button is clicked on the support page | `location` (network name / `copy_link`) | 3 – nice-to-have |
+| `memory_round_restart` | "Practice again" is clicked at the end of a Memory round | — | 3 – nice-to-have |
 | `support_help_click` | A "how to help" item is clicked on the support page | `location` (the item key) | 3 – nice-to-have |
 | `repo_click` | A GitHub/repo link is clicked | `location` (`footer`/`tech_blurb`) | 3 – nice-to-have |
 | `language_change` | A locale is picked in the language dropdown | `from`, `to` | 3 – nice-to-have |
@@ -182,6 +187,7 @@ to a real APK/store link.
 | [src/components/Faq.astro](src/components/Faq.astro) | `faq_open` on the `<details>` toggle (open only). |
 | [src/components/SupportPage.astro](src/components/SupportPage.astro) | `donate_click` / `support_help_click` / `share_click` (declarative). |
 | [src/components/PhoneMockup.astro](src/components/PhoneMockup.astro) | `demo_complete` / `demo_replay_click` (imperative — see below). |
+| [src/components/Practice.astro](src/components/Practice.astro) | `analyze_select` (declarative) + `memory_flip` / `memory_rate` / `memory_round_complete` (imperative) + `memory_round_restart` (declarative). |
 
 ### Two ways to fire an event
 

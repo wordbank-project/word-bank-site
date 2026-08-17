@@ -295,6 +295,11 @@ body {
         animation: none;
         opacity: 0.35;
     }
+
+    /* Memory demo card swaps faces instantly instead of rotating. */
+    .flip-card-inner {
+        transition: none;
+    }
 }
 
 /* ------------------------------------------------------------------ */
@@ -338,6 +343,17 @@ body {
 
 .button-ghost:hover {
     background: transparent;
+}
+
+/* Still learning button in Practice.astro */
+.button-learning {
+    background: var(--bg-soft);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.button-learning:hover {
+    background: var(--border);
 }
 
 /* ------------------------------------------------------------------ */
@@ -1148,6 +1164,42 @@ body {
 .faq-item p {
     margin: 12px 0 4px;
     color: var(--text-secondary);
+}
+
+/* ------------------------------------------------------------------ */
+/* Practice — flip card mechanism (Memory demo, kept as classes; mirrors */
+/* the .phone-* mechanism primitives above)                             */
+/* ------------------------------------------------------------------ */
+.flip-card {
+    perspective: 1200px;
+}
+
+.flip-card-inner {
+    /* `inset: 0` (not `height: 100%`) so the inner wrapper resolves against
+       .flip-card's rendered box even though .flip-card only sets a
+       min-height — a percentage height wouldn't resolve there and the
+       wrapper would collapse to 0 (its own children are all absolutely
+       positioned, so it has no content height either). Same technique as
+       .phone-view inside .phone-stage above. */
+    position: absolute;
+    inset: 0;
+    transition: transform 0.5s ease;
+    transform-style: preserve-3d;
+}
+
+.flip-card.is-flipped .flip-card-inner {
+    transform: rotateY(180deg);
+}
+
+.flip-card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}
+
+.flip-card-face-back {
+    transform: rotateY(180deg);
 }
 
 /* ------------------------------------------------------------------ */

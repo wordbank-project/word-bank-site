@@ -92,6 +92,32 @@ export interface Copy {
         close: string;
         definitionsForPre: string;
     };
+    practice: {
+        heading: string;
+        sub: string;
+        analyze: {
+            heading: string;
+            intro: string;
+            chipsAria: string;
+            loading: string; // "Analyzing…"
+            meaningLabel: string; // "Meaning"
+            meanings: string[]; // index-aligned with content.ts ANALYZE_EXAMPLES
+        };
+        memory: {
+            heading: string;
+            intro: string;
+            flipHint: string; // "Tap to reveal"
+            cards: { definition: string; example: string }[]; // index-aligned with content.ts MEMORY_DEMO
+            stillLearning: string;
+            knewIt: string;
+            progressPre: string; // "Card " — JS builds `${progressPre}${i+1}${progressOf}${total}`
+            progressOf: string; // " of "
+            roundCompleteHeading: string; // "Round complete!"
+            roundResultPre: string; // "You knew " — JS builds `${roundResultPre}${knew}/${total}${roundResultPost}`
+            roundResultPost: string; // " words"
+            practiceAgain: string;
+        };
+    };
     faq: { heading: string; items: { question: string; answer: string }[] };
     tech: { heading: string; blurbLink: string; blurbRest: string };
     footer: { tagline: string; support: string };

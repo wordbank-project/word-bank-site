@@ -171,3 +171,28 @@ export const GLOSSARY_FALLBACK: GlossaryWord[] = [
     { word: 'reverie', partOfSpeech: 'noun', phonetic: '/ˈrɛv.ər.i/', definition: "A state of being pleasantly lost in one's thoughts; a daydream." },
     { word: 'halcyon', partOfSpeech: 'adjective', phonetic: '/ˈhæl.si.ən/', definition: 'Denoting a past period that was idyllically happy and peaceful.' },
 ];
+
+// Baked example sentences for the "Analyze a sentence" demo (Practice.astro).
+// English source text, untranslated (same precedent as DictionaryShowcase's
+// demo word). The AI "meaning" explanation for each is translatable copy,
+// index-aligned, at Copy.practice.analyze.meanings — keep both arrays the
+// same length and order.
+export const ANALYZE_EXAMPLES: string[] = [
+    "The committee's decision left everyone reading between the lines.",
+    "It was a real catch-22 — damned if she did, damned if she didn't.",
+    'His apology felt like too little, too late.',
+];
+
+// Structural data for the "Memory" flip-card demo (Practice.astro). Mirrors
+// PHONE_DEMO.existingWords's shape. Definition + example sentence are
+// translatable copy, index-aligned, at Copy.practice.memory.cards — keep both
+// arrays the same length and order. Four entries so every text-pos-* colour
+// is exercised (same intent as GLOSSARY_FALLBACK).
+export type MemoryDemoCard = { word: string; ipa: string; pos: string };
+
+export const MEMORY_DEMO: MemoryDemoCard[] = [
+    { word: 'luminous', ipa: '/ˈluː.mɪ.nəs/', pos: 'adjective' },
+    { word: 'wander', ipa: '/ˈwɒn.dər/', pos: 'verb' },
+    { word: 'threshold', ipa: '/ˈθreʃ.hoʊld/', pos: 'noun' },
+    { word: 'briskly', ipa: '/ˈbrɪs.kli/', pos: 'adverb' },
+];

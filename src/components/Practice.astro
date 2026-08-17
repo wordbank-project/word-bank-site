@@ -1,0 +1,418 @@
+---
+import Section from "./Section.astro";
+import { getCopy, type Lang } from "../i18n";
+import { ANALYZE_EXAMPLES, MEMORY_DEMO } from "../content";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
+
+// Map a part of speech to the colour-coded utility (mirrors the app's
+// POS_COLORS; same mapping as DictionaryShowcase.astro's helper).
+
+/**
+ * Maps a part of speech to its colour-coded Tailwind utility class.
+ *
+ * @param {string} pos The part of speech (e.g. "noun", "adjective").
+ * @returns {string} The matching `text-pos-*` class, or `text-accent` as a fallback.
+ *
+ */
+function posClass(pos: string): string {
+    const p = pos.toLowerCase();
+    if (p.startsWith("noun")) {
+        return "text-pos-noun";
+    }
+    if (p.startsWith("verb")) {
+        return "text-pos-verb";
+    }
+    if (p.startsWith("adject") || p === "adj") {
+        return "text-pos-adjective";
+    }
+    if (p.startsWith("adverb") || p === "adv") {
+        return "text-pos-adverb";
+    }
+    return "text-accent";
+}
+---
+
+{
+    /* Two baked, fully local demos — no live network/AI calls. The Analyze
+    card lets a visitor pick one of three example sentences and see the kind
+    of plain-language explanation the app's AI feature returns; the Memory
+    card is a real tap-to-flip flashcard the visitor can play through. Both
+    widgets pre-render every state server-side and just toggle `hidden` /
+    classes, matching DictionaryShowcase's approach to its definition list. */
+}
+<Section id="practice">
+    <h2>{t.practice.heading}</h2>
+    <p class="section-sub">{t.practice.sub}</p>
+
+    <div class="grid grid-cols-2 gap-8 max-[860px]:grid-cols-1" data-stagger>
+        {/* ---- Analyze a sentence ---- */}
+        <article class="rounded-[14px] border border-line bg-card p-6.5">
+            <h3 class="mb-2 text-[1.05rem]">{t.practice.analyze.heading}</h3>
+            <p class="mb-5 text-[0.93rem] text-ink-muted">
+                {t.practice.analyze.intro}
+            </p>
+
+            <div
+                class="mb-4 flex flex-col gap-2"
+                role="group"
+                aria-label={t.practice.analyze.chipsAria}
+            >
+                {
+                    ANALYZE_EXAMPLES.map((sentence, i) => (
+                        <button
+                            type="button"
+                            data-analyze-chip
+                            data-index={i}
+                            data-sentence={sentence}
+                            data-ph-event="analyze_select"
+                            data-ph-example={i}
+                            aria-pressed={i === 0}
+                            class:list={[
+                                "cursor-pointer rounded-[10px] border px-3.5 py-2.5 text-left text-[0.85rem] italic transition-colors",
+                                i === 0
+                                    ? "border-accent bg-accent-soft text-accent"
+                                    : "border-line text-ink-soft hover:border-accent/40",
+                            ]}
+                        >
+                            “{sentence}”
+                        </button>
+                    ))
+                }
+            </div>
+
+            <div
+                data-analyze-loading
+                hidden
+                class="text-[0.85rem] italic text-ink-muted"
+            >
+                {t.practice.analyze.loading}
+            </div>
+
+            <div data-analyze-result class="border-t border-line pt-4">
+                <span class="mb-1 block text-[0.7rem] font-bold uppercase tracking-[0.06em] text-ink-muted">
+                    {t.practice.analyze.meaningLabel}
+                </span>
+                {
+                    ANALYZE_EXAMPLES.map((_, i) => (
+                        <p
+                            data-analyze-meaning
+                            data-index={i}
+                            hidden={i !== 0}
+                            class="m-0 text-[0.9rem] text-ink-soft"
+                        >
+                            {t.practice.analyze.meanings[i]}
+                        </p>
+                    ))
+                }
+            </div>
+        </article>
+
+        {/* ---- Memory ---- */}
+        <article class="rounded-[14px] border border-line bg-card p-6.5">
+            <h3 class="mb-2 text-[1.05rem]">{t.practice.memory.heading}</h3>
+            <p class="mb-5 text-[0.93rem] text-ink-muted">
+                {t.practice.memory.intro}
+            </p>
+
+            <div
+                class="flip-card relative mx-auto min-h-64 w-full max-w-80 cursor-pointer rounded-[14px] focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2"
+                data-memory-card
+                role="button"
+                tabindex="0"
+                aria-pressed="false"
+                aria-label={t.practice.memory.flipHint}
+            >
+                <div class="flip-card-inner" data-memory-inner>
+                    {
+                        MEMORY_DEMO.map((card, i) => (
+                            <Fragment>
+                                <div
+                                    class="flip-card-face flex flex-col items-center justify-center gap-1.5 rounded-[14px] border border-accent bg-surface p-6.5 text-center"
+                                    data-memory-front
+                                    data-index={i}
+                                    hidden={i !== 0}
+                                >
+                                    <span class="font-display text-[1.6rem] font-bold">
+                                        {card.word}
+                                    </span>
+                                    <span class="font-mono text-[0.9rem] text-ink-muted">
+                                        {card.ipa}
+                                    </span>
+                                    <span class="mt-4 text-[0.8rem] text-ink-muted">
+                                        {t.practice.memory.flipHint}
+                                    </span>
+                                </div>
+                                <div
+                                    class="flip-card-face flip-card-face-back flex flex-col items-center justify-center overflow-y-auto rounded-[14px] border border-accent bg-surface p-6.5 text-center"
+                                    data-memory-back
+                                    data-index={i}
+                                    hidden={i !== 0}
+                                >
+                                    <span
+                                        class:list={[
+                                            "mb-1 block text-[0.75rem] font-semibold uppercase tracking-[0.08em]",
+                                            posClass(card.pos),
+                                        ]}
+                                    >
+                                        {card.pos}
+                                    </span>
+                                    <p class="mb-2 text-[0.95rem] text-ink">
+                                        {t.practice.memory.cards[i].definition}
+                                    </p>
+                                    <p class="m-0 text-[0.9rem] italic text-ink-soft">
+                                        “{t.practice.memory.cards[i].example}”
+                                    </p>
+                                </div>
+                            </Fragment>
+                        ))
+                    }
+                </div>
+            </div>
+
+            <p
+                class="mt-3 text-center text-[0.8rem] text-ink-muted"
+                data-memory-progress
+            >
+                {t.practice.memory.progressPre}<span data-memory-index
+                    >1</span
+                >{t.practice.memory.progressOf}<span>{MEMORY_DEMO.length}</span>
+            </p>
+
+            <div class="mt-4 hidden justify-center gap-3" data-memory-rate>
+                <button
+                    type="button"
+                    class="button button-learning button-small cursor-pointer"
+                    data-memory-rate-btn
+                    data-rating="still_learning"
+                >
+                    {t.practice.memory.stillLearning}
+                </button>
+                <button
+                    type="button"
+                    class="button button-small"
+                    data-memory-rate-btn
+                    data-rating="knew"
+                >
+                    {t.practice.memory.knewIt}
+                </button>
+            </div>
+
+            <div
+                class="hidden flex-col items-center gap-3 py-6 text-center"
+                data-memory-complete
+            >
+                <p class="m-0 text-[1.05rem] font-semibold">
+                    {t.practice.memory.roundCompleteHeading}
+                </p>
+                <p class="m-0 text-ink-soft">
+                    {t.practice.memory.roundResultPre}<span
+                        data-memory-knew-count>0</span
+                    >/{MEMORY_DEMO.length}{t.practice.memory.roundResultPost}
+                </p>
+                <button
+                    type="button"
+                    class="button button-small"
+                    data-memory-restart
+                    data-ph-event="memory_round_restart"
+                >
+                    {t.practice.memory.practiceAgain}
+                </button>
+            </div>
+        </article>
+    </div>
+</Section>
+
+<script>
+    import { track } from "../lib/analytics";
+
+    // ---- Analyze a sentence: pick a chip, see the AI's meaning ----------
+    const chips = Array.from(
+        document.querySelectorAll<HTMLButtonElement>("[data-analyze-chip]"),
+    );
+    const loading = document.querySelector<HTMLElement>(
+        "[data-analyze-loading]",
+    );
+    const result = document.querySelector<HTMLElement>(
+        "[data-analyze-result]",
+    );
+    const meanings = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-analyze-meaning]"),
+    );
+    const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (chips.length > 0 && loading && result) {
+        let activeIndex = 0;
+        let timer: number | null = null;
+
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                const index = Number(chip.dataset.index);
+                if (index === activeIndex && timer === null) {
+                    return;
+                }
+                if (timer !== null) {
+                    clearTimeout(timer);
+                }
+                activeIndex = index;
+                chips.forEach((c) => {
+                    const active = c === chip;
+                    c.classList.toggle("border-accent", active);
+                    c.classList.toggle("bg-accent-soft", active);
+                    c.classList.toggle("text-accent", active);
+                    c.classList.toggle("border-line", !active);
+                    c.classList.toggle("text-ink-soft", !active);
+                    c.setAttribute("aria-pressed", String(active));
+                });
+                result.hidden = true;
+                loading.hidden = false;
+                timer = window.setTimeout(
+                    () => {
+                        timer = null;
+                        loading.hidden = true;
+                        result.hidden = false;
+                        meanings.forEach((m) => {
+                            m.hidden = Number(m.dataset.index) !== index;
+                        });
+                    },
+                    reduceMotion ? 0 : 550,
+                );
+            });
+        });
+    }
+
+    // ---- Memory: tap to flip, rate, advance through the deck ------------
+    const card = document.querySelector<HTMLElement>("[data-memory-card]");
+    const fronts = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-memory-front]"),
+    );
+    const backs = Array.from(
+        document.querySelectorAll<HTMLElement>("[data-memory-back]"),
+    );
+    const indexOut = document.querySelector<HTMLElement>(
+        "[data-memory-index]",
+    );
+    const progress = document.querySelector<HTMLElement>(
+        "[data-memory-progress]",
+    );
+    const rateRow = document.querySelector<HTMLElement>("[data-memory-rate]");
+    const rateBtns = Array.from(
+        document.querySelectorAll<HTMLButtonElement>(
+            "[data-memory-rate-btn]",
+        ),
+    );
+    const complete = document.querySelector<HTMLElement>(
+        "[data-memory-complete]",
+    );
+    const knewCountOut = document.querySelector<HTMLElement>(
+        "[data-memory-knew-count]",
+    );
+    const restartBtn = document.querySelector<HTMLButtonElement>(
+        "[data-memory-restart]",
+    );
+    const total = fronts.length;
+
+    if (
+        card &&
+        total > 0 &&
+        indexOut &&
+        progress &&
+        rateRow &&
+        complete &&
+        knewCountOut
+    ) {
+        let index = 0;
+        let flipped = false;
+        let knewCount = 0;
+
+        // Shows only the front/back pair at `i`, hiding every other card.
+        function showCard(i: number): void {
+            fronts.forEach((f) => {
+                f.hidden = Number(f.dataset.index) !== i;
+            });
+            backs.forEach((b) => {
+                b.hidden = Number(b.dataset.index) !== i;
+            });
+            if (indexOut) {
+                indexOut.textContent = String(i + 1);
+            }
+        }
+
+        function setFlipped(value: boolean): void {
+            flipped = value;
+            card?.classList.toggle("is-flipped", value);
+            card?.setAttribute("aria-pressed", String(value));
+            rateRow?.classList.toggle("hidden", !value);
+            rateRow?.classList.toggle("flex", value);
+        }
+
+        // Tapping the card always flips it — forward to the meaning, back to
+        // the word again. Only the forward flip is tracked (matches the
+        // documented "flipped to reveal its back" event semantics).
+        function toggleFlip(): void {
+            const next = !flipped;
+            setFlipped(next);
+            if (next) {
+                track("memory_flip", { index });
+            }
+        }
+
+        function showComplete(): void {
+            card!.hidden = true;
+            progress!.hidden = true;
+            rateRow!.classList.add("hidden");
+            rateRow!.classList.remove("flex");
+            complete!.classList.remove("hidden");
+            complete!.classList.add("flex");
+            knewCountOut!.textContent = String(knewCount);
+            track("memory_round_complete", { knew: knewCount, total });
+        }
+
+        card.addEventListener("click", toggleFlip);
+        card.addEventListener("keydown", (e) => {
+            if (e.key !== "Enter" && e.key !== " ") {
+                return;
+            }
+            e.preventDefault();
+            toggleFlip();
+        });
+
+        rateBtns.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                if (!flipped) {
+                    return;
+                }
+                const rating = btn.dataset.rating ?? "";
+                if (rating === "knew") {
+                    knewCount += 1;
+                }
+                track("memory_rate", { rating, index });
+                index += 1;
+                if (index >= total) {
+                    showComplete();
+                    return;
+                }
+                setFlipped(false);
+                showCard(index);
+            });
+        });
+
+        restartBtn?.addEventListener("click", () => {
+            index = 0;
+            knewCount = 0;
+            complete!.classList.add("hidden");
+            complete!.classList.remove("flex");
+            card!.hidden = false;
+            progress!.hidden = false;
+            setFlipped(false);
+            showCard(0);
+        });
+    }
+</script>
