@@ -100,6 +100,8 @@ export const en: Copy = {
         tryError: 'Could not reach the dictionary — please try again.',
         tryNotFoundPre: 'No English entry found for: “',
         tryNotFoundPost: '”.',
+        tryTipPre: 'Tip: press “',
+        tryTipPost: '” to look up the word shown above.',
         tryHint:
             'In the app, you would now save this word with the sentence you found it in and add your own personal notes.',
         sentenceLabel: 'Sentence',

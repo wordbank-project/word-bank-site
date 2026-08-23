@@ -100,6 +100,8 @@ export const fr: Copy = {
         tryError: 'Impossible de joindre le dictionnaire — veuillez réessayer.',
         tryNotFoundPre: 'Aucune entrée anglaise trouvée pour « ',
         tryNotFoundPost: ' ».',
+        tryTipPre: 'Astuce : cliquez sur « ',
+        tryTipPost: ' » pour rechercher le mot affiché ci-dessus.',
         tryHint:
             'Dans l’application, vous enregistreriez maintenant ce mot avec la phrase où vous l’avez trouvé, puis ajouteriez vos notes personnelles.',
         sentenceLabel: 'Phrase',

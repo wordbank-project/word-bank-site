@@ -100,6 +100,8 @@ export const nl: Copy = {
         tryError: 'Kon het woordenboek niet bereiken — probeer het opnieuw.',
         tryNotFoundPre: 'Geen Engelse vermelding gevonden voor “',
         tryNotFoundPost: '”.',
+        tryTipPre: 'Tip: klik op “',
+        tryTipPost: '” om het woord hierboven op te zoeken.',
         tryHint:
             'In de app zou je dit woord nu opslaan met de zin waarin je het tegenkwam en je eigen persoonlijke notities toevoegen.',
         sentenceLabel: 'Zin',

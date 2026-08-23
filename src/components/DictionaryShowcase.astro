@@ -15,9 +15,12 @@ const t = getCopy(lang);
 // the Sentence/Notes below, which are written for "flourish".
 const WORD = "flourish";
 
-// Example word the "try it" form looks up when submitted with an empty input.
-// The placeholder copy (tryPlaceholder in i18n/{en,nl}.ts) mentions this word —
-// keep them in sync if you change it.
+// Example word the "try it" form looks up when submitted with an empty input,
+// and the SSR/no-JS placeholder (tryPlaceholder in i18n/{en,nl,fr}.ts mentions
+// it — keep them in sync if you change it). Once JS runs, the client script
+// below drives the field's placeholder with a typewriter effect that cycles
+// through HERO_WORDS instead (mirrors the app's useTypewriterPlaceholder), and
+// an empty submit accepts whichever of those words is currently shown.
 const TRY_WORD = "petrichor";
 
 type Item = { partOfSpeech: string; definition: string };
@@ -204,6 +207,15 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                     </button>
                 </div>
                 <p
+                    data-dict-typewriter-tip
+                    hidden
+                    class="mt-1.5 text-[0.8rem] text-ink-muted"
+                >
+                    {t.dictionary.tryTipPre}<strong class="font-semibold text-ink-soft"
+                        >{t.dictionary.tryButton}</strong
+                    >{t.dictionary.tryTipPost}
+                </p>
+                <p
                     data-dict-status
                     role="status"
                     hidden
@@ -385,6 +397,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 <script>
     import { backDismiss } from "../lib/back-dismiss";
     import { track } from "../lib/analytics";
+    import { HERO_WORDS } from "../content";
 
     type Item = { pos: string; definition: string };
 
@@ -559,6 +572,9 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
             document.querySelectorAll<HTMLElement>("[data-dict-example]"),
         );
         const hint = document.querySelector<HTMLElement>("[data-dict-hint]");
+        const typewriterTip = document.querySelector<HTMLElement>(
+            "[data-dict-typewriter-tip]",
+        );
 
         if (form && input && wordEl) {
             const setStatus = (text: string) => {
@@ -566,6 +582,69 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 status.textContent = text;
                 status.hidden = !text;
             };
+
+            // ---- Placeholder typewriter: types a random example word into
+            //      the field's placeholder one character at a time, pauses on
+            //      the finished word, then cycles to another — the same word
+            //      list and 130ms-per-character pace as the app's
+            //      useTypewriterPlaceholder hook. The app's hook itself types
+            //      only a single word per mount and relies on the screen
+            //      losing/regaining focus to pick a new one; here there's no
+            //      such remount, so it loops on a pause instead to keep
+            //      cycling through words while the field stays empty. The
+            //      full target word is kept so an empty submit can accept it.
+            const TYPE_MS = 130;
+            const PAUSE_MS = 10000; // dwell on the finished word before cycling
+            let typewriterTimer: ReturnType<typeof setTimeout> | undefined;
+            let placeholderWord = form.dataset.exampleWord ?? "";
+
+            const stopTypewriter = () => {
+                if (typewriterTimer) {
+                    clearTimeout(typewriterTimer);
+                    typewriterTimer = undefined;
+                }
+            };
+
+            const startTypewriter = () => {
+                stopTypewriter();
+                if (HERO_WORDS.length === 0) return;
+                // Avoid immediately repeating the word that just finished.
+                let target = placeholderWord;
+                while (target === placeholderWord && HERO_WORDS.length > 1) {
+                    target =
+                        HERO_WORDS[Math.floor(Math.random() * HERO_WORDS.length)];
+                }
+                placeholderWord = target;
+                if (reduceMotion) {
+                    input.placeholder = target;
+                    if (typewriterTip) typewriterTip.hidden = false;
+                    typewriterTimer = setTimeout(startTypewriter, PAUSE_MS);
+                    return;
+                }
+                let i = 1; // first character shows immediately, no blank frame
+                const tick = () => {
+                    input.placeholder = target.slice(0, i);
+                    if (i < target.length) {
+                        i += 1;
+                        typewriterTimer = setTimeout(tick, TYPE_MS);
+                        return;
+                    }
+                    // Word fully typed — nudge visitors toward Enter-to-accept.
+                    if (typewriterTip) typewriterTip.hidden = false;
+                    typewriterTimer = setTimeout(startTypewriter, PAUSE_MS);
+                };
+                tick();
+            };
+
+            startTypewriter();
+            input.addEventListener("input", () => {
+                if (input.value) {
+                    stopTypewriter();
+                    if (typewriterTip) typewriterTip.hidden = true;
+                    return;
+                }
+                startTypewriter();
+            });
 
             const makeHead = (pos: string): HTMLElement => {
                 const div = document.createElement("div");
@@ -709,9 +788,12 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 // An empty submit looks up the placeholder example word —
                 // shown in the field so it's clear what was searched.
                 const typed = input.value.trim();
-                const q = typed || (form.dataset.exampleWord ?? "");
+                const q =
+                    typed || placeholderWord || (form.dataset.exampleWord ?? "");
                 if (!q || busy) return;
                 input.value = q;
+                stopTypewriter();
+                if (typewriterTip) typewriterTip.hidden = true;
                 busy = true;
                 const submit = form.querySelector<HTMLButtonElement>(
                     'button[type="submit"]',

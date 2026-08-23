@@ -78,6 +78,10 @@ export interface Copy {
         tryError: string;
         tryNotFoundPre: string; // "No entry found for “" — query — tryNotFoundPost
         tryNotFoundPost: string;
+        // Shown under the field once the typed placeholder word finishes, nudging
+        // visitors to accept it — tryButton's label is interpolated in between.
+        tryTipPre: string;
+        tryTipPost: string;
         tryHint: string; // shown instead of the baked-in Sentence/Notes after a live lookup
         sentenceLabel: string;
         notesLabel: string;
