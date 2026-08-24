@@ -151,7 +151,7 @@ a `locale` super-property so you can segment by language.
 | `download_click` | Hero "Download Android" button clicked | `platform: "android"`, `location: "hero"` | **1 – conversion** |
 | `cta_get_app_click` | Nav "Get the app" button clicked | — | **1 – conversion** |
 | `donate_click` | A donation platform link is clicked on the support page | `location` (the platform id) | **1 – conversion** |
-| `dictionary_lookup` | A word is submitted in the `#dictionary` "try it" box | `query`, `result` (`found`/`not_found`/`error`), `is_example` | 2 – engagement |
+| `dictionary_lookup` | A word is submitted in the `#dictionary` "try it" box | `query`, `result` (`found`/`not_found`/`error`), `is_example`, `source` (`local`/`live`) | 2 – engagement |
 | `section_view` | A section scrolls into view (features / how-it-works / dictionary / faq) | `section` | 2 – engagement |
 | `faq_open` | An FAQ `<details>` is opened | `question` | 2 – engagement |
 | `demo_complete` | The phone-mockup story plays through to the end | `location`, `replay_count`, `interrupted`, `reduced_motion` | 2 – engagement |
@@ -170,7 +170,9 @@ a `locale` super-property so you can segment by language.
 > **`dictionary_lookup.query` captures the searched term** — intentionally, so you can see what
 > vocabulary interests visitors. It's a public English dictionary word (the input is `maxlength=40`),
 > sent cookielessly with no identity attached. `is_example: true` marks an empty submit (which looks
-> up the demo word), so real searches are easy to separate.
+> up the demo word), so real searches are easy to separate. `source: "local"` marks a lookup resolved
+> from the bundled `TRY_WORDS` data (see `content.ts`) with no network call at all — `"live"` is a
+> real `api.dictionaryapi.dev` request.
 
 **The north-star metric** is `download_click`. The Hero button is currently a placeholder
 (`href="#"`); the event already fires, so conversion data is ready the moment the button is wired
