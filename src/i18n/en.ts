@@ -242,12 +242,13 @@ export const en: Copy = {
     },
     phone: {
         aria: 'Word Bank app showing a read list with statuses and word counts',
-        readList: 'Read List',
+        library: 'Library',
         filters: { all: 'All', want: 'Want to read', reading: 'Currently Reading', read: 'Have read' },
         tabs: {
             search: 'Search',
-            readList: 'Read List',
-            wordList: 'Word list',
+            words: 'Words',
+            library: 'Library',
+            memory: 'Memory',
             more: 'More',
         },
         wordPos: { noun: 'Noun', verb: 'Verb', adjective: 'Adj.' },

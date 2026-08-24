@@ -142,12 +142,15 @@ export interface Copy {
     };
     phone: {
         aria: string;
-        readList: string;
+        library: string; // the Library screen's header (was "readList" — the app renamed the tab)
         filters: { all: string; want: string; reading: string; read: string };
+        // Bottom tab bar, in display order — mirrors the app's 5 tabs exactly
+        // (Search, Words, Library, Memory, More; see (tabs)/_layout.tsx).
         tabs: {
             search: string;
-            readList: string;
-            wordList: string;
+            words: string;
+            library: string;
+            memory: string;
             more: string;
         };
         // Part-of-speech chips on the Words List view (the "All" chip reuses filters.all).

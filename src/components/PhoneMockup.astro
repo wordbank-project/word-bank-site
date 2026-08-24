@@ -141,7 +141,7 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                      colour-coded part-of-speech filter chips the story taps. ---- */
                 }
                 <section class="phone-view" data-view="words">
-                    <div class="phone-header">{t.phone.tabs.wordList}</div>
+                    <div class="phone-header">{t.phone.tabs.words}</div>
 
                     {
                         /* Decorative search bar — the app's Words List has one above the filters. */
@@ -227,7 +227,7 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
                     /* ---- View 4: Read List (the original static mockup; default) ---- */
                 }
                 <section class="phone-view is-active" data-view="readlist">
-                    <div class="phone-header">{t.phone.readList}</div>
+                    <div class="phone-header">{t.phone.library}</div>
 
                     <div class="phone-filters" data-phone-filters>
                         {
@@ -291,14 +291,20 @@ const FILTERS: { value: ReadStatus | "all"; label: string }[] = [
             </div>
 
             {
-                /* Shared tab bar — the story moves the active tab as it navigates. */
+                /* Shared tab bar — the story moves the active tab as it navigates.
+                   Matches the app's 5 tabs (Search, Words, Library, Memory, More;
+                   see (tabs)/_layout.tsx) — text only, no icons. "memory" has no
+                   view of its own in this demo, so it's never marked active; that
+                   mirrors "more", which is likewise present but unvisited by the
+                   scripted story. */
             }
             <div class="phone-tabbar" data-tabbar>
                 <span data-tab="search">{t.phone.tabs.search}</span>
+                <span data-tab="words">{t.phone.tabs.words}</span>
                 <span class="active" data-tab="readlist"
-                    >{t.phone.tabs.readList}</span
+                    >{t.phone.tabs.library}</span
                 >
-                <span data-tab="words">{t.phone.tabs.wordList}</span>
+                <span data-tab="memory">{t.phone.tabs.memory}</span>
                 <span data-tab="more">{t.phone.tabs.more}</span>
             </div>
         </div>

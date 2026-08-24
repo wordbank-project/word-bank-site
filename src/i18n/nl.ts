@@ -242,12 +242,13 @@ export const nl: Copy = {
     },
     phone: {
         aria: 'Word Bank-app met een leeslijst met statussen en woordtellingen',
-        readList: 'Leeslijst',
+        library: 'Bibliotheek',
         filters: { all: 'Alle', want: 'Wil ik lezen', reading: 'Aan het lezen', read: 'Gelezen' },
         tabs: {
             search: 'Zoeken',
-            readList: 'Leeslijst',
-            wordList: 'Woordenlijst',
+            words: 'Woorden',
+            library: 'Bibliotheek',
+            memory: 'Geheugen',
             more: 'Meer',
         },
         wordPos: { noun: 'Zelfst.', verb: 'Werkw.', adjective: 'Bijv.' },

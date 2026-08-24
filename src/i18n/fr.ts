@@ -242,12 +242,13 @@ export const fr: Copy = {
     },
     phone: {
         aria: 'Application Word Bank montrant une liste de lecture avec statuts et nombres de mots',
-        readList: 'Liste de lecture',
+        library: 'Bibliothèque',
         filters: { all: 'Tous', want: 'À lire', reading: 'En cours', read: 'Lu' },
         tabs: {
             search: 'Recherche',
-            readList: 'Liste de lecture',
-            wordList: 'Liste de mots',
+            words: 'Mots',
+            library: 'Bibliothèque',
+            memory: 'Mémoire',
             more: 'Plus',
         },
         wordPos: { noun: 'Nom', verb: 'Verbe', adjective: 'Adj.' },
