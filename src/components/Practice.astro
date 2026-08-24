@@ -64,6 +64,14 @@ function posClass(pos: string): string {
                 aria-label={t.practice.analyze.chipsAria}
             >
                 {
+                    /* A filled rest-state background (not just a border) plus a
+                    trailing ✓/› glyph — the same accent-colored "there's more
+                    here, tap it" vocabulary as DictionaryShowcase's "Choose
+                    other definition ›" — make these read as buttons rather
+                    than static quoted text at a glance, including on touch
+                    where there's no hover state to reveal it. */
+                }
+                {
                     ANALYZE_EXAMPLES.map((sentence, i) => (
                         <button
                             type="button"
@@ -74,13 +82,20 @@ function posClass(pos: string): string {
                             data-ph-example={i}
                             aria-pressed={i === 0}
                             class:list={[
-                                "cursor-pointer rounded-[10px] border px-3.5 py-2.5 text-left text-[0.85rem] italic transition-colors",
+                                "flex cursor-pointer items-center justify-between gap-3 rounded-[10px] border px-3.5 py-2.5 text-left text-[0.85rem] transition-colors",
                                 i === 0
                                     ? "border-accent bg-accent-soft text-accent"
-                                    : "border-line text-ink-soft hover:border-accent/40",
+                                    : "border-line bg-surface-soft text-ink-soft hover:border-accent/40 hover:bg-accent-soft/50",
                             ]}
                         >
-                            “{sentence}”
+                            <span class="italic">“{sentence}”</span>
+                            <span
+                                aria-hidden="true"
+                                data-chip-glyph
+                                class="shrink-0 text-[0.85rem] font-bold text-accent"
+                            >
+                                {i === 0 ? "✓" : "›"}
+                            </span>
                         </button>
                     ))
                 }
@@ -268,8 +283,11 @@ function posClass(pos: string): string {
                     c.classList.toggle("bg-accent-soft", active);
                     c.classList.toggle("text-accent", active);
                     c.classList.toggle("border-line", !active);
+                    c.classList.toggle("bg-surface-soft", !active);
                     c.classList.toggle("text-ink-soft", !active);
                     c.setAttribute("aria-pressed", String(active));
+                    const glyph = c.querySelector("[data-chip-glyph]");
+                    if (glyph) glyph.textContent = active ? "✓" : "›";
                 });
                 result.hidden = true;
                 loading.hidden = false;
