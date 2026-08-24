@@ -172,6 +172,104 @@ export const GLOSSARY_FALLBACK: GlossaryWord[] = [
     { word: 'halcyon', partOfSpeech: 'adjective', phonetic: '/ˈhæl.si.ən/', definition: 'Denoting a past period that was idyllically happy and peaceful.' },
 ];
 
+// Curated word entries with real dictionary data (word, phonetic, and every
+// {partOfSpeech, definition} pair to show, in display order) baked directly
+// into the site. DictionaryShowcase's "try it" field checks this list before
+// ever calling api.dictionaryapi.dev — that's a free, unauthenticated service
+// that's occasionally slow/rate-limited/down, and browsers report those
+// failures as a misleading CORS error since it doesn't send CORS headers on
+// every response. These 10 words (also what the placeholder typewriter
+// cycles through) always resolve instantly with no network call; typing any
+// other English word still does a normal live lookup as before.
+export type DictionaryEntry = {
+    word: string;
+    phonetic: string;
+    items: { partOfSpeech: string; definition: string }[];
+};
+
+export const TRY_WORDS: DictionaryEntry[] = [
+    {
+        word: 'serendipity',
+        phonetic: '/ˌsɛɹ.ənˈdɪp.ɪ.ti/',
+        items: [
+            { partOfSpeech: 'noun', definition: 'A combination of events which have come together by chance to make a surprisingly good or wonderful outcome.' },
+            { partOfSpeech: 'noun', definition: 'An unsought, unintended, but fortunate discovery that happens by accident.' },
+        ],
+    },
+    {
+        word: 'ephemeral',
+        phonetic: '/ɪˈfɛm.ər.əl/',
+        items: [
+            { partOfSpeech: 'adjective', definition: 'Lasting for a very short time.' },
+            { partOfSpeech: 'noun', definition: 'Something which lasts for only a short period of time.' },
+        ],
+    },
+    {
+        word: 'resilience',
+        phonetic: '/rɪˈzɪl.i.əns/',
+        items: [
+            { partOfSpeech: 'noun', definition: 'The mental ability to recover quickly from depression, illness, or misfortune.' },
+            { partOfSpeech: 'noun', definition: 'The physical property of a material that can resume its shape after being stretched or deformed; elasticity.' },
+        ],
+    },
+    {
+        word: 'eloquent',
+        phonetic: '/ˈɛl.ə.kwənt/',
+        items: [
+            { partOfSpeech: 'adjective', definition: 'Fluently persuasive and articulate.' },
+            { partOfSpeech: 'adjective', definition: 'Effective in expressing meaning through speech or writing.' },
+        ],
+    },
+    {
+        word: 'tenacious',
+        phonetic: '/təˈneɪ.ʃəs/',
+        items: [
+            { partOfSpeech: 'adjective', definition: 'Unwilling to yield or give up; persistent and determined.' },
+            { partOfSpeech: 'adjective', definition: 'Holding together firmly; cohesive.' },
+        ],
+    },
+    {
+        word: 'luminous',
+        phonetic: '/ˈluː.mɪ.nəs/',
+        items: [
+            { partOfSpeech: 'adjective', definition: 'Emitting light; glowing brightly.' },
+            { partOfSpeech: 'adjective', definition: 'Full of light; brightly illuminated.' },
+        ],
+    },
+    {
+        word: 'mellifluous',
+        phonetic: '/məˈlɪf.lu.əs/',
+        items: [
+            { partOfSpeech: 'adjective', definition: 'Sweet or musical; pleasant to hear.' },
+            { partOfSpeech: 'adjective', definition: 'Flowing smoothly and sweetly, like honey.' },
+        ],
+    },
+    {
+        word: 'wanderlust',
+        phonetic: '/ˈwɒn.dəˌlʌst/',
+        items: [
+            { partOfSpeech: 'noun', definition: 'A strong desire or impulse to travel and explore the world.' },
+        ],
+    },
+    {
+        word: 'halcyon',
+        phonetic: '/ˈhæl.si.ən/',
+        items: [
+            { partOfSpeech: 'adjective', definition: 'Calm, undisturbed, and peaceful; idyllically happy.' },
+            { partOfSpeech: 'noun', definition: 'A kingfisher, said in classical mythology to nest on the sea and calm the waters.' },
+        ],
+    },
+    {
+        word: 'melancholy',
+        phonetic: '/ˈmɛl.ən.kɒl.i/',
+        items: [
+            { partOfSpeech: 'noun', definition: 'A deep, thoughtful sadness or gloominess.' },
+            { partOfSpeech: 'adjective', definition: 'Affected with or expressing sadness; pensive.' },
+            { partOfSpeech: 'noun', definition: 'Black bile — one of the four "cardinal humours" ancient physicians believed governed mood and temperament.' },
+        ],
+    },
+];
+
 // Baked example sentences for the "Analyze a sentence" demo (Practice.astro).
 // English source text, untranslated (same precedent as DictionaryShowcase's
 // demo word). The AI "meaning" explanation for each is translatable copy,

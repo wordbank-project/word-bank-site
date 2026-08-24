@@ -19,8 +19,9 @@ const WORD = "flourish";
 // and the SSR/no-JS placeholder (tryPlaceholder in i18n/{en,nl,fr}.ts mentions
 // it — keep them in sync if you change it). Once JS runs, the client script
 // below drives the field's placeholder with a typewriter effect that cycles
-// through HERO_WORDS instead (mirrors the app's useTypewriterPlaceholder), and
-// an empty submit accepts whichever of those words is currently shown.
+// through TRY_WORDS instead (see content.ts; mirrors the app's
+// useTypewriterPlaceholder), and an empty submit accepts whichever of those
+// words is currently shown.
 const TRY_WORD = "petrichor";
 
 type Item = { partOfSpeech: string; definition: string };
@@ -397,7 +398,12 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 <script>
     import { backDismiss } from "../lib/back-dismiss";
     import { track } from "../lib/analytics";
-    import { HERO_WORDS } from "../content";
+    import { TRY_WORDS } from "../content";
+
+    // The typewriter only cycles through words with bundled local data (see
+    // TRY_WORDS in content.ts) — that way an empty submit always resolves
+    // instantly, with no dependency on api.dictionaryapi.dev's uptime.
+    const TRY_WORD_LIST = TRY_WORDS.map((w) => w.word);
 
     type Item = { pos: string; definition: string };
 
@@ -583,10 +589,11 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 status.hidden = !text;
             };
 
-            // ---- Placeholder typewriter: types a random example word into
-            //      the field's placeholder one character at a time, pauses on
-            //      the finished word, then cycles to another — the same word
-            //      list and 130ms-per-character pace as the app's
+            // ---- Placeholder typewriter: types a random example word (from
+            //      TRY_WORD_LIST, so it always resolves locally — see below)
+            //      into the field's placeholder one character at a time,
+            //      pauses on the finished word, then cycles to another — the
+            //      same 130ms-per-character pace as the app's
             //      useTypewriterPlaceholder hook. The app's hook itself types
             //      only a single word per mount and relies on the screen
             //      losing/regaining focus to pick a new one; here there's no
@@ -607,12 +614,14 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 
             const startTypewriter = () => {
                 stopTypewriter();
-                if (HERO_WORDS.length === 0) return;
+                if (TRY_WORD_LIST.length === 0) return;
                 // Avoid immediately repeating the word that just finished.
                 let target = placeholderWord;
-                while (target === placeholderWord && HERO_WORDS.length > 1) {
+                while (target === placeholderWord && TRY_WORD_LIST.length > 1) {
                     target =
-                        HERO_WORDS[Math.floor(Math.random() * HERO_WORDS.length)];
+                        TRY_WORD_LIST[
+                            Math.floor(Math.random() * TRY_WORD_LIST.length)
+                        ];
                 }
                 placeholderWord = target;
                 if (reduceMotion) {
@@ -791,6 +800,35 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 const q =
                     typed || placeholderWord || (form.dataset.exampleWord ?? "");
                 if (!q || busy) return;
+
+                // Bundled locally (see TRY_WORDS in content.ts) — resolve
+                // straight from that data, no network call at all, so this
+                // never hits dictionaryapi.dev's CORS/uptime issues.
+                const local = TRY_WORDS.find(
+                    (w) => w.word.toLowerCase() === q.toLowerCase(),
+                );
+                if (local) {
+                    input.value = q;
+                    stopTypewriter();
+                    if (typewriterTip) typewriterTip.hidden = true;
+                    showWord(
+                        local.word,
+                        local.phonetic,
+                        local.items.map((it) => ({
+                            pos: it.partOfSpeech,
+                            definition: it.definition,
+                        })),
+                    );
+                    setStatus("");
+                    track("dictionary_lookup", {
+                        query: q.toLowerCase(),
+                        result: "found",
+                        is_example: !typed,
+                        source: "local",
+                    });
+                    return;
+                }
+
                 input.value = q;
                 stopTypewriter();
                 if (typewriterTip) typewriterTip.hidden = true;
@@ -842,6 +880,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                         query: q.toLowerCase(),
                         result,
                         is_example: !typed,
+                        source: "live",
                     });
                 }
             });
