@@ -76,29 +76,35 @@ function posClass(pos: string): string {
     return "text-accent";
 }
 
-// Build-time lookup, mirroring the app's English path (words-api.ts → fetchEnglish).
+// Build-time lookup against wiktapi.dev's public instance (see word-bank-app's
+// src/utils/words-api.ts for the sibling implementation this mirrors). Two
+// concurrent calls: /definitions for the glosses, /pronunciations for the
+// phonetic — wiktapi.dev never includes phonetic data in /definitions itself.
 let word = FALLBACK.word;
 let phonetic = FALLBACK.phonetic;
 let items: Item[] = FALLBACK.items;
 try {
-    const res = await fetch(
-        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(WORD)}`,
-    );
-    if (res.ok) {
-        const data = await res.json();
+    const [defRes, pronRes] = await Promise.allSettled([
+        fetch(
+            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(WORD)}/definitions?lang=en`,
+        ),
+        fetch(
+            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(WORD)}/pronunciations?lang=en`,
+        ),
+    ]);
+    if (defRes.status === "fulfilled" && defRes.value.ok) {
+        const data = await defRes.value.json();
         const flat: Item[] = [];
-        for (const entry of data ?? []) {
-            for (const meaning of entry.meanings ?? []) {
-                for (const def of meaning.definitions ?? []) {
-                    if (def?.definition) {
-                        flat.push({
-                            partOfSpeech: (
-                                meaning.partOfSpeech ?? ""
-                            ).toLowerCase(),
-                            definition: def.definition,
-                        });
-                    }
+        for (const definition of data.definitions ?? []) {
+            for (const sense of definition.senses ?? []) {
+                const gloss = (sense.glosses ?? sense.raw_glosses ?? [])[0];
+                if (!gloss) {
+                    continue;
                 }
+                flat.push({
+                    partOfSpeech: (definition.pos ?? "").toLowerCase(),
+                    definition: gloss,
+                });
             }
         }
         const seen = new Set<string>();
@@ -114,10 +120,20 @@ try {
             .slice(0, 12);
         if (unique.length > 0) {
             items = unique;
-            phonetic =
-                data.find((e: { phonetic?: string }) => e.phonetic)?.phonetic ??
-                "";
-            word = data[0]?.word ?? WORD;
+            word = data.word ?? WORD;
+            // Best-effort phonetic — a failure here just leaves FALLBACK's phonetic in place.
+            if (pronRes.status === "fulfilled" && pronRes.value.ok) {
+                const pronData = await pronRes.value.json();
+                for (const entry of pronData.pronunciations ?? []) {
+                    const ipa = entry.sounds?.find(
+                        (s: { ipa?: string }) => s.ipa,
+                    )?.ipa;
+                    if (ipa) {
+                        phonetic = ipa;
+                        break;
+                    }
+                }
+            }
         }
     }
 } catch {
@@ -402,7 +418,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
 
     // The typewriter only cycles through words with bundled local data (see
     // TRY_WORDS in content.ts) — that way an empty submit always resolves
-    // instantly, with no dependency on api.dictionaryapi.dev's uptime.
+    // instantly, with zero network latency regardless of the live API's health.
     const TRY_WORD_LIST = TRY_WORDS.map((w) => w.word);
 
     type Item = { pos: string; definition: string };
@@ -725,23 +741,30 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 }
             };
 
-            // Same flatten/dedupe/cap the build-time lookup applies.
+            // Same flatten/dedupe/cap the build-time lookup applies, for
+            // wiktapi.dev's shape. Phonetic isn't included here — wiktapi.dev
+            // never returns it from /definitions, it's fetched separately.
             const parseEntries = (
                 data: unknown,
-            ): { word: string; phonetic: string; items: Item[] } => {
-                const entries: any[] = Array.isArray(data) ? data : [];
+            ): { word: string; items: Item[] } => {
+                const definitions: any[] = Array.isArray(
+                    (data as any)?.definitions,
+                )
+                    ? (data as any).definitions
+                    : [];
                 const flat: Item[] = [];
-                for (const entry of entries) {
-                    for (const meaning of entry?.meanings ?? []) {
-                        for (const def of meaning?.definitions ?? []) {
-                            if (def?.definition) {
-                                flat.push({
-                                    pos: String(
-                                        meaning.partOfSpeech ?? "",
-                                    ).toLowerCase(),
-                                    definition: String(def.definition),
-                                });
-                            }
+                for (const definition of definitions) {
+                    for (const sense of definition?.senses ?? []) {
+                        const gloss = (
+                            sense?.glosses ?? sense?.raw_glosses ?? []
+                        )[0];
+                        if (gloss) {
+                            flat.push({
+                                pos: String(
+                                    definition?.pos ?? "",
+                                ).toLowerCase(),
+                                definition: String(gloss),
+                            });
                         }
                     }
                 }
@@ -754,13 +777,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                         return true;
                     })
                     .slice(0, 12);
-                return {
-                    word: String(entries[0]?.word ?? ""),
-                    phonetic: String(
-                        entries.find((e) => e?.phonetic)?.phonetic ?? "",
-                    ),
-                    items,
-                };
+                return { word: String((data as any)?.word ?? ""), items };
             };
 
             const showWord = (
@@ -802,8 +819,7 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 if (!q || busy) return;
 
                 // Bundled locally (see TRY_WORDS in content.ts) — resolve
-                // straight from that data, no network call at all, so this
-                // never hits dictionaryapi.dev's CORS/uptime issues.
+                // straight from that data, no network call at all.
                 const local = TRY_WORDS.find(
                     (w) => w.word.toLowerCase() === q.toLowerCase(),
                 );
@@ -841,22 +857,29 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 // Outcome for analytics — set through the branches, reported once below.
                 let result: "found" | "not_found" | "error" = "error";
                 try {
-                    const res = await fetch(
-                        `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(q)}`,
-                    );
-                    if (res.status === 404) {
+                    const [defRes, pronRes] = await Promise.allSettled([
+                        fetch(
+                            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(q)}/definitions?lang=en`,
+                        ),
+                        fetch(
+                            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(q)}/pronunciations?lang=en`,
+                        ),
+                    ]);
+                    const defResponse =
+                        defRes.status === "fulfilled" ? defRes.value : null;
+                    if (defResponse?.status === 404) {
                         setStatus(
                             `${form.dataset.msgNotfoundPre ?? ""}${q}${form.dataset.msgNotfoundPost ?? ""}`,
                         );
                         result = "not_found";
                         return;
                     }
-                    if (!res.ok) {
+                    if (!defResponse || !defResponse.ok) {
                         setStatus(form.dataset.msgError ?? "");
                         result = "error";
                         return;
                     }
-                    const parsed = parseEntries(await res.json());
+                    const parsed = parseEntries(await defResponse.json());
                     if (parsed.items.length === 0) {
                         setStatus(
                             `${form.dataset.msgNotfoundPre ?? ""}${q}${form.dataset.msgNotfoundPost ?? ""}`,
@@ -864,7 +887,21 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                         result = "not_found";
                         return;
                     }
-                    showWord(parsed.word || q, parsed.phonetic, parsed.items);
+                    // Best-effort phonetic, separate call — a failure just means no phonetic shown.
+                    let phonetic = "";
+                    if (pronRes.status === "fulfilled" && pronRes.value.ok) {
+                        const pronData = await pronRes.value.json();
+                        for (const entry of pronData.pronunciations ?? []) {
+                            const ipa = entry.sounds?.find(
+                                (s: { ipa?: string }) => s.ipa,
+                            )?.ipa;
+                            if (ipa) {
+                                phonetic = ipa;
+                                break;
+                            }
+                        }
+                    }
+                    showWord(parsed.word || q, phonetic, parsed.items);
                     setStatus("");
                     result = "found";
                 } catch {

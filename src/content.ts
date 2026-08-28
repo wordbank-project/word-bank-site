@@ -175,12 +175,10 @@ export const GLOSSARY_FALLBACK: GlossaryWord[] = [
 // Curated word entries with real dictionary data (word, phonetic, and every
 // {partOfSpeech, definition} pair to show, in display order) baked directly
 // into the site. DictionaryShowcase's "try it" field checks this list before
-// ever calling api.dictionaryapi.dev — that's a free, unauthenticated service
-// that's occasionally slow/rate-limited/down, and browsers report those
-// failures as a misleading CORS error since it doesn't send CORS headers on
-// every response. These 10 words (also what the placeholder typewriter
-// cycles through) always resolve instantly with no network call; typing any
-// other English word still does a normal live lookup as before.
+// ever making a live call — these 10 words (also what the placeholder
+// typewriter cycles through) always resolve instantly with zero network
+// latency, regardless of the live API's health; typing any other English
+// word still does a normal live lookup as before.
 export type DictionaryEntry = {
     word: string;
     phonetic: string;
