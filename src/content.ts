@@ -55,7 +55,7 @@ export const TECH: Tech[] = [
     { name: 'Expo Router', url: 'https://github.com/expo/expo/tree/main/packages/expo-router' },
     { name: 'Reanimated', url: 'https://github.com/software-mansion/react-native-reanimated' },
     { name: 'AsyncStorage', url: 'https://github.com/react-native-async-storage/async-storage' },
-    { name: 'Wiktionary · wiktapi.dev', url: 'https://github.com/TheAlexLichter/wiktapi.dev' },
+    { name: 'Wiktionary · wiktapi.dev', url: 'https://github.com/wordbank-project/wiktapi.dev' },
     { name: 'Open Library', url: 'https://github.com/internetarchive/openlibrary' },
 ];
 
