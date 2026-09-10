@@ -148,8 +148,8 @@ a `locale` super-property so you can segment by language.
 |---|---|---|---|
 | _(pageview)_ | Any page loads | `locale` (super-prop) | autocapture |
 | _(`$exception`)_ | An uncaught JS error occurs | (posthog error props) | autocapture |
-| `download_click` | Hero "Download Android" button clicked | `platform: "android"`, `location: "hero"` | **1 – conversion** |
-| `cta_get_app_click` | Nav "Get the app" button clicked | — | **1 – conversion** |
+| `download_click` | Hero "Download Android"/"Web" button clicked | `platform: "android"/"web"`, `location: "hero"` | **1 – conversion** |
+| `cta_get_app_click` | Nav "Get the app" button clicked (links to [word-bank-web.netlify.app](https://word-bank-web.netlify.app/)) | — | **1 – conversion** |
 | `donate_click` | A donation platform link is clicked on the support page | `location` (the platform id) | **1 – conversion** |
 | `dictionary_lookup` | A word is submitted in the `#dictionary` "try it" box | `query`, `result` (`found`/`not_found`/`error`), `is_example`, `source` (`local`/`live`) | 2 – engagement |
 | `section_view` | A section scrolls into view (features / how-it-works / dictionary / faq) | `section` | 2 – engagement |
@@ -174,9 +174,10 @@ a `locale` super-property so you can segment by language.
 > from the bundled `TRY_WORDS` data (see `content.ts`) with no network call at all — `"live"` is a
 > real `api.dictionaryapi.dev` request.
 
-**The north-star metric** is `download_click`. The Hero button is currently a placeholder
+**The north-star metric** is `download_click`. The Android button is currently a placeholder
 (`href="#"`); the event already fires, so conversion data is ready the moment the button is wired
-to a real APK/store link.
+to a real APK/store link. The Web button is already wired to
+[word-bank-web.netlify.app](https://word-bank-web.netlify.app/).
 
 ## How it works (code)
 

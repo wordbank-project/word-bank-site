@@ -60,7 +60,7 @@ export interface Copy {
         downloadAndroid: string;
         androidBeta: string;
         iosSoon: string;
-        webSoon: string;
+        webAvailable: string;
     };
     features: { heading: string; sub: string; items: { icon: IconName; title: string; description: string }[] };
     howItWorks: { heading: string; sub: string; steps: { title: string; description: string }[] };

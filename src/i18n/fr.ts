@@ -32,7 +32,7 @@ export const fr: Copy = {
         downloadAndroid: 'Télécharger pour Android',
         androidBeta: '(bêta)',
         iosSoon: 'iOS — bientôt disponible',
-        webSoon: 'Web — bientôt disponible',
+        webAvailable: 'Web — disponible',
     },
     features: {
         heading: 'Tout ce qu’il faut pour une habitude de lecture',

@@ -31,9 +31,10 @@ const iconClass = "w-[18px] h-[18px]";
             <nav class="nav-links" aria-label="Main" data-nav-links>
                 {t.nav.links.map(({ href, label }) => <a href={subpath ? `${home}${href}` : href}>{label}</a>)}
                 <a
-                    href={subpath ? home : "#top"}
+                    href="https://word-bank-web.netlify.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     class="button button-small"
-                    data-scroll-top={subpath ? undefined : true}
                     data-ph-event="cta_get_app_click">{t.nav.cta}</a
                 >
             </nav>
@@ -374,9 +375,10 @@ const iconClass = "w-[18px] h-[18px]";
         });
     }
 
-    // --- Scroll to top: the logo and the "Get the app" button. Works on mobile
-    //     too, and closes the open nav menu first. Falls back to the #top anchor
-    //     when JS is off. Honors reduced-motion.
+    // --- Scroll to top: the logo (the "Get the app" button now links out to
+    //     the web app instead for now until the native app is available). Works on mobile too, and closes the open nav
+    //     menu first. Falls back to the #top anchor when JS is off. Honors
+    //     reduced-motion.
     const reduceMotion = window.matchMedia(
         "(prefers-reduced-motion: reduce)",
     ).matches;

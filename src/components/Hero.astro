@@ -66,8 +66,15 @@ const badges = t.hero.badges.split("·").map((b) => b.trim());
                 <span class="button button-ghost" aria-disabled="true"
                     >{t.hero.iosSoon}</span
                 >
-                <span class="button button-ghost" aria-disabled="true"
-                    >{t.hero.webSoon}</span
+                <a
+                    class="button"
+                    href="https://word-bank-web.netlify.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-ph-event="download_click"
+                    data-ph-platform="web"
+                    data-ph-location="hero"
+                    >{t.hero.webAvailable}</a
                 >
             </div>
             <div class="mt-5">

@@ -32,7 +32,7 @@ export const nl: Copy = {
         downloadAndroid: 'Download voor Android',
         androidBeta: '(bèta)',
         iosSoon: 'iOS — binnenkort',
-        webSoon: 'Web — binnenkort',
+        webAvailable: 'Web — beschikbaar',
     },
     features: {
         heading: 'Alles wat een leesgewoonte nodig heeft',
