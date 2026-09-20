@@ -56,12 +56,6 @@ export const fr: Copy = {
                 description:
                     'Enregistrez chaque mot avec la phrase où vous l’avez trouvé et vos propres notes.',
             },
-            {
-                icon: 'sort',
-                title: 'Tous vos mots au même endroit',
-                description:
-                    'La liste de mots rassemble chaque mot de chaque livre — cherchez, filtrez et triez instantanément.',
-            },
         ],
     },
     howItWorks: {

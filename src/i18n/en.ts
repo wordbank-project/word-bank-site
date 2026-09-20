@@ -56,12 +56,6 @@ export const en: Copy = {
                 description:
                     'Save each word with the sentence you found it in and your own notes.',
             },
-            {
-                icon: 'sort',
-                title: 'All your words in one place',
-                description:
-                    'The Words List gathers every word from every book — search, filter, and sort instantly.',
-            },
         ],
     },
     howItWorks: {

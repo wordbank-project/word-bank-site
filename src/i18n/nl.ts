@@ -56,12 +56,6 @@ export const nl: Copy = {
                 description:
                     'Bewaar elk woord met de zin waarin je het vond en je eigen notities.',
             },
-            {
-                icon: 'sort',
-                title: 'Al je woorden op één plek',
-                description:
-                    'De Woordenlijst verzamelt elk woord uit elk boek — direct zoeken, filteren en sorteren.',
-            },
         ],
     },
     howItWorks: {
