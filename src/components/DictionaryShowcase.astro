@@ -76,20 +76,29 @@ function posClass(pos: string): string {
     return "text-accent";
 }
 
-// Build-time lookup against wiktapi.dev's public instance (see word-bank-app's
-// src/utils/words-api.ts for the sibling implementation this mirrors). Two
-// concurrent calls: /definitions for the glosses, /pronunciations for the
-// phonetic — wiktapi.dev never includes phonetic data in /definitions itself.
+// Base URL of the dictionary API. Defaults to our own instance on the droplet
+// (see droplet-deploy.md); set PUBLIC_DICT_API_URL to point elsewhere, e.g. back
+// at the public https://api.wiktapi.dev. Read in the client script below too.
+const DICT_API =
+    (import.meta.env.PUBLIC_DICT_API_URL as string | undefined)?.replace(
+        /\/$/,
+        "",
+    ) || "https://dict.wordbankapp.com";
+
+// Build-time lookup (see word-bank-app's src/utils/api/words-api.ts for the
+// sibling implementation this mirrors). Two concurrent calls: /definitions for
+// the glosses, /pronunciations for the phonetic — the API never includes
+// phonetic data in /definitions itself.
 let word = FALLBACK.word;
 let phonetic = FALLBACK.phonetic;
 let items: Item[] = FALLBACK.items;
 try {
     const [defRes, pronRes] = await Promise.allSettled([
         fetch(
-            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(WORD)}/definitions?lang=en`,
+            `${DICT_API}/v1/en/word/${encodeURIComponent(WORD)}/definitions?lang=en`,
         ),
         fetch(
-            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(WORD)}/pronunciations?lang=en`,
+            `${DICT_API}/v1/en/word/${encodeURIComponent(WORD)}/pronunciations?lang=en`,
         ),
     ]);
     if (defRes.status === "fulfilled" && defRes.value.ok) {
@@ -422,6 +431,14 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
     const TRY_WORD_LIST = TRY_WORDS.map((w) => w.word);
 
     type Item = { pos: string; definition: string };
+
+    // Mirrors the frontmatter constant — Astro inlines PUBLIC_* env at build, so
+    // this resolves to the same URL without being passed through the DOM.
+    const DICT_API =
+        (import.meta.env.PUBLIC_DICT_API_URL as string | undefined)?.replace(
+            /\/$/,
+            "",
+        ) || "https://dict.wordbankapp.com";
 
     const modal = document.getElementById("dict-modal");
     const openBtn = document.getElementById("dict-open");
@@ -859,10 +876,10 @@ const posLabelClass = `mt-0.5 mb-2 inline-block text-[0.85rem] italic ${posClass
                 try {
                     const [defRes, pronRes] = await Promise.allSettled([
                         fetch(
-                            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(q)}/definitions?lang=en`,
+                            `${DICT_API}/v1/en/word/${encodeURIComponent(q)}/definitions?lang=en`,
                         ),
                         fetch(
-                            `https://api.wiktapi.dev/v1/en/word/${encodeURIComponent(q)}/pronunciations?lang=en`,
+                            `${DICT_API}/v1/en/word/${encodeURIComponent(q)}/pronunciations?lang=en`,
                         ),
                     ]);
                     const defResponse =
