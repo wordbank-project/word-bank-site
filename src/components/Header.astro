@@ -1,6 +1,7 @@
 ---
 import Logo from "./Logo.astro";
 import { getCopy, localeRoot, LANGS, LANG_META, type Lang } from "../i18n";
+import { WEB_APP_URL } from "../content";
 
 interface Props {
     lang: Lang;
@@ -31,7 +32,7 @@ const iconClass = "w-[18px] h-[18px]";
             <nav class="nav-links" aria-label="Main" data-nav-links>
                 {t.nav.links.map(({ href, label }) => <a href={subpath ? `${home}${href}` : href}>{label}</a>)}
                 <a
-                    href="https://word-bank-web.netlify.app/"
+                    href={WEB_APP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     class="button button-small"

@@ -1,5 +1,6 @@
 ---
 import { getCopy, type Lang } from "../i18n";
+import { ANDROID_RELEASE_URL, WEB_APP_URL } from "../content";
 import FloatingWords from "./FloatingWords.astro";
 import PhoneMockup from "./PhoneMockup.astro";
 import WordWall from "./WordWall.astro";
@@ -56,7 +57,9 @@ const badges = t.hero.badges.split("·").map((b) => b.trim());
             <div id="download" class="my-7 flex flex-wrap gap-3.5">
                 <a
                     class="button"
-                    href="#"
+                    href={ANDROID_RELEASE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     data-ph-event="download_click"
                     data-ph-platform="android"
                     data-ph-location="hero"
@@ -68,7 +71,7 @@ const badges = t.hero.badges.split("·").map((b) => b.trim());
                 >
                 <a
                     class="button"
-                    href="https://app.wordbankapp.com/"
+                    href={WEB_APP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     data-ph-event="download_click"

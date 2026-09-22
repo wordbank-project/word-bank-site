@@ -24,6 +24,17 @@ export type Feature = {
 // Word Bank is open source — link the repo from the "Built with" section.
 export const REPO_URL = 'https://github.com/wordbank-project/word-bank';
 
+// Where the public Android build lives. `/releases/latest` always resolves to
+// the newest release, so this never needs updating when a new beta ships —
+// unlike an Expo per-build URL, which carries a fresh UUID every time. The
+// app's README badge points at this same URL.
+export const ANDROID_RELEASE_URL =
+    'https://github.com/wordbank-project/word-bank-app/releases/latest';
+
+// The Expo web build of the same app. Kept here rather than inline so the Hero
+// and Download sections can't drift apart.
+export const WEB_APP_URL = 'https://app.wordbankapp.com/';
+
 export type SupportPlatformId = 'github' | 'liberapay' | 'kofi' | 'bmac';
 
 // Donation platforms listed on the /support page (per-platform blurbs live in

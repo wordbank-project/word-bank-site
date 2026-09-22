@@ -34,6 +34,22 @@ export const nl: Copy = {
         iosSoon: 'iOS — binnenkort',
         webAvailable: 'Web — beschikbaar',
     },
+    download: {
+        heading: 'Download Word Bank voor Android',
+        sub: 'Gratis tijdens de beta — geen account, geen advertenties, en elk woord dat je opslaat blijft op je toestel.',
+        scanHint: 'Scan met je telefoon',
+        qrAlt: 'QR-code naar de nieuwste Word Bank-release op GitHub',
+        button: 'Download de APK',
+        buttonNote: 'Nieuwste release · gehost op GitHub',
+        notesHeading: 'Wat je installeert',
+        notes: [
+            'Android 7.0 of nieuwer.',
+            'Omdat de app niet uit de Play Store komt, vraagt Android of je installeren vanaf deze bron wil toestaan — dat hoort zo.',
+            'iOS volgt, en een F-Droid-vermelding staat gepland.',
+        ],
+        webPrompt: 'Liever niets installeren?',
+        webCta: 'Open de web-app',
+    },
     features: {
         heading: 'Alles wat een leesgewoonte nodig heeft',
         sub: 'Eén app voor de boeken die je leest en de woorden die ze je leren.',

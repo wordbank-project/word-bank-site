@@ -34,6 +34,22 @@ export const fr: Copy = {
         iosSoon: 'iOS — bientôt disponible',
         webAvailable: 'Web — disponible',
     },
+    download: {
+        heading: 'Téléchargez Word Bank pour Android',
+        sub: 'Gratuit pendant la bêta — sans compte, sans publicité, et chaque mot enregistré reste sur votre appareil.',
+        scanHint: 'Scannez avec votre téléphone',
+        qrAlt: 'QR code vers la dernière version de Word Bank sur GitHub',
+        button: "Télécharger l'APK",
+        buttonNote: 'Dernière version · hébergée sur GitHub',
+        notesHeading: 'Ce que vous installez',
+        notes: [
+            'Android 7.0 ou plus récent.',
+            "L'application ne venant pas du Play Store, Android vous demandera d'autoriser l'installation depuis cette source — c'est normal.",
+            'iOS arrive bientôt, et une fiche F-Droid est prévue.',
+        ],
+        webPrompt: 'Vous préférez ne rien installer ?',
+        webCta: "Ouvrir l'app web",
+    },
     features: {
         heading: 'Tout ce qu’il faut pour une habitude de lecture',
         sub: 'Une seule app pour les livres que vous lisez et les mots qu’ils vous apprennent.',

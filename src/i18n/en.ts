@@ -34,6 +34,22 @@ export const en: Copy = {
         iosSoon: 'iOS — coming soon',
         webAvailable: 'Web — available',
     },
+    download: {
+        heading: 'Get Word Bank for Android',
+        sub: 'Free during beta — no account, no ads, and every word you save stays on your device.',
+        scanHint: 'Scan with your phone',
+        qrAlt: 'QR code linking to the latest Word Bank release on GitHub',
+        button: 'Download the APK',
+        buttonNote: 'Latest release · hosted on GitHub',
+        notesHeading: "What you're installing",
+        notes: [
+            'Android 7.0 or newer.',
+            "Because it comes from outside the Play Store, Android will ask you to allow installing from this source — that's expected.",
+            'iOS is coming, and an F-Droid listing is planned.',
+        ],
+        webPrompt: 'Rather not install anything?',
+        webCta: 'Open the web app',
+    },
     features: {
         heading: 'Everything a reading habit needs',
         sub: 'One app for the books you read and the words they teach you.',

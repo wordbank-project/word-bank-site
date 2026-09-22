@@ -62,6 +62,22 @@ export interface Copy {
         iosSoon: string;
         webAvailable: string;
     };
+    // The Download section (Download.astro). The APK lives on GitHub Releases,
+    // so `notes` exists to set expectations before the install: sideloading an
+    // app from outside the Play Store makes Android show an "unknown source"
+    // warning, which looks alarming if nobody warned you first.
+    download: {
+        heading: string;
+        sub: string;
+        scanHint: string; // above the QR, desktop-oriented
+        qrAlt: string; // alt text for the QR image
+        button: string;
+        buttonNote: string; // muted line under the button
+        notesHeading: string;
+        notes: string[];
+        webPrompt: string; // "Rather not install anything?"
+        webCta: string;
+    };
     features: { heading: string; sub: string; items: { icon: IconName; title: string; description: string }[] };
     howItWorks: { heading: string; sub: string; steps: { title: string; description: string }[] };
     dictionary: {

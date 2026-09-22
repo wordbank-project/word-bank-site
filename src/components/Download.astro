@@ -1,0 +1,96 @@
+---
+import Section from "./Section.astro";
+import { getCopy, type Lang } from "../i18n";
+import { ANDROID_RELEASE_URL, WEB_APP_URL } from "../content";
+
+interface Props {
+    lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = getCopy(lang);
+---
+
+{
+    /* The public download lives on GitHub Releases, not on a per-build Expo
+    link: the release URL is stable, so this section (and the README badge)
+    never need editing when a new beta ships. The QR is a committed static SVG
+    rather than a generated-at-runtime image, so the page makes no third-party
+    request to render it — consistent with the app's own no-phone-home stance. */
+}
+<Section id="get-the-app">
+    <h2>{t.download.heading}</h2>
+    <p class="section-sub">{t.download.sub}</p>
+
+    <div
+        class="grid grid-cols-[auto_1fr] items-center gap-10 rounded-[14px] border border-line bg-card p-8 max-[720px]:grid-cols-1 max-[720px]:gap-7 max-[720px]:p-6.5"
+        data-stagger
+    >
+        {/* ---- QR ---- */}
+        <div class="flex flex-col items-center gap-2.5 max-[720px]:hidden">
+            {
+                /* The QR is black-on-white and must stay that way to scan
+                reliably, so it keeps an explicit white plate in dark mode
+                instead of inheriting the card background. */
+            }
+            <div class="rounded-[10px] bg-white p-3">
+                <img
+                    src="/qr-android.svg"
+                    alt={t.download.qrAlt}
+                    width="148"
+                    height="148"
+                    class="block size-37"
+                />
+            </div>
+            <span class="text-[0.8rem] text-ink-muted">
+                {t.download.scanHint}
+            </span>
+        </div>
+
+        {/* ---- Link + expectations ---- */}
+        <div>
+            <a
+                class="button"
+                href={ANDROID_RELEASE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-ph-event="download_click"
+                data-ph-platform="android"
+                data-ph-location="download_section"
+            >
+                {t.download.button}
+            </a>
+            <p class="mt-2.5 mb-6 text-[0.8rem] text-ink-muted">
+                {t.download.buttonNote}
+            </p>
+
+            <h3 class="mb-2 text-[0.95rem]">{t.download.notesHeading}</h3>
+            <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
+                {
+                    t.download.notes.map((note) => (
+                        <li class="flex gap-2 text-[0.88rem] text-ink-soft">
+                            <span aria-hidden="true" class="text-accent">
+                                ·
+                            </span>
+                            <span>{note}</span>
+                        </li>
+                    ))
+                }
+            </ul>
+
+            <p class="mt-6 mb-0 text-[0.88rem] text-ink-muted">
+                {t.download.webPrompt}{" "}
+                <a
+                    href={WEB_APP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-ph-event="download_click"
+                    data-ph-platform="web"
+                    data-ph-location="download_section"
+                >
+                    {t.download.webCta}
+                </a>
+            </p>
+        </div>
+    </div>
+</Section>
