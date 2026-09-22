@@ -41,7 +41,7 @@ export const FDROID_URL = 'https://f-droid.org/';
 
 // The App Store landing page — there is no Word Bank listing yet. Swap it for
 // the app's own page once iOS ships.
-export const APP_STORE_URL = 'https://www.apple.com/benl/app-store/';
+export const APP_STORE_URL = 'https://www.apple.com/app-store/';
 
 export type SupportPlatformId = 'github' | 'liberapay' | 'kofi' | 'bmac';
 
