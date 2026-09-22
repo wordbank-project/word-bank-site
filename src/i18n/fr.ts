@@ -47,6 +47,10 @@ export const fr: Copy = {
             "L'application ne venant pas du Play Store, Android vous demandera d'autoriser l'installation depuis cette source — c'est normal.",
             'iOS arrive bientôt, et une fiche F-Droid est prévue.',
         ],
+        nativeOnlyLabel: 'Uniquement dans l’application mobile',
+        nativeOnly: 'Des rappels quotidiens pour réviser vos mots Mémoire.',
+        nativeOnlySoon:
+            'D’autres fonctionnalités réservées à l’application installée arrivent.',
         webPrompt: 'Vous préférez ne rien installer ?',
         webCta: "Ouvrir l'app web",
     },

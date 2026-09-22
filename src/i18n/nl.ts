@@ -47,6 +47,10 @@ export const nl: Copy = {
             'Omdat de app niet uit de Play Store komt, vraagt Android of je installeren vanaf deze bron wil toestaan — dat hoort zo.',
             'iOS volgt, en een F-Droid-vermelding staat gepland.',
         ],
+        nativeOnlyLabel: 'Alleen in de mobiele app',
+        nativeOnly: 'Dagelijkse herinneringen om je Geheugen-woorden te oefenen.',
+        nativeOnlySoon:
+            'Er komen meer functies die alleen de geïnstalleerde app kan bieden.',
         webPrompt: 'Liever niets installeren?',
         webCta: 'Open de web-app',
     },

@@ -47,6 +47,10 @@ export const en: Copy = {
             "Because it comes from outside the Play Store, Android will ask you to allow installing from this source — that's expected.",
             'iOS is coming, and an F-Droid listing is planned.',
         ],
+        nativeOnlyLabel: 'Only in the mobile app',
+        nativeOnly: 'Daily reminders to practice your Memory words.',
+        nativeOnlySoon:
+            'More features that only the installed app can offer are on the way.',
         webPrompt: 'Rather not install anything?',
         webCta: 'Open the web app',
     },

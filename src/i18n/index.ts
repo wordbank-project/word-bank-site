@@ -75,6 +75,9 @@ export interface Copy {
         buttonNote: string; // muted line under the button
         notesHeading: string;
         notes: string[];
+        nativeOnlyLabel: string; // lead-in, rendered on its own line
+        nativeOnly: string; // why install rather than use the web app
+        nativeOnlySoon: string; // the same, for what isn't built yet
         webPrompt: string; // "Rather not install anything?"
         webCta: string;
     };
