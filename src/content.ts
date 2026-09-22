@@ -35,6 +35,14 @@ export const ANDROID_RELEASE_URL =
 // and Download sections can't drift apart.
 export const WEB_APP_URL = 'https://app.wordbankapp.com/';
 
+// F-Droid: no listing yet, so this points at the catalogue itself rather than a
+// package page. Swap it for /packages/com.jensrot.wordbank/ once accepted.
+export const FDROID_URL = 'https://f-droid.org/';
+
+// The App Store landing page — there is no Word Bank listing yet. Swap it for
+// the app's own page once iOS ships.
+export const APP_STORE_URL = 'https://www.apple.com/benl/app-store/';
+
 export type SupportPlatformId = 'github' | 'liberapay' | 'kofi' | 'bmac';
 
 // Donation platforms listed on the /support page (per-platform blurbs live in

@@ -1,7 +1,7 @@
 ---
 import Section from "./Section.astro";
 import { getCopy, type Lang } from "../i18n";
-import { ANDROID_RELEASE_URL, WEB_APP_URL } from "../content";
+import { ANDROID_RELEASE_URL, APP_STORE_URL, FDROID_URL, WEB_APP_URL } from "../content";
 
 interface Props {
     lang: Lang;
@@ -76,6 +76,26 @@ const t = getCopy(lang);
                         </li>
                     ))
                 }
+                <li class="flex gap-2 text-[0.88rem] text-ink-soft">
+                    <span aria-hidden="true" class="text-accent">·</span>
+                    <span>
+                        <a
+                            href={APP_STORE_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-ph-event="app_store_click"
+                            data-ph-location="download_section"
+                            >{t.download.iosLink}</a
+                        >{t.download.fdroidPre}<a
+                            href={FDROID_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            data-ph-event="fdroid_click"
+                            data-ph-location="download_section"
+                            >{t.download.fdroidLink}</a
+                        >{t.download.fdroidPost}
+                    </span>
+                </li>
             </ul>
 
             <p

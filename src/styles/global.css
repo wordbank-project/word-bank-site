@@ -118,10 +118,9 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Anchor targets (#features, #faq, …) must not scroll under the 64px sticky
-   nav — reserve the bar height plus a little breathing room. */
-section[id],
-#download {
+/* Anchor targets (#features, #faq, #get-the-app, …) must not scroll under the
+   64px sticky nav — reserve the bar height plus a little breathing room. */
+section[id] {
     scroll-margin-top: 76px;
 }
 

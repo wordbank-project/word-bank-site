@@ -1,6 +1,6 @@
 ---
 import { getCopy, type Lang } from "../i18n";
-import { ANDROID_RELEASE_URL, WEB_APP_URL } from "../content";
+import { WEB_APP_URL } from "../content";
 import FloatingWords from "./FloatingWords.astro";
 import PhoneMockup from "./PhoneMockup.astro";
 import WordWall from "./WordWall.astro";
@@ -54,13 +54,11 @@ const badges = t.hero.badges.split("·").map((b) => b.trim());
                     ))
                 }
             </ul>
-            <div id="download" class="my-7 flex flex-wrap gap-3.5">
+            <div id="hero-cta" class="my-7 flex flex-wrap gap-3.5">
                 <a
                     class="button"
-                    href={ANDROID_RELEASE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-ph-event="download_click"
+                    href="#get-the-app"
+                    data-ph-event="download_scroll"
                     data-ph-platform="android"
                     data-ph-location="hero"
                 >

@@ -75,6 +75,13 @@ export interface Copy {
         buttonNote: string; // muted line under the button
         notesHeading: string;
         notes: string[];
+        // The "iOS … F-Droid …" line is split so both store names can be links
+        // — same Pre/Post convention as `dictionary.tryTipPre` / `tryTipPost`.
+        // Rendered as: iosLink + fdroidPre + fdroidLink + fdroidPost.
+        iosLink: string;
+        fdroidPre: string;
+        fdroidLink: string;
+        fdroidPost: string;
         nativeOnlyLabel: string; // lead-in, rendered on its own line
         nativeOnly: string; // why install rather than use the web app
         nativeOnlySoon: string; // the same, for what isn't built yet
