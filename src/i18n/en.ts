@@ -220,7 +220,7 @@ export const en: Copy = {
                 'Ways to support Word Bank — donate via GitHub Sponsors, Liberapay, Ko-fi or Buy Me a Coffee, or help out with a star, a bug report, or a recommendation.',
         },
         heading: 'Support Word Bank',
-        intro: 'Word Bank is free, open source, and ad-free — and it’s staying that way. There is no company behind it, just one developer and a few servers. Donations cover the dictionary API that powers every lookup and keep new features coming.',
+        intro: 'Word Bank is free, open source, and ad-free — and it’s staying that way. There is no company behind it, just one developer and a few servers. Every donation goes to infrastructure: the server running the dictionary and word-feed APIs, and the domain behind them — currently about $6 a month and $10 a year. The AI features run on free tiers for now; that’s the part most likely to grow.',
         donateHeading: 'Donate',
         donateSub: 'Pick whichever platform you prefer — every bit helps.',
         platforms: {

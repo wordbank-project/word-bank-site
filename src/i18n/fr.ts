@@ -220,7 +220,7 @@ export const fr: Copy = {
                 'Comment soutenir Word Bank — faites un don via GitHub Sponsors, Liberapay, Ko-fi ou Buy Me a Coffee, ou aidez avec une étoile, un signalement de bug ou une recommandation.',
         },
         heading: 'Soutenir Word Bank',
-        intro: 'Word Bank est gratuit, open source et sans publicité — et cela ne changera pas. Il n’y a pas d’entreprise derrière, juste un développeur et quelques serveurs. Les dons couvrent l’API de dictionnaire derrière chaque recherche et font avancer les nouvelles fonctionnalités.',
+        intro: 'Word Bank est gratuit, open source et sans publicité — et cela ne changera pas. Il n’y a pas d’entreprise derrière, juste un développeur et quelques serveurs. Chaque don va à l’infrastructure : le serveur qui fait tourner les API de dictionnaire et de flux de mots, et le domaine associé — actuellement environ 6 $ par mois et 10 $ par an. Les fonctionnalités d’IA tournent pour l’instant sur des offres gratuites ; c’est la partie la plus susceptible d’augmenter.',
         donateHeading: 'Faire un don',
         donateSub: 'Choisissez la plateforme que vous préférez — chaque geste compte.',
         platforms: {

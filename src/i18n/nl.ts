@@ -220,7 +220,7 @@ export const nl: Copy = {
                 'Manieren om Word Bank te steunen — doneer via GitHub Sponsors, Liberapay, Ko-fi of Buy Me a Coffee, of help met een ster, een bugmelding of een aanbeveling.',
         },
         heading: 'Steun Word Bank',
-        intro: 'Word Bank is gratis, open source en zonder advertenties — en dat blijft zo. Er zit geen bedrijf achter, alleen één ontwikkelaar en een paar servers. Donaties dekken de woordenboek-API achter elke opzoeking en houden nieuwe functies op komst.',
+        intro: 'Word Bank is gratis, open source en zonder advertenties — en dat blijft zo. Er zit geen bedrijf achter, alleen één ontwikkelaar en een paar servers. Elke donatie gaat naar infrastructuur: de server achter de woordenboek- en woordenfeed-API’s, en het domein daarachter — op dit moment ongeveer $6 per maand en $10 per jaar. De AI-functies draaien voorlopig op gratis tiers; dat is het deel dat het snelst kan groeien.',
         donateHeading: 'Doneren',
         donateSub: 'Kies het platform dat jij prettig vindt — elk beetje helpt.',
         platforms: {
