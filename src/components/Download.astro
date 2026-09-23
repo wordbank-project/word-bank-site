@@ -60,9 +60,56 @@ const t = getCopy(lang);
             >
                 {t.download.button}
             </a>
-            <p class="mt-2.5 mb-6 text-[0.8rem] text-ink-muted">
+            <p class="mt-2.5 mb-5 text-[0.8rem] text-ink-muted">
                 {t.download.buttonNote}
             </p>
+
+            {/* The no-install alternative sits right under the APK button (as
+                a visibly secondary outlined button) so visitors see both
+                choices at once instead of finding it at the bottom of the card. */}
+            <div class="mb-6">
+                <div class="mb-3 flex items-center gap-3 text-[0.8rem] text-ink-muted">
+                    <span aria-hidden="true" class="h-px flex-1 bg-line"></span>
+                    {t.download.webPrompt}
+                    <span aria-hidden="true" class="h-px flex-1 bg-line"></span>
+                </div>
+                <a
+                    class="button button-outline"
+                    href={WEB_APP_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-ph-event="download_click"
+                    data-ph-platform="web"
+                    data-ph-location="download_section"
+                >
+                    <svg
+                        class="h-4.5 w-4.5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path>
+                    </svg>
+                    {t.download.webCta}
+                    <svg
+                        class="h-3.5 w-3.5"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M7 17 17 7M8 7h9v9"></path>
+                    </svg>
+                </a>
+            </div>
 
             <h3 class="mb-2 text-[0.95rem]">{t.download.notesHeading}</h3>
             <ul class="m-0 flex list-none flex-col gap-1.5 p-0">
@@ -104,20 +151,6 @@ const t = getCopy(lang);
                 <strong class="mb-2 block">{t.download.nativeOnlyLabel}</strong>
                 <span class="block">{t.download.nativeOnly}</span>
                 <span class="block">{t.download.nativeOnlySoon}</span>
-            </p>
-
-            <p class="mt-6 mb-0 text-[0.88rem] text-ink-muted">
-                {t.download.webPrompt}{" "}
-                <a
-                    href={WEB_APP_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    data-ph-event="download_click"
-                    data-ph-platform="web"
-                    data-ph-location="download_section"
-                >
-                    {t.download.webCta}
-                </a>
             </p>
         </div>
     </div>

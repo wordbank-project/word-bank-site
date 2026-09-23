@@ -344,6 +344,24 @@ body {
     background: transparent;
 }
 
+/* Secondary action next to a primary .button (e.g. "Open the web app" under
+   the APK download). Padding is 1px smaller than .button's so the border keeps
+   both buttons the same height. Flex lives here, not as utilities, because
+   the unlayered .button's display would beat an `inline-flex` utility. */
+.button-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: 12px 25px;
+}
+
+.button-outline:hover {
+    background: var(--accent-soft);
+}
+
 /* Still learning button in Practice.astro */
 .button-learning {
     background: var(--bg-soft);
