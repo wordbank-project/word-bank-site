@@ -203,7 +203,14 @@ export interface Copy {
             replay: string; // replay button label + aria
         };
     };
-    wordWall: { trigger: string; title: string; panelAria: string; close: string };
+    wordWall: {
+        trigger: string;
+        title: string;
+        panelAria: string;
+        countSubset: string; // `{shown}` / `{total}` are replaced; used when the list shows only part of all saved words
+        countAll: string; // `{total}` is replaced; used when every saved word is listed
+        close: string;
+    };
     statusLabels: { want: string; reading: string; read: string };
 }
 

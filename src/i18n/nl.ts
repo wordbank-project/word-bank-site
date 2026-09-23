@@ -291,6 +291,8 @@ export const nl: Copy = {
         trigger: 'Bekijk de woorden die gebruikers nu bewaren',
         title: 'Woorden die gebruikers nu bewaren:',
         panelAria: 'Woorden die gebruikers bewaren',
+        countSubset: 'De {shown} meest bewaarde van {total} woorden',
+        countAll: '{total} woorden bewaard',
         close: 'Sluiten',
     },
     statusLabels: { want: 'Wil ik lezen', reading: 'Aan het lezen', read: 'Gelezen' },

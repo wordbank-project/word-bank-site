@@ -291,6 +291,8 @@ export const en: Copy = {
         trigger: 'See the words users have currently saved',
         title: 'Words users have currently saved:',
         panelAria: 'Words users are saving',
+        countSubset: 'Showing the {shown} most-saved of {total} words',
+        countAll: '{total} words saved',
         close: 'Close',
     },
     statusLabels: { want: 'Want to read', reading: 'Currently reading', read: 'Have read' },

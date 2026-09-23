@@ -291,6 +291,8 @@ export const fr: Copy = {
         trigger: 'Voir les mots que les utilisateurs enregistrent en ce moment',
         title: 'Mots enregistrés par les utilisateurs :',
         panelAria: 'Mots que les utilisateurs enregistrent',
+        countSubset: 'Les {shown} mots les plus enregistrés sur {total}',
+        countAll: '{total} mots enregistrés',
         close: 'Fermer',
     },
     statusLabels: { want: 'À lire', reading: 'En cours de lecture', read: 'Lu' },

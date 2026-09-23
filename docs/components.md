@@ -250,7 +250,12 @@ The "words users have currently saved" glossary — a trigger button (dropped in
 opens a bottom-sheet modal, structurally almost identical to `DictionaryShowcase.astro`'s
 definition sheet (same `backDismiss` wiring, same open/close animation classes). Renders
 `GLOSSARY_FALLBACK` server-side as the default content; the `<script>` then, if
-`PUBLIC_WORDS_API_URL` is set, fetches `${base}/words?order=top&limit=120` once and, if any
+`PUBLIC_WORDS_API_URL` is set, fetches `${base}/words?order=top&limit=120&includeTotal=true` once (so the body is
+`{ totalCount, words }`) and, if any
 returned word has both a `word` and a `definition`, wholesale-replaces the fallback rows with
 live ones built via `document.createElement` (word, phonetic, POS chip, definition paragraph) —
-otherwise it silently keeps showing the curated fallback list.
+otherwise it silently keeps showing the curated fallback list. The same response's
+`totalCount` fills a line under the title saying how many of the total saved words the
+(capped) list shows — "Showing the 120 most-saved of 1,234 words", or just "1,234 words
+saved" when everything fits (locale-formatted via `Intl.NumberFormat`). It only appears once
+both the live rows and the total have loaded, so it's hidden without a backend or on any failure.

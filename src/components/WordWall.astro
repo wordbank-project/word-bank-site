@@ -70,9 +70,22 @@ function posClass(pos: string): string {
         <div
             class="flex items-center justify-between gap-3 border-b border-line px-4 py-3.5"
         >
-            <span class="truncate text-[1rem] font-bold text-ink"
-                >{t.wordWall.title}</span
-            >
+            <span class="flex min-w-0 flex-col">
+                <span class="truncate text-[1rem] font-bold text-ink"
+                    >{t.wordWall.title}</span
+                >
+                {/* "Showing the N most-saved of TOTAL words": the list is capped,
+                    so this says it's a subset. Hidden until the live rows and
+                    their totalCount arrive, so the curated fallback never shows
+                    a number. */}
+                <span
+                    data-ww-count
+                    data-template-subset={t.wordWall.countSubset}
+                    data-template-all={t.wordWall.countAll}
+                    hidden
+                    class="text-[0.8rem] text-ink-muted"
+                ></span>
+            </span>
             <button
                 data-ww-close
                 type="button"
@@ -148,9 +161,10 @@ function posClass(pos: string): string {
         };
 
         // Replace the build-time fallback rows with live saved words (with definitions).
-        const renderRows = (words: FeedWord[]) => {
+        // Returns true when live rows replaced the fallback.
+        const renderRows = (words: FeedWord[]): boolean => {
             const withDefs = words.filter((w) => w.word && w.definition);
-            if (withDefs.length === 0) return; // keep the fallback
+            if (withDefs.length === 0) return false; // keep the fallback
             list.querySelectorAll("[data-ww-row]").forEach((el) => el.remove());
             for (const w of withDefs) {
                 const row = document.createElement("div");
@@ -181,6 +195,7 @@ function posClass(pos: string): string {
                 row.appendChild(def);
                 list.appendChild(row);
             }
+            return true;
         };
 
         const close = () => {
@@ -224,12 +239,45 @@ function posClass(pos: string): string {
                 requestClose();
         });
 
+        // Under the title: how many of the total saved words the list shows.
+        // Filled in only once both the live rows and the total are known.
+        const countLine = modal.querySelector<HTMLElement>("[data-ww-count]");
+        const numberFormat = new Intl.NumberFormat(document.documentElement.lang);
+        let liveShown: number | null = null;
+        let totalCount: number | null = null;
+        const renderCount = () => {
+            if (!countLine || liveShown === null || totalCount === null) {
+                return;
+            }
+            if (totalCount <= 0) {
+                return;
+            }
+            const template =
+                liveShown < totalCount
+                    ? countLine.dataset.templateSubset
+                    : countLine.dataset.templateAll;
+            countLine.textContent = (template ?? "")
+                .replace("{shown}", numberFormat.format(liveShown))
+                .replace("{total}", numberFormat.format(totalCount));
+            countLine.hidden = false;
+        };
+
         // Pull live saved words once (they replace the curated fallback).
         if (base) {
-            fetch(`${base}/words?order=top&limit=120`)
+            // includeTotal wraps the list as { totalCount, words } so one
+            // request also gives the total for the "N of TOTAL" line.
+            fetch(`${base}/words?order=top&limit=120&includeTotal=true`)
                 .then((r) => (r.ok ? r.json() : null))
                 .then((data) => {
-                    if (Array.isArray(data)) renderRows(data as FeedWord[]);
+                    const words = Array.isArray(data?.words) ? data.words : null;
+                    if (!words || !renderRows(words as FeedWord[])) {
+                        return;
+                    }
+                    liveShown = list.querySelectorAll("[data-ww-row]").length;
+                    if (typeof data.totalCount === "number") {
+                        totalCount = data.totalCount;
+                    }
+                    renderCount();
                 })
                 .catch(() => {
                     /* keep the fallback */
