@@ -22,6 +22,7 @@ export const nl: Copy = {
         theme: { prefix: 'Thema', light: 'licht', dark: 'donker', system: 'systeem' },
         language: { label: 'Taal wijzigen', search: 'Zoek een taal...', noResults: 'Geen talen gevonden' },
         skipToContent: 'Direct naar inhoud',
+        github: 'Bekijk de broncode op GitHub',
     },
     hero: {
         headlinePre: 'Verander de boeken die je leest in ',

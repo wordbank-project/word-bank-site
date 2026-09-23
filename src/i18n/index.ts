@@ -50,6 +50,7 @@ export interface Copy {
         theme: { prefix: string; light: string; dark: string; system: string }; // aria pieces
         language: { label: string; search: string; noResults: string }; // dropdown: trigger aria, search placeholder, empty state
         skipToContent: string; // keyboard-only skip link
+        github: string; // aria-label/title of the header GitHub icon
     };
     hero: {
         headlinePre: string;

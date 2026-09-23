@@ -7,7 +7,7 @@
 The **language-invariant data** file — anything that isn't translated copy. Exports:
 - `IconName` — union of the icon keys `Features.astro`'s `ICONS` map understands.
 - `Feature` type (legacy shape; the actual feature copy now lives per-locale, see below).
-- `REPO_URL` — the GitHub repo, used by the footer, tech marquee blurb, and support page.
+- `REPO_URL` — the GitHub repo, used by the header, tech marquee blurb, and support page.
 - `SupportPlatformId` + `SUPPORT_PLATFORMS` — the four donation platforms (GitHub Sponsors,
   Liberapay, Ko-fi, Buy Me a Coffee) with their URLs; the per-platform *blurb* text lives in
   `Copy.supportPage.platforms` so it can be translated, keyed by the same `id`.

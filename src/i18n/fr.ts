@@ -22,6 +22,7 @@ export const fr: Copy = {
         theme: { prefix: 'Thème', light: 'clair', dark: 'sombre', system: 'système' },
         language: { label: 'Changer de langue', search: 'Rechercher une langue...', noResults: 'Aucune langue trouvée' },
         skipToContent: 'Aller au contenu',
+        github: 'Voir le code source sur GitHub',
     },
     hero: {
         headlinePre: 'Transformez les livres que vous lisez en ',

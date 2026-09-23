@@ -34,6 +34,7 @@ locale's homepage from a subpage — `data-scroll-top` marks it for the smooth-s
 below), the section nav links + "Get the app" CTA (hidden behind the hamburger below 900px), a
 **language dropdown** (a button showing the current locale, toggling a searchable popover/sheet
 listing every `LANGS` entry with native + English names and a checkmark on the active one), a
+GitHub icon link to `REPO_URL` (`data-ph-event="repo_click"`, `location: header`), a
 **theme toggle** button (cycles light → dark → system, showing a different icon per state), and
 the mobile hamburger toggle.
 
@@ -220,8 +221,7 @@ lands back where the single-length original started. The second copy is `aria-hi
 
 ## `Footer.astro`
 Static site-wide footer: logo + copyright year (computed live via `new Date().getFullYear()`, so
-it never needs manual updating), a tagline, a GitHub link (inline SVG octocat icon,
-`data-ph-event="repo_click"`), and a "Support" link to `localeRoot(lang) + "support"`
+it never needs manual updating), a tagline, and a "Support" link to `localeRoot(lang) + "support"`
 (`data-ph-event="support_click"`).
 
 ## `Logo.astro`

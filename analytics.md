@@ -163,7 +163,7 @@ a `locale` super-property so you can segment by language.
 | `share_click` | A share link/copy-link button is clicked on the support page | `location` (network name / `copy_link`) | 3 – nice-to-have |
 | `memory_round_restart` | "Practice again" is clicked at the end of a Memory round | — | 3 – nice-to-have |
 | `support_help_click` | A "how to help" item is clicked on the support page | `location` (the item key) | 3 – nice-to-have |
-| `repo_click` | A GitHub/repo link is clicked | `location` (`footer`/`tech_blurb`) | 3 – nice-to-have |
+| `repo_click` | A GitHub/repo link is clicked | `location` (`header`/`tech_blurb`) | 3 – nice-to-have |
 | `language_change` | A locale is picked in the language dropdown | `from`, `to` | 3 – nice-to-have |
 | `theme_change` | The light/dark/system toggle is cycled | `theme` | 3 – nice-to-have |
 
