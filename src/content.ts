@@ -49,10 +49,12 @@ export type SupportPlatformId = 'github' | 'liberapay' | 'kofi' | 'bmac';
 // the locale files under `supportPage.platforms`).
 // TODO: confirm the Liberapay / Ko-fi / Buy Me a Coffee handles after registering.
 export const SUPPORT_PLATFORMS: { id: SupportPlatformId; name: string; url: string }[] = [
-    { id: 'github', name: 'GitHub Sponsors', url: 'https://github.com/sponsors/jensrot' },
+    // Hidden until the account is set up.
+    // { id: 'github', name: 'GitHub Sponsors', url: 'https://github.com/sponsors/jensrot' },
     { id: 'liberapay', name: 'Liberapay', url: 'https://liberapay.com/jensrot' },
     { id: 'kofi', name: 'Ko-fi', url: 'https://ko-fi.com/jensrot' },
-    { id: 'bmac', name: 'Buy Me a Coffee', url: 'https://buymeacoffee.com/jensrot' },
+    // Hidden until the account is set up.
+    // { id: 'bmac', name: 'Buy Me a Coffee', url: 'https://buymeacoffee.com/jensrot' },
 ];
 
 export type Tech = {
