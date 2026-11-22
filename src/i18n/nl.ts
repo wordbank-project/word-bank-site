@@ -34,6 +34,7 @@ export const nl: Copy = {
         androidBeta: '(bèta)',
         iosSoon: 'iOS — binnenkort',
         webAvailable: 'Web — beschikbaar',
+        starPill: 'Gratis en open source — geef ons een ster op GitHub',
     },
     download: {
         heading: 'Download Word Bank voor Android',

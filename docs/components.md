@@ -78,7 +78,10 @@ commented sections:
   incorrectly clear the hash, and lose the intended scroll target.
 
 ## `Hero.astro`
-The above-the-fold section (`id="top"`). Renders the gradient headline (with a live link to
+The above-the-fold section (`id="top"`). Above the headline sits an eyebrow pill linking to
+`REPO_URL` (`t.hero.starPill`, `data-ph-event="repo_click"`, `location: hero_star`) — a small
+`<script>` fills its live star count from the public GitHub API and leaves it hidden on any
+failure. Renders the gradient headline (with a live link to
 `#dictionary` styled via `global.css`'s `.text-gradient-accent`), the sub-line, a row of
 check-marked "badge" pills built by splitting `t.hero.badges` on `·` (so the badges are just
 plain translated text with a separator, not a structured array — keeps the `Copy` type simpler),

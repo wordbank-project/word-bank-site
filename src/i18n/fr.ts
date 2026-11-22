@@ -34,6 +34,7 @@ export const fr: Copy = {
         androidBeta: '(bêta)',
         iosSoon: 'iOS — bientôt disponible',
         webAvailable: 'Web — disponible',
+        starPill: 'Gratuit et open source — ajoutez une étoile sur GitHub',
     },
     download: {
         heading: 'Téléchargez Word Bank pour Android',

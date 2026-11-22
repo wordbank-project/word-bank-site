@@ -1,6 +1,6 @@
 ---
 import { getCopy, type Lang } from "../i18n";
-import { WEB_APP_URL } from "../content";
+import { REPO_URL, WEB_APP_URL } from "../content";
 import FloatingWords from "./FloatingWords.astro";
 import PhoneMockup from "./PhoneMockup.astro";
 import WordWall from "./WordWall.astro";
@@ -23,6 +23,33 @@ const badges = t.hero.badges.split("·").map((b) => b.trim());
         class="relative z-1 mx-auto grid max-w-270 grid-cols-[1.15fr_0.85fr] items-center gap-12 px-6 max-[720px]:grid-cols-1"
     >
         <div>
+            {/* Eyebrow pill: the GitHub star, kept above the headline so it's
+                seen first without competing with the Download button. The
+                count is filled in by the script below and stays hidden if
+                the GitHub API is unreachable or rate-limited. */}
+            <a
+                href={REPO_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-ph-event="repo_click"
+                data-ph-location="hero_star"
+                class="mb-4 inline-flex items-center gap-2 rounded-full border border-line bg-accent-soft px-3.5 py-1.5 text-[0.85rem] font-semibold text-accent no-underline transition-transform hover:-translate-y-0.5 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
+            >
+                <svg
+                    class="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                >
+                    <path d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                </svg>
+                {t.hero.starPill}
+                <span
+                    data-star-count
+                    hidden
+                    class="rounded-full bg-card px-2 py-0.5 text-[0.75rem] text-ink-soft"
+                ></span>
+            </a>
             <h1 class="text-[clamp(2rem,5vw,3.1rem)]">
                 {t.hero.headlinePre}<span class="text-gradient-accent"
                     ><a href="#dictionary"
@@ -85,3 +112,27 @@ const badges = t.hero.badges.split("·").map((b) => b.trim());
         <PhoneMockup lang={lang} />
     </div>
 </section>
+
+<script>
+    import { REPO_URL } from "../content";
+
+    // Fill the star pill's count from the public GitHub API (unauthenticated:
+    // 60 requests/hour per visitor IP). Any failure leaves the count hidden —
+    // the pill is still a working link without it.
+    const countEl = document.querySelector<HTMLElement>("[data-star-count]");
+    const repoPath = new URL(REPO_URL).pathname; // "/owner/repo"
+
+    if (countEl) {
+        fetch(`https://api.github.com/repos${repoPath}`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => {
+                const stars = data?.stargazers_count;
+                if (typeof stars !== "number") {
+                    return;
+                }
+                countEl.textContent = `★ ${new Intl.NumberFormat(document.documentElement.lang).format(stars)}`;
+                countEl.hidden = false;
+            })
+            .catch((error) => console.error(error));
+    }
+</script>

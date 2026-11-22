@@ -62,6 +62,7 @@ export interface Copy {
         androidBeta: string;
         iosSoon: string;
         webAvailable: string;
+        starPill: string; // the GitHub star pill above the headline
     };
     // The Download section (Download.astro). The APK lives on GitHub Releases,
     // so `notes` exists to set expectations before the install: sideloading an
